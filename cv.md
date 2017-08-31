@@ -7,8 +7,6 @@ Autonomous Systems Master student
 
 <img id="photo" src="portraitCrop.png" />
 <div id="webaddress">
-Post: Alexandraweg 38, 64287 Darmstadt <br/>
-Tel. 01590 / 5077 303<br/>
 <a href="mailto:simonjena@gmail.com">simon.leischnig@stud.tu-darmstadt.de</a>
 <br />
 <i class="fa fa-github"></i> <a href="http://github.com/simlei">"simlei" is my github account</a>,

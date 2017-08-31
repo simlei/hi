@@ -1,7 +1,3 @@
-## Hi!
-
-I am Simon Leischnig, Autonomous Systems student in Darmstadt Germany.
-
 I regularly contribute to the [JCrypTool](https://github.com/organizations/jcryptool/) project here on Github.
 Freetime ponderings and activities include
 - Machine learning for robots and music

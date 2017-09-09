@@ -15,7 +15,7 @@ Freetime ponderings and activities include
 ### Current reading
 
  - [Fundamentals of Music Processing by M. Müller](https://www.audiolabs-erlangen.de/fau/professor/mueller/bookFMP)
- -  different papers on music transcription / feature extraction and deep learning
+ - various papers on music transcription / feature extraction with classical methods and RNN
 
 ### CV
 

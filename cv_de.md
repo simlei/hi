@@ -2,11 +2,13 @@
 layout: cv
 title: Simon Leischnig's CV
 ---
-<img id="photo" src="portraitCrop.png" />
 # Simon Leischnig
 Masterstudent Autonome Systeme / Informatik an der TU Darmstadt
 
 <div id="webaddress">
+Geb. am 13. 07. 1990<br />
+Post: Alexandraweg 38, 64287 Darmstadt, Deutschland <br/>
+Tel. 01590 / 5077 303<br/>
 <a href="mailto:simonjena@gmail.com">simon.leischnig@stud.tu-darmstadt.de</a>
 <br />
 <i class="fa fa-github"></i> <a href="https://github.com/simlei">"simlei"</a> ist mein Github-Account <br />
@@ -71,8 +73,10 @@ Conference on Humanoid Robots (Humanoids)
 * C++
 * GUI: Java SWT, JavaFX
 * OSGi, Eclipse RCP
-* Statistik und Machine learning
+* Statistik
+* Machine learning
 * Computer vision
+* Kryptographie
 * Git
 * UNIX
 * Ammonite Shell scripting
@@ -84,22 +88,24 @@ Conference on Humanoid Robots (Humanoids)
 
 ### JCrypTool
 
-Ich trage seit dem Abitur regelmäßig zum [JCrypTool](https://github.com/jcryptool)-Open-Source-Projekt bei. Dabei kümmere ich mich um das GUI, grundlegende Programmierung am Framework des Projekts, Projektverwaltung und Dokumentation. Ich kam zu diesem Projekt über meine Seminarfacharbeit, in der ich mich mit kryptographischen Verfahren beschäftigt hatte. Es ist ein sehr umfangreiches Eclipse Rich Client Platform Projekt mit über 100 Plugins, welches kryptographische Funktionen bereitstellt und deren Verwendung erklärt. Die Cynops GmbH unterstützte dieses Projekt, indem ich während meiner Arbeitszeit dort am JCrypTool arbeiten durfte. Ich bin sehr stolz, bei diesem Projekt ein wichtige Funktion inne zu haben.
+Ich trage seit vielen Jahren regelmäßig zum [JCrypTool](https://github.com/jcryptool)-Open-Source-Projekt bei. Dabei kümmere ich mich um das GUI, grundlegende Programmierung am Framework des Projekts, Projektverwaltung und Dokumentation. Ich kam zu diesem Projekt über meine Seminarfacharbeit, in der ich mich mit kryptographischen Verfahren beschäftigt hatte. Es ist ein sehr umfangreiches Eclipse Rich Client Platform Projekt mit über 100 Plugins, welches kryptographische Funktionen bereitstellt und deren Verwendung erklärt. Ich bin sehr stolz, bei diesem Projekt ein wichtige Funktion inne zu haben.
 <br />
 <br />
-Mein derzeitiges Vorhaben ist die Integration der [Bouncy Castle](https://www.bouncycastle.org/)-Bibliothek in dieses Java-basierte Projekt. Im Kern baut es auf Scala auf und benutzt eine domänenspezifische Sprache. Der langfristige Plan ist, mehr und mehr die Funktionen der [Scalaz](https://github.com/scalaz/scalaz)-Bibliothek zu nutzen und im Ende so weit es geht auf [Free Applicatives](https://en.wikipedia.org/wiki/Applicative_programming_language) (aus der Kathegorientheorie) aufzubauen.
+Mein derzeitiges Vorhaben ist die Integration der [Bouncy Castle](https://www.bouncycastle.org/)-Bibliothek in dieses Java-basierte Projekt. Im Kern baut es auf Scala auf und benutzt eine domänenspezifische Sprache. Der langfristige Plan ist, mehr und mehr die Funktionen der [Shapeless](https://github.com/milessabin/shapeless)-Bibliothek zu nutzen und es mit der [Ammonite](http://ammonite.io) REPL zu verweben. Ultimativ will ich einmal das Konzept des "Lightweight Modular Staging" ausprobieren um performancekritische Anwendungsfälle zu ermöglichen und im Ende so weit es geht auf [Free Applicatives](https://en.wikipedia.org/wiki/Applicative_programming_language) (aus der Kathegorientheorie) aufzubauen.
 
 <!--[JCrypTool at github](https://github.com/jcryptool) -- [JCrypTool homepage](https://www.cryptool.org/de/jcryptool)-->
 
 
 ### USB guitar
-Im Rahmen einer Veranstaltung an der TU Darmstadt zu Virtual and Augmented Reality entschloss ich mich, ein langgehegtes Vorhaben umzusetzen: Musik und das Spielen der Gitarre zu verbinden. Dabei haben wir mit einem [Arduino](https://www.arduino.cc/) eine Westerngitarre so modifiziert, dass man sie per USB mit dem Computer verbinden kann. Der Computer kann die Fingerposition auf dem Griffbrett in Echtzeit auslesen. Als Proof-of-Concept haben wir eine Gitarrenlehrer-Anwendung programmiert. Diese bestimmt die Position und Ausrichtung der Gitarre in einem Webcam-feed mit markerbasiertem optischem Tracking. Zusammen mit den Fingerposition-Daten von der USB-Gitarre kann sie unter Anderem die gegriffenen Positionen direkt im Webcambild visualisieren. Wir nutzen dabei [OpenCV](http://opencv.org/) für das Marker-Tracking und [Openframeworks](http://openframeworks.cc/).
-
-Projekt-Log mit Bildern: [simlei.github.io/VAR2017Project](https://simlei.github.io/VAR2017Project)
+Im Rahmen einer Veranstaltung an der TU Darmstadt zu Virtual and Augmented Reality entschloss ich mich, ein langgehegtes Vorhaben umzusetzen: Musik und das Spielen der Gitarre zu verbinden. Dabei haben wir mit einem [Arduino](https://www.arduino.cc/) eine Westerngitarre so modifiziert, dass man sie per USB mit dem Computer verbinden kann. Der Computer kann die Fingerposition auf dem Griffbrett in Echtzeit auslesen. Als Proof-of-Concept haben wir eine Gitarrenlehrer-Anwendung programmiert. Diese bestimmt die Position und Ausrichtung der Gitarre in einem Webcam-feed mit markerbasiertem optischem Tracking. Zusammen mit den Fingerposition-Daten von der USB-Gitarre kann sie unter Anderem die gegriffenen Positionen direkt im Webcambild visualisieren. Wir nutzen dabei [OpenCV](http://opencv.org/) für das Marker-Tracking und [Openframeworks](http://openframeworks.cc/). Ausführliches Projekt-log: [simlei.github.io/VAR2017Project](https://simlei.github.io/VAR2017Project).
 
 ## Sprachkenntnisse
 
-Deutsch (Muttersprache), English (fließend, C1/C2), Spanish (fortgeschritten, B2)
+Deutsch (Muttersprache)
+
+English (fließend, C1/C2)
+
+Spanisch (fortgeschritten, B2)
 
 
 <!-- ### Footer

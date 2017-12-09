@@ -33,7 +33,7 @@ footer, header, hgroup, menu, nav, section {
 	width: 10em;
 	position: absolute;
 	top: 0em;
-	right: 0em;
+	right: 5em;
 	border: solid black 1px
 }
 

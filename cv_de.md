@@ -7,7 +7,7 @@ Masterstudent Autonome Systeme / Informatik an der TU Darmstadt
 
 <div id="webaddress">
 Geb. am 13. 07. 1990<br />
-Post: Alexandraweg 38, 64287 Darmstadt, Deutschland <br/>
+Post: Am Teich 8, 07743 Jena, Deutschland <br/>
 Tel. 01590 / 5077 303<br/>
 <a href="mailto:simonjena@gmail.com">simon.leischnig@stud.tu-darmstadt.de</a>
 <br />

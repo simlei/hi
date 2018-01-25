@@ -20,7 +20,3 @@ Freetime ponderings and activities include
 ### CV
 
 Until further expansion of the page, [here is my HTML Resumé](cv.md).
-
-### Pamflet test link
-
-[visit the docs!](./pftestout/index.html)

@@ -24,28 +24,24 @@ version_compare() {
         return 0
     fi
     
-    local IFS=.
-    local i ver1=($v1) ver2=($v2)
+    # Split versions into arrays
+    local IFS=. v1_parts=($v1) v2_parts=($v2)
     
-    # Fill empty positions with zeros
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
-        ver1[i]=0
-    done
-    for ((i=${#ver2[@]}; i<${#ver1[@]}; i++)); do
-        ver2[i]=0
-    done
+    # Compare each part
+    local i max_len
+    max_len=$(( ${#v1_parts[@]} > ${#v2_parts[@]} ? ${#v1_parts[@]} : ${#v2_parts[@]} ))
     
-    for ((i=0; i<${#ver1[@]}; i++)); do
-        if [[ -z ${ver2[i]} ]]; then
-            ver2[i]=0
-        fi
-        if ((10#${ver1[i]} > 10#${ver2[i]})); then
+    for ((i=0; i<max_len; i++)); do
+        local v1_part="${v1_parts[$i]:-0}"
+        local v2_part="${v2_parts[$i]:-0}"
+        
+        if (( 10#$v1_part > 10#$v2_part )); then
             return 1
-        fi
-        if ((10#${ver1[i]} < 10#${ver2[i]})); then
+        elif (( 10#$v1_part < 10#$v2_part )); then
             return 2
         fi
     done
+    
     return 0
 }
 
@@ -56,7 +52,7 @@ get_version() {
     
     case "$cmd" in
         node)
-            version=$(node --version 2>/dev/null)
+            version=$(node --version 2>/dev/null | sed 's/^v//')
             ;;
         npm)
             version=$(npm --version 2>/dev/null)
@@ -66,34 +62,38 @@ get_version() {
             ;;
     esac
     
-    echo "${version#v}"
-    return 0
-}
-
-# Function to check version compatibility
-check_version_compatibility() {
-    local cmd="$1"
-    local current_version
-    local min_version="${MIN_VERSIONS[$cmd]}"
-    
-    if [[ -z "$min_version" ]]; then
+    # Extract major.minor.patch
+    if [[ $version =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+        echo "${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
         return 0
     fi
     
-    current_version=$(get_version "$cmd")
-    if [[ -z "$current_version" ]]; then
-        return 1
+    return 1
+}
+
+# Function to compare versions
+version_compare() {
+    local v1="$1" v2="$2"
+    
+    # Extract major.minor.patch using regex
+    if [[ $v1 =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]] && [[ $v2 =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+        local -a v1_parts=("${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[3]}")
+        local -a v2_parts=("${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[3]}")
+        
+        # Compare each part
+        for i in {0..2}; do
+            if (( v1_parts[i] > v2_parts[i] )); then
+                return 1
+            elif (( v1_parts[i] < v2_parts[i] )); then
+                return 2
+            fi
+        done
+        return 0
     fi
     
-    version_compare "$current_version" "$min_version"
-    local result=$?
-    
-    if [[ $result -eq 2 ]]; then
-        log_error "$cmd version $current_version is lower than required $min_version"
-        return 1
-    fi
-    
-    return 0
+    # If versions don't match expected format
+    log_error "Invalid version format: $v1 or $v2"
+    return 1
 }
 
 # Function to setup local installation directory
@@ -128,59 +128,73 @@ get_command_path() {
     return 1
 }
 
-# Function to create a dependency checker
-make_dependency_checker() {
+# Function to check version compatibility
+check_version_compatibility() {
+    local cmd="$1"
+    local current_version
+    local min_version="${MIN_VERSIONS[$cmd]}"
+    
+    if [[ -z "$min_version" ]]; then
+        return 0
+    fi
+    
+    current_version=$(get_version "$cmd")
+    if [[ -z "$current_version" ]]; then
+        return 1
+    fi
+    
+    version_compare "$current_version" "$min_version"
+    local result=$?
+    
+    if [[ $result -eq 2 ]]; then
+        log_error "$cmd version $current_version is lower than required $min_version"
+        return 1
+    fi
+    
+    return 0
+}
+
+# Function to check a specific dependency
+check_dependency() {
     local name="$1"
     local min_version="${2:-}"
     local install_cmd="${3:-}"
     
-    # Return a function (closure-like behavior)
-    echo "
-        check_${name}() {
-            local cmd_path
-            cmd_path=\$(get_command_path '$name')
-            
-            if [[ -z \"\$cmd_path\" ]]; then
-                if [[ -n '$install_cmd' ]]; then
-                    log_warning '$name not found, installing locally...'
-                    setup_local_dirs
-                    if ! ($install_cmd); then
-                        log_error 'Failed to install $name'
-                        return 1
-                    fi
-                else
-                    log_error '$name is required but not found'
-                    return 1
-                fi
+    local cmd_path
+    cmd_path=$(get_command_path "$name")
+    
+    if [[ -z "$cmd_path" ]]; then
+        if [[ -n "$install_cmd" ]]; then
+            log_warning "$name not found, installing locally..."
+            setup_local_dirs
+            if ! (eval "$install_cmd"); then
+                log_error "Failed to install $name"
+                return 1
             fi
-            
-            if [[ -n '$min_version' ]]; then
-                MIN_VERSIONS['$name']='$min_version'
-                if ! check_version_compatibility '$name'; then
-                    return 1
-                fi
-            fi
-            
-            return 0
-        }
-    "
+        else
+            log_error "$name is required but not found"
+            return 1
+        fi
+    fi
+    
+    if [[ -n "$min_version" ]]; then
+        MIN_VERSIONS["$name"]="$min_version"
+        if ! check_version_compatibility "$name"; then
+            return 1
+        fi
+    fi
+    
+    return 0
 }
-
-# Create dependency checkers
-eval "$(make_dependency_checker "node" "18.0.0")"
-eval "$(make_dependency_checker "npm" "9.0.0")"
-eval "$(make_dependency_checker "curl")"
 
 # Function to check all project dependencies
 check_project_deps() {
     local -a failed_deps=()
     
     # Check each dependency
-    for checker in check_node check_npm check_curl; do
-        if ! $checker; then
-            failed_deps+=("${checker#check_}")
-        fi
-    done
+    check_dependency "node" "18.0.0" || failed_deps+=("node")
+    check_dependency "npm" "9.0.0" || failed_deps+=("npm")
+    check_dependency "curl" || failed_deps+=("curl")
     
     # If any dependencies failed, exit
     if [[ ${#failed_deps[@]} -gt 0 ]]; then

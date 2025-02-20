@@ -11,29 +11,30 @@ All agents MUST:
 
 - [Current Status](/workspace/docs/STATUS.md) - Always check this first
 - [CV Website Implementation](/workspace/docs/cv-website/README.md) - Documentation for CV website implementation
+- [Development Scripts](/workspace/docs/cv-website/scripts.md) - Development and testing tools
 - [Design Decisions](/workspace/docs/cv-website/design-decisions.md) - Key architectural choices
 - [Build & Deploy](/workspace/docs/cv-website/build-deploy.md) - Build and deployment tools
 - [Content Guidelines](/workspace/docs/cv-website/content.md) - CV and landing page content guidelines
 
 ## Tools Overview
 
-1. Development Script (`website/scripts/manage-website.sh`)
-   - Automated dependency management
-   - Development server control
-   - Testing and validation
-   - URL extraction and browser integration
+1. Development Scripts (`website/scripts/`)
+   - Modular bash script system
+   - Shared utilities and functions
    - Clean process management
+   - Automated testing
 
-2. Build & Test Script (`scripts/test-build.sh`)
-   - Non-interactive build verification
-   - Static content generation test
-   - Content validation checks
+2. Main Scripts:
+   - `dev.sh`: Development server control
+   - `test.sh`: Automated testing
+   - Shared modules in `lib/`
 
-3. Deployment Script (`website/deploy.sh`)
-   - GitHub Pages deployment automation
-   - Integrated testing workflow
-   - Clean workspace management
-   - Progress tracking and feedback
+3. Features:
+   - Dependency management
+   - Server lifecycle control
+   - Build verification
+   - Health checking
+   - Clean error handling
 
 ## Documentation Structure
 

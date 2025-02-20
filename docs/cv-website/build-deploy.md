@@ -1,6 +1,33 @@
 # Build and Deployment Tools
 
-## Build & Test Script
+## Development and Testing Scripts
+
+### Local Development Script
+
+Location: `scripts/manage-website.sh`
+
+A versatile script that manages the development environment:
+- Dependency checking and installation
+- Build verification
+- Server management
+- Automated testing
+- URL extraction
+
+```bash
+# Start development server
+./scripts/manage-website.sh
+
+# Run automated tests
+./scripts/manage-website.sh --test
+
+# Get server URL
+./scripts/manage-website.sh --print-url
+
+# Clean up server
+./scripts/manage-website.sh --cleanup
+```
+
+### Build Test Script
 
 Location: `scripts/test-build.sh`
 
@@ -15,53 +42,82 @@ A non-interactive script that verifies:
 npm run test:build
 ```
 
-### What's Tested
+#### What's Tested
 - Build completion
 - Critical file presence
 - Content validation (key elements)
 - Directory structure
 - Static generation
 
-### Output
+#### Output
 - Build size metrics
 - File count
 - Validation results
 
-## Deployment Script
+## Deployment
 
-Location: `deploy.sh`
+### GitHub Pages Setup
 
-Automates GitHub Pages deployment with:
+1. Repository Requirements:
+   - Name: `<username>.github.io`
+   - SSH key configured
+   - GitHub Pages enabled:
+     - Source: Deploy from branch
+     - Branch: gh-pages / root
+
+2. First Time Setup:
+   ```bash
+   # Add remote
+   git remote add origin git@github.com:<username>/<username>.github.io.git
+
+   # Generate SSH key (if needed)
+   ssh-keygen -t ed25519 -C "your_email@example.com"
+
+   # Add key to GitHub: Settings > SSH and GPG keys
+   ```
+
+### Deployment Script
+
+Location: `website/deploy.sh`
+
+Features:
+- Automated testing integration
 - Clean workspace handling
 - Error management
 - Self-cleanup
 - Clear feedback
+- Branch management
 
-### Setup Requirements
-1. GitHub repository: `<username>.github.io`
-2. SSH key configuration
-3. GitHub Pages settings:
-   - Source: Deploy from branch
-   - Branch: gh-pages / root
-
-### Usage
 ```bash
-# First time setup
-git remote add origin git@github.com:<username>/<username>.github.io.git
-
-# Deploy
+# Deploy with tests
 ./deploy.sh
+
+# Deploy without tests
+./deploy.sh --skip-tests
 ```
 
-### Process
-1. Dependencies installation
-2. Build verification
-3. Static content generation
-4. Branch management
-5. Deployment
-6. Cleanup
+### Deployment Process
+
+1. Pre-deployment:
+   - Dependencies installation
+   - Automated testing (optional)
+   - Build verification
+
+2. Deployment:
+   - Branch preparation (gh-pages)
+   - Static file generation
+   - Content organization
+   - Git operations
+
+3. Post-deployment:
+   - Cleanup
+   - Status verification
+   - Branch restoration
 
 ### Notes
-- SSH authentication required
-- May need manual GitHub Pages setup
-- Allow time for deployment to complete
+
+- The deployment script integrates with the new development workflow
+- Automated testing ensures deployment readiness
+- Clean workspace management prevents artifacts
+- Progress indicators show deployment status
+- Allow a few minutes for GitHub Pages to update after deployment

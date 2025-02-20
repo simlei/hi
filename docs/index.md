@@ -17,15 +17,23 @@ All agents MUST:
 
 ## Tools Overview
 
-1. Build & Test Script (`scripts/test-build.sh`)
+1. Development Script (`website/scripts/manage-website.sh`)
+   - Automated dependency management
+   - Development server control
+   - Testing and validation
+   - URL extraction and browser integration
+   - Clean process management
+
+2. Build & Test Script (`scripts/test-build.sh`)
    - Non-interactive build verification
    - Static content generation test
    - Content validation checks
 
-2. Deployment Script (`deploy.sh`)
+3. Deployment Script (`website/deploy.sh`)
    - GitHub Pages deployment automation
-   - Setup instructions included
-   - Self-cleaning and error handling
+   - Integrated testing workflow
+   - Clean workspace management
+   - Progress tracking and feedback
 
 ## Documentation Structure
 
@@ -34,15 +42,19 @@ Each task or component has its own directory under `/workspace/docs/` with:
 - Specific documentation files for different aspects
 - Task-specific guides and references
 
-## Current Active Tasks
+## Current Progress
 
 1. CV Website Implementation
-   - Status: Infrastructure ready
-   - Primary docs: `/workspace/docs/cv-website/`
-   - Current focus: Content implementation according to prompt
+   - Status: Basic implementation complete
+   - Landing page: Minimal, professional design
+   - CV page: Experience section with latest roles
+   - Infrastructure: Next.js + TailwindCSS
+   - Testing: Automated workflow with URL verification
+   - Deployment: GitHub Pages ready
 
 2. Next Steps
-   - Review and implement CV content from prompt
-   - Create minimal but professional landing page
-   - Ensure non-interactive build process works
-   - Document content structure and guidelines
+   - Add project thumbnails and descriptions
+   - Implement PDF generation
+   - Add more CV content sections
+   - Enhance responsive design features
+   - Add more interactive elements

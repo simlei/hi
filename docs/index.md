@@ -46,16 +46,20 @@ Each task or component has its own directory under `/workspace/docs/` with:
 ## Current Progress
 
 1. CV Website Implementation
-   - Status: Basic implementation complete
+   - Status: Implementation complete, build issue pending
    - Landing page: Minimal, professional design
-   - CV page: Experience section with latest roles
+   - CV page: Content updated from legacy repository
    - Infrastructure: Next.js + TailwindCSS
    - Testing: Automated workflow with URL verification
-   - Deployment: GitHub Pages ready
+   - Deployment: GitHub Pages configuration ready
 
-2. Next Steps
+2. Current Critical Task
+   - Fix Next.js build error during static export
+   - See [Next.js Build Fix Plan](/workspace/docs/cv-website/next-build-fix.md)
+   - Status: Analysis complete, awaiting implementation
+
+3. Future Steps
    - Add project thumbnails and descriptions
    - Implement PDF generation
-   - Add more CV content sections
    - Enhance responsive design features
    - Add more interactive elements

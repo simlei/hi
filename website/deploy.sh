@@ -11,17 +11,22 @@ set -euo pipefail
 # First-time setup:
 # 1. Create repository: <username>.github.io
 # 2. git remote add origin git@github.com:<username>/<username>.github.io.git
-# 3. Generate SSH key if needed: ssh-keygen -t ed25519 -C "your_email@example.com"
+# 3. Generate SSH key if needed: ssh-keygen -t ed25519 -C "openhands@all-hands.dev"
 # 4. Add key to GitHub: Settings > SSH and GPG keys
-# 5. Run this script
+# 5. Configure git:
+#    git config --global user.name "openhands"
+#    git config --global user.email "openhands@all-hands.dev"
+# 6. Run this script
 #
-# Note: This script is designed to work with the new Next.js static export
-# configuration in next.config.js and the automated testing script in
-# scripts/manage-website.sh
+# Note: This script relies on ssh-agent for key management. Make sure to:
+# - Start ssh-agent: eval "$(ssh-agent -s)"
+# - Add your key: ssh-add ~/.ssh/id_ed25519
+# The agent will prompt for the key password if needed.
 
 # Default values
 SKIP_TESTS=0
 WEBSITE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPTS_DIR="$WEBSITE_DIR/scripts"
 
 # Function to show usage
 usage() {
@@ -51,36 +56,24 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Cleanup function
-cleanup() {
-    echo "🧹 Cleaning up..."
-    if [[ -f "/tmp/website-dev-server.pid" ]]; then
-        "$WEBSITE_DIR/scripts/manage-website.sh" --cleanup
-    fi
-    rm -rf node_modules .next out
-}
-
-# Ensure cleanup on script exit
-trap cleanup EXIT
-
 echo "🚀 Starting deployment process..."
 
 # Change to website directory
 cd "$WEBSITE_DIR"
 
-# Install dependencies
-echo "📦 Installing dependencies..."
-npm ci
+# Use dev.sh to handle dependencies and environment
+echo "📦 Setting up environment..."
+"$SCRIPTS_DIR/dev.sh" exec npm ci
 
 if [[ $SKIP_TESTS -eq 0 ]]; then
-    # Run automated tests
+    # Run automated tests through dev.sh
     echo "🧪 Running automated tests..."
-    ./scripts/manage-website.sh --test || { echo "❌ Tests failed"; exit 1; }
+    "$SCRIPTS_DIR/dev.sh" test || { echo "❌ Tests failed"; exit 1; }
 fi
 
-# Build the site
+# Build the site using dev.sh
 echo "🏗️ Building site..."
-npm run build || { echo "❌ Build failed"; exit 1; }
+"$SCRIPTS_DIR/dev.sh" exec npm run build || { echo "❌ Build failed"; exit 1; }
 
 # Create and switch to gh-pages branch
 echo "🔄 Preparing gh-pages branch..."

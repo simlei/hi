@@ -53,10 +53,10 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - Testing: Automated workflow with URL verification
    - Deployment: GitHub Pages configuration ready
 
-2. Current Critical Task
-   - Fix Next.js build error during static export
-   - See [Next.js Build Fix Plan](/workspace/docs/cv-website/next-build-fix.md)
-   - Status: Analysis complete, awaiting implementation
+2. Testing and Deployment
+   - Primary test command: `dev.sh test` (fast, for content changes)
+   - Full deployment test: `deploy.sh --dry-run` (comprehensive)
+   - Status: All tests passing, ready for deployment
 
 3. Future Steps
    - Add project thumbnails and descriptions

@@ -114,6 +114,29 @@ Features:
    - Status verification
    - Branch restoration
 
+### Testing Strategy
+
+#### Quick Content Testing
+```bash
+# For content changes and quick verification
+./scripts/dev.sh test
+```
+- Fast execution
+- Verifies build process
+- Checks server functionality
+- Ideal for content updates
+
+#### Comprehensive Deployment Testing
+```bash
+# Full deployment test without pushing
+./deploy.sh --dry-run
+```
+- Complete deployment simulation
+- Includes all build steps
+- Creates and tests gh-pages branch
+- Cleans up automatically
+- Perfect for verifying deployment readiness
+
 ### Notes
 
 - The deployment script integrates with the new development workflow
@@ -121,3 +144,5 @@ Features:
 - Clean workspace management prevents artifacts
 - Progress indicators show deployment status
 - Allow a few minutes for GitHub Pages to update after deployment
+- Use `--dry-run` to verify deployment without pushing
+- For content changes, prefer `dev.sh test` for faster feedback

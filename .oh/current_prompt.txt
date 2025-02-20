@@ -1,0 +1,21 @@
+read /workspace/.oh/current_prompt.txt (this file) and act, carefully planning all steps and creating a test early to be able to iterate with feedback. after initial planning, first, put your analysis and plan under /workspace/.oh/plan/ in .md files that instruct an agent about what to do. the steps can easily be recorded by committing to the git repo in /workspace/.git.
+
+This repo should at the end contain a Curriculum Vitae repo for github pages + small personal landing page, according to the following description:
+This contains all the CV's important data:
+
+old proof of concept which worked -- can be completely replaced by something new, but the content must stay the same: ./old_CV_repo_under_simlei.github.io_hi
+
+It should be refactored to a modern, standalone, pretty CV, website + pdf, short and long (2 page) version (with project examples listed). install all necessary toolchain and note it in the knowledge base that youre building step by step on design of implementation, structure, style, toolchain and testing. You will define a test early that shows that the page can be built at all; it can be a static page that works with the normal github pages actions.
+
+The "past projects" listings in the CV should have a small thumbnail each. (images generated for now using imagemagick.
+The layout should be clean and modern, not too much frills, but it could even be a bit responsive w.r.t. highlighting on mouseover. not too intrusive, something kinda clever would be nice.
+
+It has to integrate seamlessly into github pages, providing the pipeline files for building the CV repo and in the README a short list of things to do to activate the pipeline correctly through web UI.
+
+It should also have a main page that is not the CV. It should be almost empty, with one entry to a bogus welcome post, and a small link to the CV. There should be the minimal contact info, name, minimal boilerplate common to individual-person web presences (take ones of more famous programmers as reference, but not too old-fashioned).
+
+consider carefully the task, a template to use with a modern but not too bulky standalone web page framework suitable for github pages, and detail how you'll do it.
+
+The tone should be that of a person serious about programming and hard-thinking, hard-working, but also friendly and accommodating. Not too many eloquent phrases, simple cuts it.
+
+I have a current employment at Spleenlab GmbH from May 2023 until present, and my employment at Esslinger IT consulting was between Aug 2019 and December 2022, which should be added to the cv.

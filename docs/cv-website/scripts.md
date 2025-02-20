@@ -82,35 +82,53 @@ The system provides closure-like behavior through dynamic function generation, a
 
 ## Command Scripts
 
-### Development Server (`dev.sh`)
+### Development Command (`dev.sh`)
 
-Start and manage the development server.
+Main command dispatcher that manages environment and subcommands.
 
 ```bash
-# Start server on default port
+# Start development server (default)
 ./scripts/dev.sh
 
-# Start on specific port
-./scripts/dev.sh --port 3001
+# Run tests
+./scripts/dev.sh test
 
-# Get server URL
-./scripts/dev.sh --url-only
+# Run tests without build
+./scripts/dev.sh test --skip-build
+
+# Run any command with local environment
+./scripts/dev.sh exec npm run build
 ```
 
-### Test Runner (`test.sh`)
+### Environment Management
 
-Run automated tests.
+The script system automatically manages:
+- Local installation paths (`/.local/`)
+- Tool-specific environment variables
+- Library and module paths
+- Clean environment inheritance
 
+Commands are run with proper environment using:
 ```bash
-# Run all tests
-./scripts/test.sh
-
-# Skip build test
-./scripts/test.sh --skip-build
-
-# Test with specific port
-./scripts/test.sh --port 3001
+PATH=/local/path:$PATH NODE_PATH=/local/node_modules command
 ```
+
+### Subcommands
+
+1. `server` (default)
+   - Starts development server
+   - Manages server lifecycle
+   - Handles port configuration
+
+2. `test`
+   - Runs all automated tests
+   - Verifies build process
+   - Checks server functionality
+
+3. `exec <cmd>`
+   - Runs arbitrary commands
+   - Uses local environment
+   - Preserves arguments
 
 ## Testing Process
 

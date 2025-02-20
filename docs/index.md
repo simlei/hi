@@ -18,23 +18,23 @@ All agents MUST:
 
 ## Tools Overview
 
-1. Development Scripts (`website/scripts/`)
-   - Modular bash script system
-   - Shared utilities and functions
-   - Clean process management
-   - Automated testing
+1. Development Command (`website/scripts/dev.sh`)
+   - Command dispatcher with subcommands
+   - Environment management
+   - Local toolchain support
+   - Dependency validation
 
-2. Main Scripts:
-   - `dev.sh`: Development server control
-   - `test.sh`: Automated testing
-   - Shared modules in `lib/`
+2. Subcommands:
+   - `server`: Development server (default)
+   - `test`: Automated testing
+   - `exec`: Run with local environment
 
 3. Features:
-   - Dependency management
-   - Server lifecycle control
-   - Build verification
-   - Health checking
-   - Clean error handling
+   - Smart dependency management
+   - Local installation support (`.local/`)
+   - Environment variable handling
+   - Clean process management
+   - Comprehensive testing
 
 ## Documentation Structure
 

@@ -38,8 +38,16 @@ done
 
 # Main script
 ensure_website_dir
-check_dependencies
-ensure_npm_deps
+
+# Check system dependencies with version requirements
+if ! check_project_deps; then
+    exit 1
+fi
+
+# Ensure project dependencies
+if ! ensure_project_deps "$WEBSITE_DIR"; then
+    exit 1
+fi
 
 if [[ $PRINT_URL_ONLY -eq 1 ]]; then
     get_server_url "$PORT"

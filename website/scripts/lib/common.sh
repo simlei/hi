@@ -10,8 +10,13 @@ DEFAULT_PORT=3000
 
 # Import other modules
 source "$LIB_DIR/log.sh"
-source "$LIB_DIR/deps.sh"
+source "$LIB_DIR/deps_advanced.sh"
 source "$LIB_DIR/server.sh"
+
+# Add .local/bin to gitignore if not already there
+if [[ -f "$WEBSITE_DIR/.gitignore" ]] && ! grep -q "^\.local/" "$WEBSITE_DIR/.gitignore"; then
+    echo -e "\n# Local installations\n.local/" >> "$WEBSITE_DIR/.gitignore"
+fi
 
 # Function to show generic usage
 show_usage() {

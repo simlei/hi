@@ -23,10 +23,10 @@ set -euo pipefail
 # - Add your key: ssh-add ~/.ssh/id_ed25519
 # The agent will prompt for the key password if needed.
 
-# Default values
-SKIP_TESTS=0
-WEBSITE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPTS_DIR="$WEBSITE_DIR/scripts"
+# Resolve paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WEBSITE_DIR="$SCRIPT_DIR"
+DEV_SCRIPT="$WEBSITE_DIR/scripts/dev.sh"
 
 # Function to show usage
 usage() {
@@ -40,7 +40,21 @@ EOF
     exit 1
 }
 
+# Function to ensure dev.sh exists and is executable
+check_dev_script() {
+    if [[ ! -x "$DEV_SCRIPT" ]]; then
+        echo "❌ Error: dev.sh script not found or not executable at $DEV_SCRIPT"
+        exit 1
+    fi
+}
+
+# Function to run a command through dev.sh
+run_dev() {
+    "$DEV_SCRIPT" exec "$@"
+}
+
 # Parse arguments
+SKIP_TESTS=0
 while [[ $# -gt 0 ]]; do
     case $1 in
         -s|--skip-tests)
@@ -58,22 +72,25 @@ done
 
 echo "🚀 Starting deployment process..."
 
+# Verify dev.sh is available
+check_dev_script
+
 # Change to website directory
 cd "$WEBSITE_DIR"
 
 # Use dev.sh to handle dependencies and environment
 echo "📦 Setting up environment..."
-"$SCRIPTS_DIR/dev.sh" exec npm ci
+run_dev npm ci
 
 if [[ $SKIP_TESTS -eq 0 ]]; then
     # Run automated tests through dev.sh
     echo "🧪 Running automated tests..."
-    "$SCRIPTS_DIR/dev.sh" test || { echo "❌ Tests failed"; exit 1; }
+    "$DEV_SCRIPT" test || { echo "❌ Tests failed"; exit 1; }
 fi
 
 # Build the site using dev.sh
 echo "🏗️ Building site..."
-"$SCRIPTS_DIR/dev.sh" exec npm run build || { echo "❌ Build failed"; exit 1; }
+run_dev npm run build || { echo "❌ Build failed"; exit 1; }
 
 # Create and switch to gh-pages branch
 echo "🔄 Preparing gh-pages branch..."

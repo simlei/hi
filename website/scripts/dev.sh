@@ -7,25 +7,30 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 
 # Parse arguments
 PORT=$DEFAULT_PORT
-PRINT_URL_ONLY=0
+COMMAND="server"
 
 usage() {
     show_usage "$(basename "$0")" \
-        "Start the development server" \
-        "    -p, --port PORT    Port to run the server on (default: $DEFAULT_PORT)
-    -u, --url-only    Only print the server URL
-    -h, --help       Show this help message"
+        "Development command dispatcher" \
+        "    server [options]     Start development server (default)
+    test [options]      Run tests
+    exec <cmd>         Run command with local environment
+    -h, --help        Show this help message
+
+Server options:
+    -p, --port PORT   Port to run the server on (default: $DEFAULT_PORT)
+
+Test options:
+    --skip-build      Skip build test"
 }
 
+# Parse command and options
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -p|--port)
-            PORT="$2"
-            shift 2
-            ;;
-        -u|--url-only)
-            PRINT_URL_ONLY=1
+        server|test|exec)
+            COMMAND="$1"
             shift
+            break
             ;;
         -h|--help)
             usage
@@ -49,9 +54,22 @@ if ! ensure_project_deps "$WEBSITE_DIR"; then
     exit 1
 fi
 
-if [[ $PRINT_URL_ONLY -eq 1 ]]; then
-    get_server_url "$PORT"
-    exit 0
-fi
-
-run_server_with_cleanup "$PORT"
+# Handle commands
+case "$COMMAND" in
+    server)
+        # Start development server
+        run_with_local_env "$SCRIPTS_DIR/server.sh" "$@"
+        ;;
+    test)
+        # Run tests
+        run_with_local_env "$SCRIPTS_DIR/test.sh" "$@"
+        ;;
+    exec)
+        # Execute command with local environment
+        if [[ $# -eq 0 ]]; then
+            log_error "No command specified for exec"
+            exit 1
+        fi
+        run_with_local_env "$@"
+        ;;
+esac

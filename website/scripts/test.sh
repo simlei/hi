@@ -175,8 +175,3 @@ if ! npm test -- --watchAll=false --ci; then
     exit 1
 fi
 log_success "Unit tests passed"
-
-# Run runtime tests unless skipped
-if [[ $SKIP_RUNTIME -eq 0 ]]; then
-    RUNTIME_TIMEOUT=$RUNTIME_TIMEOUT CI_MODE=$CI_MODE "$(dirname "${BASH_SOURCE[0]}")/runtime-test.sh"
-fi

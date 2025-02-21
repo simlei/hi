@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-export token="$(cat /tmp/token.txt 2>/dev/null || : )"
+token="$(cat /tmp/token.txt 2>/dev/null || : )"
 if [[ -z "${token}" ]]; then
     echo "❌ GITHUB_TOKEN environment variable is required for deployment"
     echo "💡 For local testing, use --dry-run"

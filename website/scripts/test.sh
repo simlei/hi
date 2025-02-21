@@ -7,18 +7,32 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 
 # Parse arguments
 SKIP_BUILD=0
+SKIP_RUNTIME=0
+CI_MODE=0
+RUNTIME_TIMEOUT=5
 
 usage() {
     show_usage "$(basename "$0")" \
         "Run all tests" \
-        "    -s, --skip-build  Skip build test
-    -h, --help       Show this help message"
+        "    -s, --skip-build    Skip build test
+    -r, --skip-runtime  Skip runtime tests (for content updates)
+    -c, --ci           Run in CI mode with extended timeout
+    -h, --help         Show this help message"
 }
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         -s|--skip-build)
             SKIP_BUILD=1
+            shift
+            ;;
+        -r|--skip-runtime)
+            SKIP_RUNTIME=1
+            shift
+            ;;
+        -c|--ci)
+            CI_MODE=1
+            RUNTIME_TIMEOUT=30
             shift
             ;;
         -h|--help)
@@ -153,3 +167,8 @@ if ! grep -q "<title" "out/cv/index.html"; then
 fi
 
 log_success "All static export tests passed"
+
+# Run runtime tests unless skipped
+if [[ $SKIP_RUNTIME -eq 0 ]]; then
+    RUNTIME_TIMEOUT=$RUNTIME_TIMEOUT CI_MODE=$CI_MODE "$(dirname "${BASH_SOURCE[0]}")/runtime-test.sh"
+fi

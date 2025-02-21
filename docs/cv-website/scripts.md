@@ -132,18 +132,73 @@ PATH=/local/path:$PATH NODE_PATH=/local/node_modules command
 
 ## Testing Process
 
-The test script performs these checks:
+The test system includes multiple layers of testing, each serving different purposes:
 
-1. Build Test
+### Test Types
+
+1. Build Test (Always Run)
    - Dependency verification
    - npm package installation
    - Next.js build process
    - Output validation
+   - TypeScript type checking
 
-2. Server Test
-   - Server startup
-   - Health check
-   - Clean shutdown
+2. Static Export Test (Always Run)
+   - File structure verification
+   - HTML content validation
+   - Asset presence checking
+   - Configuration validation
+
+3. Runtime Error Test (Development)
+   - Browser runtime error detection
+   - Canvas operation validation
+   - JavaScript execution monitoring
+   - Error logging capture
+
+### When to Run Tests
+
+1. Quick Content Changes (Default)
+   ```bash
+   # Run build and static tests only
+   ./scripts/dev.sh test --skip-runtime
+   ```
+   - Use for content updates
+   - Markdown changes
+   - Text modifications
+   - Image additions
+
+2. Component/Layout Changes
+   ```bash
+   # Run all tests including runtime
+   ./scripts/dev.sh test
+   ```
+   - Required for component changes
+   - JavaScript modifications
+   - Layout updates
+   - Visual effect changes
+
+3. Continuous Integration
+   ```bash
+   # Run all tests with extended timeout
+   ./scripts/dev.sh test --ci
+   ```
+   - Full test suite
+   - Extended runtime checks
+   - Deployment validation
+
+### Runtime Error Detection
+
+The system monitors for runtime errors by:
+1. Starting a test server instance
+2. Monitoring error log files
+3. Checking browser console output
+4. Validating canvas operations
+
+Runtime errors are captured in `/workspace/.oh/current_error.txt` and will:
+- Fail the test suite immediately
+- Provide detailed error context
+- Show stack traces when available
+- Indicate the source component
 
 ## Development Workflow
 

@@ -25,11 +25,17 @@ All agents MUST:
    - Automated dependency validation
    - Clean process handling
 
-2. Subcommands:
+2. Testing Strategy:
+   - Quick content updates: `dev.sh test --skip-runtime`
+   - Component changes: `dev.sh test`
+   - CI/deployment: `dev.sh test --ci`
+   - Runtime error monitoring via `/workspace/.oh/current_error.txt`
+
+3. Subcommands:
    - `server`: Development server with hot reload
-   - `test`: Build validation and URL testing
+   - `test`: Multi-level validation (build, static, runtime)
    - `exec`: Run commands in local environment
-   - Common options: `--skip-build`, `--help`
+   - Common options: `--skip-build`, `--skip-runtime`, `--ci`
 
 3. Deployment Tools
    - GitHub Actions workflow (`.github/workflows/nextjs.yml`)

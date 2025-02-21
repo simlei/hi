@@ -40,45 +40,72 @@ export function GraphBackground() {
     window.addEventListener('resize', resize);
 
     // Visualization parameters
+    interface VertexState extends Vertex {
+      pulsePhase: number;
+      pulseFreq: number;
+      baseSize: number;
+    }
+
     const PARAMS = {
-      numVertices: 20,
-      vertexBaseRadius: 2.4, // Smaller base node size
-      vertexGlowMultiplier: 8, // Increased glow for interest
+      numVertices: 40,
+      vertexBaseRadius: 0.8,
+      vertexGlowMultiplier: 2.7,
       vertexSpeed: 0.3,
-      maxDistance: 300,
-      edgeBaseWidth: 1.2, // Slightly thinner base edges
-      edgeActivityMultiplier: 2.4,
-      baseAlpha: 0.12, // Slightly more subtle inactive state
-      activityDecay: 0.008,
-      branchSpeed: 2.4,
-      branchSpawnChance: 0.2,
+      maxDistance: 230, // Reduced from 400 (factor ~1.75)
+      edgeBaseWidth: 0.93,
+      edgeActivityMultiplier: 1.2,
+      baseAlpha: 0.35,
+      activityDecay: 0.006,
+      branchSpeed: 0.8,
+      branchSpawnChance: 0.15, // Reduced from 0.25
       // Visual enhancement parameters
-      innerGlowSize: 0.4, // Size of the inner bright core
-      outerGlowIntensity: 0.6, // Intensity of the outer glow
-      edgeGradientStops: 3, // Number of gradient stops for edges
-      // Tree-like behavior parameters
+      innerGlowSize: 0.4,
+      outerGlowIntensity: 0.8,
+      edgeGradientStops: 3,
+      // Pulsation parameters
+      pulseSpeed: 0.02, // Base speed of pulsation
+      pulseAmount: 1.2, // Increased by 4x (was 0.3)
+      pulseFreqMin: 0.7, // Slightly wider frequency range
+      pulseFreqMax: 1.3,
+      baseSizeMin: 0.7, // More size variation
+      baseSizeMax: 1.3,
+      activityBoost: 1.6, // Increased activity influence
       directionBias: Math.PI * 0.5,
       directionStrength: 0.7,
       traverseProb: (from: Vertex, to: Vertex) => {
-        // Less aggressive filtering for more connections
+        // More selective connection probability
         const dy = to.y - from.y;
         const upwardness = -dy / Math.sqrt(dy * dy + 0.1);
-        return Math.pow(0.4 + 0.6 * upwardness, 2); // Gentler curve
+        // Reduced base probability and steeper curve
+        return Math.pow(0.35 + 0.65 * upwardness, 1.8);
       }
     };
 
     // Create vertices
-    const vertices: Vertex[] = Array.from({ length: PARAMS.numVertices }, () => {
-      // Distribute vertices more evenly vertically
-      const section = Math.floor(Math.random() * 3); // 0, 1, or 2
-      const yMin = (section * canvas.height) / 3;
-      const yMax = ((section + 1) * canvas.height) / 3;
+    const vertices: VertexState[] = Array.from({ length: PARAMS.numVertices }, () => {
+      // Distribute vertices with slight clustering
+      const section = Math.floor(Math.random() * 4); // 4 vertical sections
+      let yBase = (section * canvas.height) / 4;
+      // Add some randomness to section boundaries
+      const yVariance = canvas.height / 8;
+      const yMin = Math.max(0, yBase - yVariance);
+      const yMax = Math.min(canvas.height, yBase + canvas.height/4 + yVariance);
+      
+      // Add slight horizontal clustering
+      const xCluster = Math.random() < 0.5 ? 
+        Math.random() * canvas.width * 0.5 : 
+        canvas.width * 0.5 + Math.random() * canvas.width * 0.5;
+      
       return {
-        x: Math.random() * canvas.width,
+        x: xCluster + (Math.random() - 0.5) * canvas.width * 0.3,
         y: yMin + Math.random() * (yMax - yMin),
         vx: (Math.random() - 0.5) * PARAMS.vertexSpeed,
-        vy: (Math.random() - 0.5) * PARAMS.vertexSpeed * 0.5, // Reduced vertical movement
+        vy: (Math.random() - 0.5) * PARAMS.vertexSpeed * 0.4,
         activity: 0,
+        // Individual pulsation state
+        pulsePhase: Math.random() * Math.PI * 2,
+        pulseFreq: PARAMS.pulseFreqMin + Math.random() * (PARAMS.pulseFreqMax - PARAMS.pulseFreqMin),
+        baseSize: PARAMS.baseSizeMin + Math.random() * (PARAMS.baseSizeMax - PARAMS.baseSizeMin),
       };
     });
 
@@ -125,7 +152,7 @@ export function GraphBackground() {
         }
       }
 
-      // Update vertex positions and activity
+      // Update vertex positions, activity, and pulsation
       vertices.forEach(vertex => {
         vertex.x += vertex.vx;
         vertex.y += vertex.vy;
@@ -133,6 +160,10 @@ export function GraphBackground() {
         // Bounce off edges
         if (vertex.x < 0 || vertex.x > canvas.width) vertex.vx *= -1;
         if (vertex.y < 0 || vertex.y > canvas.height) vertex.vy *= -1;
+
+        // Update pulsation
+        vertex.pulsePhase += PARAMS.pulseSpeed * vertex.pulseFreq * (1 + vertex.activity * PARAMS.activityBoost);
+        if (vertex.pulsePhase > Math.PI * 2) vertex.pulsePhase -= Math.PI * 2;
 
         // Decay activity
         vertex.activity = Math.max(0, vertex.activity - PARAMS.activityDecay);
@@ -228,17 +259,21 @@ export function GraphBackground() {
         ctx.stroke();
       });
 
-      // Draw vertices with enhanced effect
+      // Draw vertices with enhanced effect and pulsation
       vertices.forEach(vertex => {
-        const glowRadius = PARAMS.vertexBaseRadius + vertex.activity * PARAMS.vertexGlowMultiplier;
+        // Calculate pulsation effect with safety bounds
+        const pulseFactor = Math.max(0.1, 1 + Math.sin(vertex.pulsePhase) * PARAMS.pulseAmount);
+        const baseRadius = Math.max(0.1, PARAMS.vertexBaseRadius * vertex.baseSize * pulseFactor);
+        const glowRadius = baseRadius + vertex.activity * PARAMS.vertexGlowMultiplier;
         
         // Draw outer glow
-        if (vertex.activity > 0) {
+        if (vertex.activity > 0.05) { // Increased threshold for more visible active state
           const outerGlow = ctx.createRadialGradient(
-            vertex.x, vertex.y, PARAMS.vertexBaseRadius * 0.5,
+            vertex.x, vertex.y, baseRadius * 0.5,
             vertex.x, vertex.y, glowRadius
           );
-          outerGlow.addColorStop(0, `rgba(217, 119, 6, ${vertex.activity * PARAMS.outerGlowIntensity})`);
+          const glowIntensity = (vertex.activity * PARAMS.outerGlowIntensity) * (0.8 + pulseFactor * 0.2);
+          outerGlow.addColorStop(0, `rgba(217, 119, 6, ${glowIntensity})`);
           outerGlow.addColorStop(1, 'rgba(217, 119, 6, 0)');
           
           ctx.beginPath();
@@ -250,16 +285,16 @@ export function GraphBackground() {
         // Draw vertex with inner glow
         const innerGlow = ctx.createRadialGradient(
           vertex.x, vertex.y, 0,
-          vertex.x, vertex.y, PARAMS.vertexBaseRadius
+          vertex.x, vertex.y, baseRadius
         );
-        const coreAlpha = 0.3 + vertex.activity * 0.7;
+        const coreAlpha = (0.5 + vertex.activity * 0.5) * (0.9 + pulseFactor * 0.1);
         innerGlow.addColorStop(0, `rgba(217, 119, 6, ${coreAlpha})`);
-        innerGlow.addColorStop(PARAMS.innerGlowSize, `rgba(217, 119, 6, ${coreAlpha * 0.8})`);
-        innerGlow.addColorStop(1, `rgba(217, 119, 6, ${coreAlpha * 0.2})`);
+        innerGlow.addColorStop(PARAMS.innerGlowSize, `rgba(217, 119, 6, ${coreAlpha * 0.9})`);
+        innerGlow.addColorStop(1, `rgba(217, 119, 6, ${coreAlpha * 0.4})`);
         
         ctx.beginPath();
         ctx.fillStyle = innerGlow;
-        ctx.arc(vertex.x, vertex.y, PARAMS.vertexBaseRadius, 0, Math.PI * 2);
+        ctx.arc(vertex.x, vertex.y, baseRadius, 0, Math.PI * 2);
         ctx.fill();
       });
 

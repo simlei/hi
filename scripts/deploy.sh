@@ -62,6 +62,7 @@ run_step() {
 }
 
 # Build and test using dev.sh
+cd "$WEBSITE_DIR/website"
 if [[ $SKIP_TESTS -eq 1 ]]; then
     run_step "Building website" "$DEV_SCRIPT exec npm run build"
 else
@@ -71,7 +72,7 @@ else
 fi
 
 # Ensure .nojekyll exists in output directory
-run_step "Creating .nojekyll" "cd website && touch out/.nojekyll"
+run_step "Creating .nojekyll" "mkdir -p out && touch out/.nojekyll"
 
 # If this is a dry run, we're done
 if [[ $DRY_RUN -eq 1 ]]; then

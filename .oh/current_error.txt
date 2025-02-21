@@ -1,124 +1,28 @@
-# First paragraph:
-
-○  (Static)  automatically rendered as static HTML (uses no initial props)
-
-🔄 Preparing gh-pages branch...
-M       .oh/current_error.txt
-M       website/deploy.sh
-M       website/next.config.js
-M       website/scripts/lib/env.sh
-Switched to and reset branch 'gh-pages'
-🧹 Cleaning gh-pages branch...
-📦 Preparing files...
-cp: cannot stat 'out/*': No such file or directory
+✅ Build completed successfully
+👉 Running server test...
+👉 Starting development server...
+👉 Waiting for server to start...
+👉 Testing main page at http://localhost:3000
+❌ Failed to access main page at http://localhost:3000
+❌ HTTP response:
+* Uses proxy env variable no_proxy == '127.0.0.1,localhost'
+*   Trying 127.0.0.1:3000...
+* Connected to localhost (127.0.0.1) port 3000 (#0)
+> GET / HTTP/1.1
+> Host: localhost:3000
+> User-Agent: curl/7.81.0
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 500 Internal Server Error
+< cache-control: no-cache, no-store, max-age=0, must-revalidate
+< content-length: 21
+< date: Fri, 21 Feb 2025 02:40:20 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< 
+* Connection #0 to host localhost left intact
+Internal Server Error👉 Stopping server (PID: 1083614)...
+❌ Running tests failed
 ERROR: $?=1
-
--- during deploy.sh in another machine, same repo. did run successfully there, before.
-
-# Second paragraph:
-
-This is what the chrome console gives me:
-
-Failed to load resource: the server responded with a status of 404 ()
-webpack-8fa1640cc84ba8fe.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-framework-b39550991c1bc003.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-index-7ec096cd2786d0ff.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-_app-5fbdfbcdfb555d2f.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-664-339c0d1773136295.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-main-a568e19a92d5412a.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-_buildManifest.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-_ssgManifest.js:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-website/:1 Unchecked runtime.lastError: The message port closed before a response was received.
-/favicon.ico:1 
-        
-        
-       Failed to load resource: the server responded with a status of 404 ()
-
-
-https://simlei.github.io/hi/website/ -- content in the following:
-```html
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charSet="utf-8"/>
-        <meta name="viewport" content="width=device-width"/>
-        <meta name="next-head-count" content="2"/>
-        <link rel="preload" href="/hi.git/_next/static/css/5465db11970d9006.css" as="style"/>
-        <link rel="stylesheet" href="/hi.git/_next/static/css/5465db11970d9006.css" data-n-g=""/>
-        <noscript data-n-css=""></noscript>
-        <script defer="" nomodule="" src="/hi.git/_next/static/chunks/polyfills-78c92fac7aa8fdd8.js"></script>
-        <script src="/hi.git/_next/static/chunks/webpack-efb25c3238c62b9a.js" defer=""></script>
-        <script src="/hi.git/_next/static/chunks/framework-b39550991c1bc003.js" defer=""></script>
-        <script src="/hi.git/_next/static/chunks/main-a31d5f515f8fb575.js" defer=""></script>
-        <script src="/hi.git/_next/static/chunks/pages/_app-5fbdfbcdfb555d2f.js" defer=""></script>
-        <script src="/hi.git/_next/static/chunks/664-339c0d1773136295.js" defer=""></script>
-        <script src="/hi.git/_next/static/chunks/pages/index-7ec096cd2786d0ff.js" defer=""></script>
-        <script src="/hi.git/_next/static/b67KuWMsT1rRTupKKPgf3/_buildManifest.js" defer=""></script>
-        <script src="/hi.git/_next/static/b67KuWMsT1rRTupKKPgf3/_ssgManifest.js" defer=""></script>
-    </head>
-    <body>
-        <div id="__next">
-            <div class="min-h-screen bg-primary-50">
-                <main class="container mx-auto px-4 py-16">
-                    <div class="max-w-2xl mx-auto text-center">
-                        <h1 class="text-4xl font-bold text-primary-900 mb-4">Welcome</h1>
-                        <p class="text-primary-600 mb-8">Software Engineer | Problem Solver | Open Source Enthusiast</p>
-                        <div class="space-y-4">
-                            <a class="inline-block bg-accent-600 text-white px-6 py-2 rounded-lg hover:bg-accent-700 transition-colors" href="/hi.git/cv/">View CV</a>
-                        </div>
-                    </div>
-                </main>
-                <footer class="fixed bottom-0 w-full bg-primary-100 py-4">
-                    <div class="container mx-auto px-4 text-center text-primary-600">
-                        <p>Contact: openhands@all-hands.dev</p>
-                    </div>
-                </footer>
-            </div>
-        </div>
-        <script id="__NEXT_DATA__" type="application/json">
-            {
-                "props": {
-                    "pageProps": {
-                    }
-                },
-                "page": "/",
-                "query": {
-                },
-                "buildId": "b67KuWMsT1rRTupKKPgf3",
-                "assetPrefix": "/hi.git",
-                "nextExport": true,
-                "autoExport": true,
-                "isFallback": false,
-                "scriptLoader": [
-                ]
-            }</script>
-    </body>
-</html>
-
-```
-
 

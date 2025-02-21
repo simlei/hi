@@ -80,11 +80,11 @@ export function GraphBackground() {
     }
 
     const PARAMS = {
-      numVertices: 30, // Increased from 80
-      vertexBaseRadius: 0.53, // Scaled down by 1.5
-      vertexGlowMultiplier: 2.8, // Scaled down by 1.5
+      numVertices: 80, // More nodes for wider coverage
+      vertexBaseRadius: 0.43, // Smaller nodes since we have more
+      vertexGlowMultiplier: 2.8,
       vertexSpeed: 0.2,
-      maxDistance: 350, // Increased for more spread (250 * 1.5)
+      maxDistance: 500, // Longer-range connections
       edgeBaseWidth: 1.00, // Scaled down by 1.5
       edgeActivityMultiplier: 1.57, // Scaled down by 1.5
       baseAlpha: 0.35,
@@ -117,36 +117,50 @@ export function GraphBackground() {
       baseSizeMax: 1.5,
       directionBias: Math.PI * 0.5,
       directionStrength: 0.8,
+      // Connection probability based on distance and direction
       traverseProb: (from: Vertex, to: Vertex) => {
-        // More selective connection probability
+        const dx = to.x - from.x;
         const dy = to.y - from.y;
-        const upwardness = -dy / Math.sqrt(dy * dy + 0.1);
-        // Reduced base probability and steeper curve
-        return Math.pow(0.35 + 0.65 * upwardness, 1.8);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Distance factor: more likely to connect to closer nodes
+        const distanceFactor = Math.max(0, 1 - distance / PARAMS.maxDistance);
+        
+        // Direction bias: slight preference for upward connections
+        const upwardness = -dy / (distance + 0.1);
+        const directionFactor = 0.7 + 0.3 * upwardness;
+        
+        // Combined probability with distance having more weight
+        return Math.pow(distanceFactor, 1.2) * directionFactor;
       }
     };
 
     // Create vertices
-    const vertices: VertexState[] = Array.from({ length: PARAMS.numVertices }, () => {
-      // Distribute vertices with slight clustering
-      const section = Math.floor(Math.random() * 4); // 4 vertical sections
-      let yBase = (section * canvas.height) / 4;
-      // Add some randomness to section boundaries
-      const yVariance = canvas.height / 8;
-      const yMin = Math.max(0, yBase - yVariance);
-      const yMax = Math.min(canvas.height, yBase + canvas.height/4 + yVariance);
+    const vertices: VertexState[] = Array.from({ length: PARAMS.numVertices }, (_, i) => {
+      // Distribute vertices more evenly across the canvas
+      // Use golden ratio for better distribution
+      const phi = (1 + Math.sqrt(5)) / 2;
+      const idx = i / PARAMS.numVertices;
       
-      // Add slight horizontal clustering
-      const xCluster = Math.random() < 0.5 ? 
-        Math.random() * canvas.width * 0.5 : 
-        canvas.width * 0.5 + Math.random() * canvas.width * 0.5;
+      // Spiral-based distribution for more even coverage
+      const angle = 2 * Math.PI * idx * phi;
+      const radius = Math.sqrt(idx) * Math.min(canvas.width, canvas.height) * 0.45;
+      
+      // Convert to cartesian coordinates with some randomness
+      const baseX = canvas.width * 0.5 + Math.cos(angle) * radius;
+      const baseY = canvas.height * 0.5 + Math.sin(angle) * radius;
+      
+      // Add random offset for natural look
+      const offset = Math.min(canvas.width, canvas.height) * 0.1;
+      const xOffset = (Math.random() - 0.5) * offset;
+      const yOffset = (Math.random() - 0.5) * offset;
       
       // Generate random mass around 1.0 (0.8 to 1.2)
       const mass = 0.8 + Math.random() * 0.4;
       
       return {
-        x: xCluster + (Math.random() - 0.5) * canvas.width * 0.3,
-        y: yMin + Math.random() * (yMax - yMin),
+        x: Math.max(0, Math.min(canvas.width, baseX + xOffset)),
+        y: Math.max(0, Math.min(canvas.height, baseY + yOffset)),
         vx: 0, // Let force field determine velocities
         vy: 0,
         mass,

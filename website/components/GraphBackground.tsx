@@ -41,17 +41,21 @@ export function GraphBackground() {
 
     // Visualization parameters
     const PARAMS = {
-      numVertices: 20, // Increased back for more potential connections
-      vertexBaseRadius: 4.8,
-      vertexGlowMultiplier: 6.4,
+      numVertices: 20,
+      vertexBaseRadius: 2.4, // Smaller base node size
+      vertexGlowMultiplier: 8, // Increased glow for interest
       vertexSpeed: 0.3,
-      maxDistance: 300, // Increased for more connections
-      edgeBaseWidth: 1.6,
+      maxDistance: 300,
+      edgeBaseWidth: 1.2, // Slightly thinner base edges
       edgeActivityMultiplier: 2.4,
-      baseAlpha: 0.15,
+      baseAlpha: 0.12, // Slightly more subtle inactive state
       activityDecay: 0.008,
       branchSpeed: 2.4,
-      branchSpawnChance: 0.2, // Increased slightly
+      branchSpawnChance: 0.2,
+      // Visual enhancement parameters
+      innerGlowSize: 0.4, // Size of the inner bright core
+      outerGlowIntensity: 0.6, // Intensity of the outer glow
+      edgeGradientStops: 3, // Number of gradient stops for edges
       // Tree-like behavior parameters
       directionBias: Math.PI * 0.5,
       directionStrength: 0.7,
@@ -184,48 +188,77 @@ export function GraphBackground() {
         });
       });
 
-      // Draw edges with activity effect
+      // Draw edges with enhanced effect
       edges.forEach(edge => {
         const from = vertices[edge.from];
         const to = vertices[edge.to];
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        // Create multi-stop gradient for more interesting edge look
         const gradient = ctx.createLinearGradient(from.x, from.y, to.x, to.y);
+        const stops = PARAMS.edgeGradientStops;
         
-        const activityAlpha = edge.activity * 0.5;
+        for (let i = 0; i <= stops; i++) {
+          const t = i / stops;
+          const wave = Math.sin(t * Math.PI) * 0.3; // Adds subtle variation
+          const alpha = PARAMS.baseAlpha + 
+            (from.activity * (1 - t) + to.activity * t) * 0.4 +
+            edge.activity * wave;
+          gradient.addColorStop(t, `rgba(217, 119, 6, ${alpha})`);
+        }
         
-        // Using primary-600 color from theme
-        gradient.addColorStop(0, `rgba(217, 119, 6, ${PARAMS.baseAlpha + from.activity * 0.4})`);
-        gradient.addColorStop(1, `rgba(217, 119, 6, ${PARAMS.baseAlpha + to.activity * 0.4})`);
+        // Draw edge with subtle glow
+        const width = PARAMS.edgeBaseWidth + edge.activity * PARAMS.edgeActivityMultiplier;
+        if (edge.activity > 0.1) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(217, 119, 6, ${edge.activity * 0.15})`;
+          ctx.lineWidth = width * 2;
+          ctx.moveTo(from.x, from.y);
+          ctx.lineTo(to.x, to.y);
+          ctx.stroke();
+        }
         
         ctx.beginPath();
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = PARAMS.edgeBaseWidth + edge.activity * PARAMS.edgeActivityMultiplier;
+        ctx.lineWidth = width;
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
         ctx.stroke();
       });
 
-      // Draw vertices with activity effect
+      // Draw vertices with enhanced effect
       vertices.forEach(vertex => {
         const glowRadius = PARAMS.vertexBaseRadius + vertex.activity * PARAMS.vertexGlowMultiplier;
         
-        // Draw glow
+        // Draw outer glow
         if (vertex.activity > 0) {
-          const gradient = ctx.createRadialGradient(
-            vertex.x, vertex.y, 0,
+          const outerGlow = ctx.createRadialGradient(
+            vertex.x, vertex.y, PARAMS.vertexBaseRadius * 0.5,
             vertex.x, vertex.y, glowRadius
           );
-          gradient.addColorStop(0, `rgba(217, 119, 6, ${vertex.activity * 0.5})`);
-          gradient.addColorStop(1, 'rgba(217, 119, 6, 0)');
+          outerGlow.addColorStop(0, `rgba(217, 119, 6, ${vertex.activity * PARAMS.outerGlowIntensity})`);
+          outerGlow.addColorStop(1, 'rgba(217, 119, 6, 0)');
           
           ctx.beginPath();
-          ctx.fillStyle = gradient;
+          ctx.fillStyle = outerGlow;
           ctx.arc(vertex.x, vertex.y, glowRadius, 0, Math.PI * 2);
           ctx.fill();
         }
         
-        // Draw vertex
+        // Draw vertex with inner glow
+        const innerGlow = ctx.createRadialGradient(
+          vertex.x, vertex.y, 0,
+          vertex.x, vertex.y, PARAMS.vertexBaseRadius
+        );
+        const coreAlpha = 0.3 + vertex.activity * 0.7;
+        innerGlow.addColorStop(0, `rgba(217, 119, 6, ${coreAlpha})`);
+        innerGlow.addColorStop(PARAMS.innerGlowSize, `rgba(217, 119, 6, ${coreAlpha * 0.8})`);
+        innerGlow.addColorStop(1, `rgba(217, 119, 6, ${coreAlpha * 0.2})`);
+        
         ctx.beginPath();
-        ctx.fillStyle = `rgba(217, 119, 6, ${0.25 + vertex.activity * 0.5})`;
+        ctx.fillStyle = innerGlow;
         ctx.arc(vertex.x, vertex.y, PARAMS.vertexBaseRadius, 0, Math.PI * 2);
         ctx.fill();
       });

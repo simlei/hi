@@ -82,6 +82,8 @@ if [[ $DRY_RUN -eq 1 ]]; then
     exit 0
 fi
 
+git add -A . || :
+git commit -m "Deploy website" || :
 git push origin HEAD:master || { echo "❌ Failed to push changes"; exit 1; }
 
 # Only check for token if we're not doing a dry run

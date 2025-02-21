@@ -54,9 +54,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                 src={image}
                 alt={title}
                 fill
-                loading="lazy"
-                quality={90}
-                sizes="(max-width: 768px) 100vw, 33vw"
+                priority
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
@@ -81,8 +79,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                       src={company.logo}
                       alt={company.name}
                       fill
-                      quality={90}
-                      sizes="96px"
+                      priority
                       className="object-contain"
                     />
                   </div>
@@ -128,8 +125,6 @@ export function ProjectCard({ title, description, image, technologies, company }
                             src={image}
                             alt={title}
                             fill
-                            quality={90}
-                            sizes="(max-width: 1200px) 100vw, 50vw"
                             priority
                             className="object-cover"
                           />
@@ -142,8 +137,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                               src={company.logo}
                               alt={company.name}
                               fill
-                              quality={90}
-                              sizes="160px"
+                              priority
                               className="object-contain"
                             />
                           </div>

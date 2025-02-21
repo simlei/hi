@@ -87,6 +87,7 @@ cd "$WEBSITE_DIR"
 # Use dev.sh to handle dependencies and environment
 echo "📦 Setting up environment..."
 run_dev npm ci
+run_dev npm install
 
 if [[ $SKIP_TESTS -eq 0 ]]; then
     # Run automated tests through dev.sh

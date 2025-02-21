@@ -46,7 +46,7 @@ export function ProjectCard({ title, description, image, technologies, company }
       >
         <div
           onClick={() => setIsOpen(true)}
-          className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+          className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm border border-primary-100"
         >
           <div className="aspect-w-4 aspect-h-3">
             <div className="relative w-full h-full">
@@ -61,7 +61,7 @@ export function ProjectCard({ title, description, image, technologies, company }
               />
             </div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-0 bg-gradient-to-t from-primary-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
               <h3 className="text-lg font-semibold">{title}</h3>
               <p className="text-sm opacity-90">{description.substring(0, 100)}...</p>
@@ -95,7 +95,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-xl transition-all border border-primary-100">
                   <div className="aspect-w-16 aspect-h-9 mb-4">
                     <div className="relative w-full h-full">
                       <Image
@@ -143,7 +143,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                       {technologies.map((tech) => (
                         <span
                           key={tech}
-                          className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
+                          className="px-3 py-1 bg-accent-50 text-accent-700 rounded-full text-sm"
                         >
                           {tech}
                         </span>
@@ -153,7 +153,7 @@ export function ProjectCard({ title, description, image, technologies, company }
 
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="mt-6 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="mt-6 px-4 py-2 bg-neutral-50 hover:bg-neutral-100 rounded-lg transition-colors text-neutral-700 border border-neutral-200"
                   >
                     Close
                   </button>

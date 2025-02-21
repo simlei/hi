@@ -5,6 +5,8 @@ export interface Moveable {
   y: number;
   vx: number;
   vy: number;
+  mass: number;
+  inertia: number;
 }
 
 export interface CanvasContext {
@@ -44,22 +46,36 @@ export class PositionController {
       cellScale = 1,
       brownianFactor = 4.0
     } = config;
-    // Calculate base field strength from hex grid and upward bias
-    const baseFieldStrength = Math.max(hexWeight, upwardBias);
+    // Base force scale for the system (adjust this to control overall motion)
+    const BASE_FORCE = 50.0; // units/s²
     
-    // Brownian speed is a factor of the base field strength
-    const brownianSpeed = baseFieldStrength * brownianFactor;
-    
-    // Adjust weights to maintain proper balance
-    const brownianWeight = 0.4; // Fixed weight for consistent influence
-    const remainingWeight = 1 - brownianWeight;
-    const adjustedHexWeight = hexWeight * remainingWeight;
-    const adjustedUpwardWeight = (1 - hexWeight) * remainingWeight;
+    // Calculate relative force magnitudes
+    const brownianForce = BASE_FORCE * brownianFactor;
+    const hexForce = BASE_FORCE * hexWeight;
+    const upwardForce = BASE_FORCE * upwardBias;
 
     return new PositionController([
-      // Only Brownian motion for testing
+      // Brownian motion force
       {
-        field: forceFields.brownianMotion(0.5), // Increased speed to account for new force application
+        field: forceFields.brownianMotion(brownianForce, 2.0),
+        weight: 1.0,
+        type: 'additive'
+      },
+      // Hex grid alignment force
+      {
+        field: forceFields.hexGrid(gridSize, {
+          aspect: cellAspect,
+          scale: cellScale
+        }),
+        weight: hexForce / BASE_FORCE,
+        type: 'restrictive'
+      },
+      // Upward bias force
+      {
+        field: (pos) => ({
+          magnitude: upwardForce,
+          direction: { x: 0, y: -1 }
+        }),
         weight: 1.0,
         type: 'additive'
       }

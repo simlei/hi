@@ -5,6 +5,7 @@ interface Vertex {
   y: number;
   vx: number;
   vy: number;
+  mass: number;
   activity: number;
 }
 
@@ -56,14 +57,25 @@ export function GraphBackground() {
       hexWeight: 0.25,  // Weight of hex grid vs upward force
       cellAspect: 0.9,  // Slightly compressed vertically
       cellScale: 1.0,   // Overall scale multiplier
-      brownianFactor: 5.0 // Brownian motion relative to field strength (4.0/50)
+      brownianFactor: 5.0 // Brownian motion relative to field strength
     });
 
     // Visualization parameters
     interface VertexState extends Vertex {
-      pulsePhase: number;
-      pulseFreq: number;
       baseSize: number;
+      pulseValue: number;      // Current pulse intensity (0-1)
+      distanceFromSource: number;  // Graph distance from current pulse source
+      lastPulseTime: number;   // When this vertex was last affected by a pulse
+      inertia: number;        // Current inertial energy
+    }
+
+    interface PulseWave {
+      sourceIndex: number;     // Index of the source vertex
+      startTime: number;       // When the pulse started
+      strength: number;        // Initial pulse strength
+      speed: number;          // How fast the pulse propagates
+      wavelength: number;     // Distance between pulse peaks
+      decay: number;          // How quickly pulse decays with distance
     }
 
     const PARAMS = {
@@ -91,13 +103,17 @@ export function GraphBackground() {
       outerGlowIntensity: 1.2,
       edgeGradientStops: 6,
       // Pulsation parameters
-      pulseSpeed: 0.2, // Slightly faster base pulsation
-      pulseAmount: 0.5, // More pronounced pulsation
-      pulseFreqMin: 0.03, // Wider frequency range
-      pulseFreqMax: 0.1,
+      // Pulse wave parameters
+      pulseSpawnInterval: 3.0,    // Average seconds between new pulses
+      pulseSpawnChance: 0.02,     // Chance per frame to spawn new pulse
+      pulseSpeed: 150,            // Units per second pulse travels
+      pulseWavelength: 100,       // Distance between pulse peaks
+      pulseDecay: 0.3,           // Decay per unit distance
+      pulseStrengthMin: 0.5,     // Minimum initial pulse strength
+      pulseStrengthMax: 1.0,     // Maximum initial pulse strength
+      // Size parameters
       baseSizeMin: 0.5,
       baseSizeMax: 1.5,
-      pulseActivityBoost: 3.0, // Stronger activity influence on pulse
       directionBias: Math.PI * 0.5,
       directionStrength: 0.8,
       traverseProb: (from: Vertex, to: Vertex) => {
@@ -135,18 +151,107 @@ export function GraphBackground() {
         mass,
         inertia: 0, // Initial inertia is 0 (at rest)
         activity: 0,
-        // Individual pulsation state
-        pulsePhase: Math.random() * Math.PI * 2,
-        pulseFreq: PARAMS.pulseFreqMin + Math.random() * (PARAMS.pulseFreqMax - PARAMS.pulseFreqMin),
+        // Pulse propagation state
+        pulseValue: 0,
+        distanceFromSource: Infinity,
+        lastPulseTime: 0,
         // Base size proportional to mass for visual feedback
         baseSize: PARAMS.baseSizeMin + (mass - 0.8) / 0.4 * (PARAMS.baseSizeMax - PARAMS.baseSizeMin),
       };
     });
 
+    // Track active pulse waves
+    const pulseWaves: PulseWave[] = [];
+
     // Create edges between nearby vertices
     const edges: Edge[] = [];
+    
+    // Create adjacency list for graph traversal
+    const adjacencyList: number[][] = Array(PARAMS.numVertices).fill(0).map(() => []);
+
+    // Calculate shortest paths from a source vertex using BFS
+    function calculateDistances(sourceIndex: number): number[] {
+      const distances = new Array(vertices.length).fill(Infinity);
+      distances[sourceIndex] = 0;
+      
+      const queue: number[] = [sourceIndex];
+      while (queue.length > 0) {
+        const current = queue.shift()!;
+        for (const neighbor of adjacencyList[current]) {
+          if (distances[neighbor] === Infinity) {
+            distances[neighbor] = distances[current] + 1;
+            queue.push(neighbor);
+          }
+        }
+      }
+      return distances;
+    }
+
+    // Create a new pulse wave from a source vertex
+    function createPulseWave(sourceIndex: number) {
+      const wave: PulseWave = {
+        sourceIndex,
+        startTime: timeRef.current,
+        strength: PARAMS.pulseStrengthMin + Math.random() * (PARAMS.pulseStrengthMax - PARAMS.pulseStrengthMin),
+        speed: PARAMS.pulseSpeed,
+        wavelength: PARAMS.pulseWavelength,
+        decay: PARAMS.pulseDecay
+      };
+      pulseWaves.push(wave);
+      
+      // Calculate and store distances for this pulse
+      const distances = calculateDistances(sourceIndex);
+      vertices.forEach((vertex, i) => {
+        vertex.distanceFromSource = distances[i];
+        vertex.lastPulseTime = timeRef.current;
+      });
+    }
+
+    // Update pulse values for all vertices
+    function updatePulses(currentTime: number) {
+      // Possibly create new pulse
+      if (Math.random() < PARAMS.pulseSpawnChance) {
+        const sourceIndex = Math.floor(Math.random() * vertices.length);
+        createPulseWave(sourceIndex);
+      }
+      
+      // Update existing pulses
+      vertices.forEach(vertex => {
+        vertex.pulseValue = 0; // Reset pulse value
+      });
+      
+      // Calculate pulse contribution from each wave
+      pulseWaves.forEach((wave, i) => {
+        const timeSinceStart = currentTime - wave.startTime;
+        const distanceTraveled = timeSinceStart * wave.speed;
+        
+        vertices.forEach(vertex => {
+          if (vertex.distanceFromSource === Infinity) return;
+          
+          // Calculate pulse based on distance from wave front
+          const distanceFromWave = Math.abs(distanceTraveled - vertex.distanceFromSource * PARAMS.maxDistance);
+          const wavelengthPhase = (distanceFromWave / wave.wavelength) * Math.PI * 2;
+          const pulseIntensity = Math.cos(wavelengthPhase) * 0.5 + 0.5;
+          
+          // Apply distance decay
+          const decayFactor = Math.exp(-vertex.distanceFromSource * wave.decay);
+          vertex.pulseValue = Math.max(vertex.pulseValue, pulseIntensity * wave.strength * decayFactor);
+        });
+      });
+      
+      // Remove old waves
+      pulseWaves.forEach((wave, i) => {
+        const timeSinceStart = currentTime - wave.startTime;
+        if (timeSinceStart * wave.speed > PARAMS.maxDistance * 2) {
+          pulseWaves.splice(i, 1);
+        }
+      });
+    }
 
     function updateEdges() {
+      // Clear existing edges and adjacency list
+      edges.length = 0;
+      adjacencyList.forEach(list => list.length = 0);
       edges.length = 0;
       for (let i = 0; i < vertices.length; i++) {
         for (let j = i + 1; j < vertices.length; j++) {
@@ -161,10 +266,13 @@ export function GraphBackground() {
                 from: i, 
                 to: j, 
                 activity: 0,
-                pulsePhase: Math.random() * Math.PI * 2,
+                pulsePhase: 0,
                 gradientPhase: Math.random() * Math.PI * 2,
                 branches: []
               });
+              // Update adjacency list for both vertices
+              adjacencyList[i].push(j);
+              adjacencyList[j].push(i);
             }
           }
         }
@@ -188,12 +296,14 @@ export function GraphBackground() {
         }
       }
 
-      // Update vertex positions, activity, and pulsation
-      // Update time
+      // Update time and pulses
       const currentTime = performance.now() / 1000;
       const deltaTime = lastFrameTimeRef.current ? currentTime - lastFrameTimeRef.current : 0.016;
       lastFrameTimeRef.current = currentTime;
       timeRef.current += deltaTime;
+
+      // Update pulse propagation
+      updatePulses(timeRef.current);
 
       // Update positions using force field
       positionController.updatePositions(vertices, {
@@ -207,10 +317,6 @@ export function GraphBackground() {
         // Bounce off edges (as safety measure)
         if (vertex.x < 0 || vertex.x > canvas.width) vertex.vx *= -1;
         if (vertex.y < 0 || vertex.y > canvas.height) vertex.vy *= -1;
-
-        // Update pulsation
-        vertex.pulsePhase += PARAMS.pulseSpeed * vertex.pulseFreq * (1 + vertex.activity * PARAMS.pulseActivityBoost);
-        if (vertex.pulsePhase > Math.PI * 2) vertex.pulsePhase -= Math.PI * 2;
 
         // Decay activity
         vertex.activity = Math.max(0, vertex.activity - PARAMS.activityDecay);
@@ -292,9 +398,11 @@ export function GraphBackground() {
         edge.gradientPhase += PARAMS.gradientSpeed;
         if (edge.gradientPhase > Math.PI * 2) edge.gradientPhase -= Math.PI * 2;
         
-        // Calculate pulsing width
-        const pulseFactor = 1 + Math.sin(edge.pulsePhase) * PARAMS.edgePulseAmount;
-        const baseWidth = PARAMS.edgeBaseWidth * pulseFactor;
+        // Calculate edge width based on vertex pulse values
+        const fromPulse = vertices[edge.from].pulseValue;
+        const toPulse = vertices[edge.to].pulseValue;
+        const edgePulse = Math.max(fromPulse, toPulse);
+        const baseWidth = PARAMS.edgeBaseWidth * (1 + edgePulse * 2);
         const width = baseWidth + edge.activity * PARAMS.edgeActivityMultiplier;
         
         // Create animated gradient
@@ -340,18 +448,18 @@ export function GraphBackground() {
 
       // Draw vertices with enhanced effect and pulsation
       vertices.forEach(vertex => {
-        // Calculate pulsation effect with safety bounds
-        const pulseFactor = Math.max(0.1, 1 + Math.sin(vertex.pulsePhase) * PARAMS.pulseAmount);
-        const baseRadius = Math.max(0.1, PARAMS.vertexBaseRadius * vertex.baseSize * pulseFactor);
-        const glowRadius = baseRadius + vertex.activity * PARAMS.vertexGlowMultiplier;
+        // Calculate vertex size based on pulse value
+        const pulseScale = 1 + vertex.pulseValue * 1.5;
+        const baseRadius = Math.max(0.1, PARAMS.vertexBaseRadius * vertex.baseSize * pulseScale);
+        const glowRadius = baseRadius + (vertex.activity + vertex.pulseValue * 0.5) * PARAMS.vertexGlowMultiplier;
         
         // Draw outer glow
-        if (vertex.activity > 0.05) { // Increased threshold for more visible active state
+        if (vertex.activity > 0.05 || vertex.pulseValue > 0.1) { // Show glow for active or pulsing vertices
           const outerGlow = ctx.createRadialGradient(
             vertex.x, vertex.y, baseRadius * 0.5,
             vertex.x, vertex.y, glowRadius
           );
-          const glowIntensity = (vertex.activity * PARAMS.outerGlowIntensity) * (0.8 + pulseFactor * 0.2);
+          const glowIntensity = ((vertex.activity + vertex.pulseValue) * PARAMS.outerGlowIntensity) * 0.8;
           outerGlow.addColorStop(0, `rgba(217, 119, 6, ${glowIntensity})`);
           outerGlow.addColorStop(1, 'rgba(217, 119, 6, 0)');
           
@@ -366,7 +474,7 @@ export function GraphBackground() {
           vertex.x, vertex.y, 0,
           vertex.x, vertex.y, baseRadius
         );
-        const coreAlpha = (0.5 + vertex.activity * 0.5) * (0.9 + pulseFactor * 0.1);
+        const coreAlpha = (0.5 + vertex.activity * 0.5) * (0.9 + vertex.pulseValue * 0.1);
         innerGlow.addColorStop(0, `rgba(217, 119, 6, ${coreAlpha})`);
         innerGlow.addColorStop(PARAMS.innerGlowSize, `rgba(217, 119, 6, ${coreAlpha * 0.9})`);
         innerGlow.addColorStop(1, `rgba(217, 119, 6, ${coreAlpha * 0.4})`);

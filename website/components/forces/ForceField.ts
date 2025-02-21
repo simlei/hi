@@ -209,70 +209,66 @@ export const forceFields = {
     };
   },
 
-  // Brownian motion with constant speed but changing direction
+  // Brownian motion as a stochastic force field
   brownianMotion: (
-    baseSpeed: number,
-    directionChangeRate: number = 0.5
+    baseForce: number, // Base magnitude of the Brownian force
+    coherenceTime: number = 2.0 // Time scale for direction changes
   ): ForceField => {
-    // Store individual vertex angles and their personal frequencies
+    // Store per-vertex Brownian state
     const vertexStates = new Map<Forceable, {
-      angle: number;
-      angleVelocity: number;
-      personalFreq: number;
+      // Direction evolution parameters
+      angle: number;           // Current force direction
+      targetAngle: number;     // Target direction for smooth transitions
+      transitionTime: number;  // Time for current direction transition
+      personalFreq: number;    // Individual frequency multiplier
+      lastUpdateTime: number;  // Last state update timestamp
     }>();
-    
-    // Store base speed for use in motion calculations
-    const speed = baseSpeed;
     
     return (pos, time, context) => {
       if (!context?.currentVertex) {
         return { magnitude: 0, direction: { x: 0, y: 0 } };
       }
 
-      // Initialize or get current state for this vertex
+      // Initialize or get state for this vertex
       if (!vertexStates.has(context.currentVertex)) {
         vertexStates.set(context.currentVertex, {
           angle: Math.random() * Math.PI * 2,
-          angleVelocity: (Math.random() - 0.5) * 0.2,
-          personalFreq: 0.5 + Math.random() * 0.5 // Individual frequency
+          targetAngle: Math.random() * Math.PI * 2,
+          transitionTime: time,
+          personalFreq: 0.7 + Math.random() * 0.6, // 0.7-1.3 range
+          lastUpdateTime: time
         });
       }
       const state = vertexStates.get(context.currentVertex)!;
 
-      // Scale time with speed to maintain consistent motion patterns
-      const speedFactor = Math.min(1, 1 / speed); // Normalize for high speeds
-      const timeScale = time * directionChangeRate * state.personalFreq * speedFactor;
-      
-      // Multi-layered noise for more organic motion
-      const noiseX = Math.sin(timeScale + context.currentVertex.x * 0.1);
-      const noiseY = Math.cos(timeScale + context.currentVertex.y * 0.1);
-      const noiseZ = Math.sin(timeScale * 1.3);
-      const noiseW = Math.cos(timeScale * 0.7); // Fourth dimension for richer motion
-      
-      // Combine noise dimensions with varied weights
-      const angularAccel = (
-        noiseX * noiseY * 0.5 +  // Primary rotation
-        noiseZ * 0.3 +           // Medium frequency variation
-        noiseW * 0.2             // Slow variation
-      ) * 0.3;                   // Overall scale
-      
-      // Update angle velocity with adaptive damping
-      const dampingFactor = 0.95 + (1 - speedFactor) * 0.03; // More damping at higher speeds
-      state.angleVelocity = state.angleVelocity * dampingFactor + angularAccel * (1 - dampingFactor);
-      
-      // Scale angle change with speed
-      const angleChange = state.angleVelocity * (1 + speed * 0.1);
+      // Time since last update
+      const dt = time - state.lastUpdateTime;
+      state.lastUpdateTime = time;
+
+      // Check if we need a new target angle
+      const timeSinceTransition = time - state.transitionTime;
+      if (timeSinceTransition > coherenceTime * state.personalFreq) {
+        // Set new target with continuous rotation preference
+        const currentRotation = (state.targetAngle - state.angle) / (Math.PI * 2);
+        const rotationBias = Math.sign(currentRotation) * 0.3; // Prefer continuing current rotation
+        state.targetAngle = state.angle + (Math.PI * (1 + rotationBias * (Math.random() - 0.5)));
+        state.transitionTime = time;
+      }
+
+      // Smoothly interpolate towards target angle
+      const transitionProgress = Math.min(1, timeSinceTransition / (coherenceTime * state.personalFreq));
+      const angleChange = (state.targetAngle - state.angle) * (1 - Math.pow(1 - transitionProgress, 3)) * dt;
       state.angle += angleChange;
 
       // Normalize angle to [0, 2π]
-      state.angle = state.angle % (Math.PI * 2);
-      if (state.angle < 0) state.angle += Math.PI * 2;
+      state.angle = ((state.angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
 
+      // Store updated state
       vertexStates.set(context.currentVertex, state);
 
-      // Always maintain the base speed
+      // Return force with constant magnitude but smoothly changing direction
       return {
-        magnitude: speed,
+        magnitude: baseForce * state.personalFreq, // Scale force by personal frequency
         direction: {
           x: Math.cos(state.angle),
           y: Math.sin(state.angle)
@@ -287,54 +283,69 @@ export const forceFields = {
   ): ForceField => forceFn
 };
 
-// Physics constants
+// Physics system configuration
 const PHYSICS = {
-  INERTIA_SCALE: 1000,    // Scale factor for inertia calculations
-  MIN_VELOCITY: 0.0001,   // Minimum velocity magnitude to consider
-  BASE_TIMESTEP: 1/60,    // Base timestep for 60fps
-  DRAG_COEFF: 0.02       // Air drag coefficient
+  TARGET_TIMESTEP: 1/60,  // Target physics timestep (60 Hz)
+  MAX_TIMESTEP: 1/30,     // Maximum allowed timestep to prevent instability
+  DRAG_COEFF: 0.1,       // Fluid drag coefficient
+  MIN_SPEED: 1e-5        // Minimum speed to consider for calculations
 };
 
-// Apply forces to a vertex using proper physics
+// Physics state for debugging/visualization
+interface PhysicsState {
+  acceleration: { x: number; y: number };
+  kineticEnergy: number;
+  momentum: { x: number; y: number };
+}
+
+// Apply forces and update position using Velocity Verlet integration
 export const applyForce = (
   vertex: Forceable,
   force: Force,
   deltaTime: number,
   damping: number = 0.98
-) => {
-  // Normalize timestep relative to our base rate
-  const dt = deltaTime / PHYSICS.BASE_TIMESTEP;
+): PhysicsState => {
+  // Clamp deltaTime to prevent instability
+  const dt = Math.min(deltaTime, PHYSICS.MAX_TIMESTEP);
   
-  // Calculate current velocity magnitude and direction
-  const currentSpeed = Math.sqrt(vertex.vx * vertex.vx + vertex.vy * vertex.vy);
-  const currentInertia = 0.5 * vertex.mass * currentSpeed * currentSpeed;
+  // Current velocity magnitude
+  const speed = Math.sqrt(vertex.vx * vertex.vx + vertex.vy * vertex.vy);
   
-  // Apply force using F = ma
+  // Calculate acceleration from force (F = ma)
   const acceleration = {
     x: force.direction.x * force.magnitude / vertex.mass,
     y: force.direction.y * force.magnitude / vertex.mass
   };
+  
+  // Add drag force (proportional to v² in opposite direction)
+  if (speed > PHYSICS.MIN_SPEED) {
+    const dragForce = PHYSICS.DRAG_COEFF * speed * speed;
+    acceleration.x -= (vertex.vx / speed) * dragForce / vertex.mass;
+    acceleration.y -= (vertex.vy / speed) * dragForce / vertex.mass;
+  }
 
-  // Calculate drag force (proportional to velocity squared)
-  const dragMagnitude = currentSpeed * currentSpeed * PHYSICS.DRAG_COEFF;
-  const drag = currentSpeed > PHYSICS.MIN_VELOCITY ? {
-    x: -vertex.vx / currentSpeed * dragMagnitude,
-    y: -vertex.vy / currentSpeed * dragMagnitude
-  } : { x: 0, y: 0 };
-
-  // Update velocity using acceleration and drag (v = v0 + at)
-  vertex.vx += (acceleration.x + drag.x / vertex.mass) * dt;
-  vertex.vy += (acceleration.y + drag.y / vertex.mass) * dt;
+  // Velocity Verlet integration:
+  // 1. Update position using current velocity and half-step acceleration
+  vertex.x += vertex.vx * dt + 0.5 * acceleration.x * dt * dt;
+  vertex.y += vertex.vy * dt + 0.5 * acceleration.y * dt * dt;
   
-  // Apply damping as a general energy loss factor
-  vertex.vx *= Math.pow(damping, dt);
-  vertex.vy *= Math.pow(damping, dt);
+  // 2. Update velocity with full acceleration step
+  vertex.vx += acceleration.x * dt;
+  vertex.vy += acceleration.y * dt;
   
-  // Update position (x = x0 + vt)
-  vertex.x += vertex.vx * dt;
-  vertex.y += vertex.vy * dt;
+  // Apply velocity damping (energy loss)
+  const dampingFactor = Math.pow(damping, dt / PHYSICS.TARGET_TIMESTEP);
+  vertex.vx *= dampingFactor;
+  vertex.vy *= dampingFactor;
   
-  // Update inertia
+  // Calculate physics state for debugging/visualization
   const newSpeed = Math.sqrt(vertex.vx * vertex.vx + vertex.vy * vertex.vy);
-  vertex.inertia = 0.5 * vertex.mass * newSpeed * newSpeed;
+  return {
+    acceleration,
+    kineticEnergy: 0.5 * vertex.mass * newSpeed * newSpeed,
+    momentum: {
+      x: vertex.mass * vertex.vx,
+      y: vertex.mass * vertex.vy
+    }
+  };
 };

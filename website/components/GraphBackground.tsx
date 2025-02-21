@@ -54,24 +54,24 @@ export function GraphBackground() {
       vertexGlowMultiplier: 2.7,
       vertexSpeed: 0.3,
       maxDistance: 250, // Slightly increased from 230
-      edgeBaseWidth: 0.93,
+      edgeBaseWidth: 0.90,
       edgeActivityMultiplier: 2.8,
       baseAlpha: 0.35,
-      activityDecay: 0.005,
-      branchSpeed: 0.8,
-      branchSpawnChance: 0.18,
+      activityDecay: 0.008,
+      branchSpeed: 0.9,
+      branchSpawnChance: 0.28,
       // Edge animation parameters
-      edgePulseSpeed: 0.018,
+      edgePulseSpeed: 0.024,
       edgePulseAmount: 0.375, // Reduced from 0.5 (scaled by 3/4)
-      gradientSpeed: 0.04,
-      gradientLength: 0.3,
+      gradientSpeed: 0.1,
+      gradientLength: 0.5,
       // Activity parameters
       activityBoost: 1.8, // New: increases activity effect
       activitySpreadProb: 0.65, // New: chance to spread activity
       // Visual enhancement parameters
       innerGlowSize: 0.4,
       outerGlowIntensity: 0.8,
-      edgeGradientStops: 3,
+      edgeGradientStops: 4,
       // Pulsation parameters
       pulseSpeed: 0.025, // Slightly faster base pulsation
       pulseAmount: 1.4, // More pronounced pulsation

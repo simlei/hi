@@ -62,18 +62,19 @@ start_dev_server "$PORT"
 URL=$(get_server_url "$PORT")
 
 # Test main page
-log_step "Testing main page at $URL"
-if ! curl --fail -s "$URL" > /dev/null; then
-    log_error "Failed to access main page at $URL"
+BASE_PATH=$(get_base_path)
+log_step "Testing main page at $URL$BASE_PATH"
+if ! curl --fail -s "$URL$BASE_PATH" > /dev/null; then
+    log_error "Failed to access main page at $URL$BASE_PATH"
     log_error "HTTP response:"
-    curl -v "$URL"
+    curl -v "$URL$BASE_PATH"
     stop_server
     exit 1
 fi
 
 # Test a few key pages
 for path in "/about" "/cv"; do
-    TEST_URL=$(get_server_url "$PORT" "$path")
+    TEST_URL="$URL$BASE_PATH$path"
     log_step "Testing page at $TEST_URL"
     if ! curl --fail -s "$TEST_URL" > /dev/null; then
         log_error "Failed to access page at $TEST_URL"

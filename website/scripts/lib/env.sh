@@ -21,10 +21,10 @@ get_repo_name() {
 
 # Function to get the base path for the website
 get_base_path() {
-    if is_github_pages; then
+    if is_github_pages || [[ "${NODE_ENV:-}" == "production" ]]; then
         echo "/$(get_repo_name)"
     else
-        echo "/hi"  # Default for local development
+        echo ""  # Empty for local development
     fi
 }
 

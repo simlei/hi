@@ -31,10 +31,11 @@ Primary content requirements are defined in:
    - Clear and concise language
 
 2. **Layout**
-   - Clean and modern
-   - Subtle interactivity
-   - Responsive design
-   - Project thumbnails
+   - Clean and modern design
+   - Dynamic graph background
+   - Responsive project cards
+   - Professional spacing
+   - Consistent theme colors
 
 3. **Versions**
    - Short version (main)

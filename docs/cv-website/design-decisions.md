@@ -55,11 +55,13 @@
   - Smooth transitions
   - Lazy loading images
 
-- **Background Animation**
+- **Graph Background**
   - Canvas-based for performance
-  - Low CPU usage
-  - Responsive to viewport
-  - Subtle movement
+  - Dynamic vertex and edge system
+  - Activity propagation and branching
+  - Needs theme color integration
+  - Responsive to viewport size
+  - Optimized animation system
 
 ## Performance Optimization
 - **Image Strategy**

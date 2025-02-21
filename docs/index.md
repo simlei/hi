@@ -60,21 +60,51 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - Robust error handling
    - Common library structure
 
-## Current Status & Task
+## Current Status & Next Task
 
-1. Current Task: Visual Enhancement
-   - Objective: Modernize UI while maintaining professionalism
-   - Focus: Clean, sleek design with subtle animations
-   - Key Elements:
-     * Dynamic graph background with golden accents
-     * Project cards with smooth transitions
-     * Professional CV layout with modern touches
-     * Intersection-based animations
-   - Constraints:
-     * Keep CV document feel
-     * Maintain readability
-     * Subtle, not flashy animations
-     * Professional color scheme
+1. Recent Achievements:
+   - ✅ Project cards layout fixed and responsive
+   - ✅ Image handling improved and simplified
+   - ✅ Deployment and testing scripts working reliably
+   - ✅ Documentation structure established
+   - ✅ Bash tooling library enhanced
+
+2. Current Task: Graph Background Integration & Enhancement
+   - Objective: Get graph background working and visible on landing page with proper theme integration
+   - Current State:
+     * GraphBackground component exists but is not visible on landing page
+     * Component imported but not rendering (needs investigation)
+     * Basic animation system implemented but untested in production
+     * Using hardcoded colors instead of theme colors
+   - Required Changes:
+     * Debug why GraphBackground is not visible despite being imported
+     * Investigate proper Next.js/React practices for canvas background
+     * Ensure correct z-index and positioning in page layout
+     * Import and use theme colors from Tailwind config
+     * Match background opacity with page style
+     * Test animation performance in production
+   - Investigation Points:
+     * Component mounting/lifecycle in Next.js
+     * Canvas initialization timing
+     * Layer ordering and CSS stacking context
+     * React 18 strict mode compatibility
+   - Key Files:
+     * `/website/components/GraphBackground.tsx` - Main visualization (currently not visible)
+     * `/website/pages/index.tsx` - Landing page integration needs fixing
+     * `/website/tailwind.config.js` - Color definitions to use
+     * `/website/styles/globals.css` - Check for conflicting styles
+
+3. Testing & Development:
+   ```bash
+   # Start development server
+   ./scripts/dev.sh server
+
+   # Run tests (includes build validation)
+   ./scripts/dev.sh test
+
+   # Test deployment
+   ./scripts/deploy.sh --dry-run
+   ```
 
 2. Design Guidelines
    - Color Palette:

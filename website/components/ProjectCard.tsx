@@ -49,14 +49,16 @@ export function ProjectCard({ title, description, image, technologies, company }
           className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm border border-primary-100 w-full transform hover:-rotate-1 hover:scale-[1.02]"
         >
           <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/3 relative h-48 md:h-auto">
-              <Image
-                src={image}
-                alt={title}
-                fill
-                priority
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+            <div className="md:w-1/3 relative h-48">
+              <div className="relative w-full h-full">
+                <Image
+                  src={image}
+                  alt={title}
+                  width={800}
+                  height={600}
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
             </div>
             <div className="flex-1 p-6 relative">
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent-100 rounded-full opacity-10 group-hover:scale-150 transition-transform duration-500"></div>
@@ -74,13 +76,13 @@ export function ProjectCard({ title, description, image, technologies, company }
               </div>
               {company && (
                 <div className="mt-4 flex items-center">
-                  <div className="relative h-6 w-24">
+                  <div className="h-6 w-24">
                     <Image
                       src={company.logo}
                       alt={company.name}
-                      fill
-                      priority
-                      className="object-contain"
+                      width={400}
+                      height={200}
+                      className="w-full h-full object-contain"
                     />
                   </div>
                   <span className="ml-2 text-primary-600 text-sm">{company.name}</span>
@@ -119,26 +121,24 @@ export function ProjectCard({ title, description, image, technologies, company }
                 <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm p-8 shadow-xl transition-all border border-primary-100">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                      <div className="aspect-w-4 aspect-h-3 mb-4 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
-                        <div className="relative w-full h-full">
-                          <Image
-                            src={image}
-                            alt={title}
-                            fill
-                            priority
-                            className="object-cover"
-                          />
-                        </div>
+                      <div className="mb-4 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
+                        <Image
+                          src={image}
+                          alt={title}
+                          width={800}
+                          height={600}
+                          className="w-full h-auto object-cover"
+                        />
                       </div>
                       {company && (
                         <div className="flex items-center p-4 bg-primary-50/50 rounded-lg">
-                          <div className="relative h-10 w-40">
+                          <div className="h-10 w-40">
                             <Image
                               src={company.logo}
                               alt={company.name}
-                              fill
-                              priority
-                              className="object-contain"
+                              width={400}
+                              height={200}
+                              className="w-full h-full object-contain"
                             />
                           </div>
                           <span className="ml-4 text-primary-700 font-medium">{company.name}</span>

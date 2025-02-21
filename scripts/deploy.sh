@@ -1,15 +1,6 @@
 #!/bin/bash
 set -eo pipefail
 
-token="$(cat /tmp/token.txt 2>/dev/null || : )"
-if [[ -z "${token}" ]]; then
-    echo "❌ GITHUB_TOKEN environment variable is required for deployment"
-    echo "💡 For local testing, use --dry-run"
-    exit 1
-else
-    export GITHUB_TOKEN="${token}"
-fi
-
 # Get absolute paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WEBSITE_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
@@ -91,11 +82,14 @@ if [[ $DRY_RUN -eq 1 ]]; then
     exit 0
 fi
 
-# Check if we have the required GitHub token
-if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+# Only check for token if we're not doing a dry run
+export token="$(cat /tmp/token.txt 2>/dev/null || : )"
+if [[ -z "${token}" ]]; then
     echo "❌ GITHUB_TOKEN environment variable is required for deployment"
     echo "💡 For local testing, use --dry-run"
     exit 1
+else
+    export GITHUB_TOKEN="${token}"
 fi
 
 # Get repository information

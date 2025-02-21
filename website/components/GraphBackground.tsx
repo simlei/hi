@@ -41,25 +41,25 @@ export function GraphBackground() {
 
     // Visualization parameters
     const PARAMS = {
-      numVertices: 20,
-      vertexBaseRadius: 14.4,
-      vertexGlowMultiplier: 19.2,
-      vertexSpeed: 0.5,
-      maxDistance: 720,
-      edgeBaseWidth: 4.8,
-      edgeActivityMultiplier: 7.2,
-      baseAlpha: 0.2,
-      activityDecay: 0.02,
-      branchSpeed: 7.2,
-      branchSpawnChance: 0.3,
+      numVertices: 20, // Increased back for more potential connections
+      vertexBaseRadius: 4.8,
+      vertexGlowMultiplier: 6.4,
+      vertexSpeed: 0.3,
+      maxDistance: 300, // Increased for more connections
+      edgeBaseWidth: 1.6,
+      edgeActivityMultiplier: 2.4,
+      baseAlpha: 0.15,
+      activityDecay: 0.008,
+      branchSpeed: 2.4,
+      branchSpawnChance: 0.2, // Increased slightly
       // Tree-like behavior parameters
-      directionBias: Math.PI * 0.5, // Points connections upward
-      directionStrength: 0.7, // How strongly to enforce direction (0-1)
+      directionBias: Math.PI * 0.5,
+      directionStrength: 0.7,
       traverseProb: (from: Vertex, to: Vertex) => {
-        // Prefer upward connections
+        // Less aggressive filtering for more connections
         const dy = to.y - from.y;
         const upwardness = -dy / Math.sqrt(dy * dy + 0.1);
-        return Math.pow(0.5 + 0.5 * upwardness, 2);
+        return Math.pow(0.4 + 0.6 * upwardness, 2); // Gentler curve
       }
     };
 
@@ -107,12 +107,12 @@ export function GraphBackground() {
     function animate() {
       if (!canvas || !ctx) return;
 
-      // Clear canvas with blur effect
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      // Clear canvas with blur effect (slower fade)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Randomly trigger vertex activity at bottom vertices
-      if (Math.random() < 0.02) {
+      // Randomly trigger vertex activity at bottom vertices (less frequent)
+      if (Math.random() < 0.006) {
         // Prefer vertices in the lower third of the canvas
         const candidates = vertices.filter(v => v.y > canvas.height * 0.67);
         if (candidates.length > 0) {

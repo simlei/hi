@@ -42,16 +42,25 @@ export function GraphBackground() {
     // Visualization parameters
     const PARAMS = {
       numVertices: 20,
-      vertexBaseRadius: 6, // Increased from 3
-      vertexGlowMultiplier: 8, // Increased from 5
+      vertexBaseRadius: 2.4,
+      vertexGlowMultiplier: 3.2,
       vertexSpeed: 0.5,
-      maxDistance: 300, // Increased from 150
-      edgeBaseWidth: 2, // Increased from 1
-      edgeActivityMultiplier: 3, // Increased from 2
-      baseAlpha: 0.2, // Increased from 0.15
+      maxDistance: 120,
+      edgeBaseWidth: 0.8,
+      edgeActivityMultiplier: 1.2,
+      baseAlpha: 0.2,
       activityDecay: 0.02,
-      branchSpeed: 3, // Increased from 2
-      branchSpawnChance: 0.3
+      branchSpeed: 1.2,
+      branchSpawnChance: 0.3,
+      // Tree-like behavior parameters
+      directionBias: Math.PI * 0.5, // Points connections upward
+      directionStrength: 0.7, // How strongly to enforce direction (0-1)
+      traverseProb: (from: Vertex, to: Vertex) => {
+        // Prefer upward connections
+        const dy = to.y - from.y;
+        const upwardness = -dy / Math.sqrt(dy * dy + 0.1);
+        return Math.pow(0.5 + 0.5 * upwardness, 2);
+      }
     };
 
     // Create vertices

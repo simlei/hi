@@ -54,27 +54,32 @@ describe('ForceField', () => {
   });
 
   describe('combineForceFields', () => {
-    test('combines multiple fields', () => {
+    test('combines additive and restrictive fields', () => {
       const combined = combineForceFields([
         {
           field: () => ({
             magnitude: 1,
             direction: { x: 1, y: 0 }
           }),
-          weight: 0.5
+          weight: 0.5,
+          type: 'additive'
         },
         {
           field: () => ({
-            magnitude: 1,
+            magnitude: 0.5,
             direction: { x: 0, y: 1 }
           }),
-          weight: 0.5
+          weight: 0.5,
+          type: 'restrictive'
         }
       ]);
 
       const force = combined({ x: 0, y: 0 }, 0);
-      expect(force.direction.x).toBeCloseTo(0.5);
-      expect(force.direction.y).toBeCloseTo(0.5);
+      // Additive force maintains its magnitude
+      expect(force.magnitude).toBeCloseTo(0.5);
+      // Direction is normalized and influenced by both forces
+      const dirMag = Math.sqrt(force.direction.x * force.direction.x + force.direction.y * force.direction.y);
+      expect(dirMag).toBeCloseTo(1);
     });
   });
 

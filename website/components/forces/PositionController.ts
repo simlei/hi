@@ -1,4 +1,4 @@
-import { forceFields, combineForceFields, applyForce, type ForceField } from './ForceField';
+import { forceFields, combineForceFields, applyForce, type ForceField, type ForceFieldConfig } from './ForceField';
 
 export interface Moveable {
   x: number;
@@ -19,7 +19,7 @@ export class PositionController {
   private damping: number;
 
   constructor(
-    forceFields: Array<{ field: ForceField; weight: number }>,
+    forceFields: Array<ForceFieldConfig>,
     damping: number = 0.98
   ) {
     this.forceField = combineForceFields(forceFields);
@@ -33,8 +33,7 @@ export class PositionController {
       hexWeight?: number;     // Weight of hex grid vs upward force
       cellAspect?: number;    // Vertical stretch factor (1 = regular hexagons)
       cellScale?: number;     // Overall scale multiplier
-      brownianSpeed?: number; // Speed of Brownian motion
-      brownianWeight?: number; // Weight of Brownian motion vs other forces
+      brownianFactor?: number; // Brownian motion magnitude as factor of field strength
     } = {}
   ): PositionController {
     const {
@@ -43,12 +42,22 @@ export class PositionController {
       hexWeight = 0.4,
       cellAspect = 1,
       cellScale = 1,
-      brownianSpeed = 0.15,
-      brownianWeight = 0.25
+      brownianFactor = 4.0
     } = config;
-    const totalWeight = hexWeight + brownianWeight + (1 - hexWeight - brownianWeight);
+    // Calculate base field strength from hex grid and upward bias
+    const baseFieldStrength = Math.max(hexWeight, upwardBias);
+    
+    // Brownian speed is a factor of the base field strength
+    const brownianSpeed = baseFieldStrength * brownianFactor;
+    
+    // Adjust weights to maintain proper balance
+    const brownianWeight = 0.4; // Fixed weight for consistent influence
+    const remainingWeight = 1 - brownianWeight;
+    const adjustedHexWeight = hexWeight * remainingWeight;
+    const adjustedUpwardWeight = (1 - hexWeight) * remainingWeight;
+
     return new PositionController([
-      // Brownian motion (additive)
+      // Brownian motion (additive) - speed scaled by field strength
       {
         field: forceFields.brownianMotion(brownianSpeed),
         weight: brownianWeight,
@@ -60,7 +69,7 @@ export class PositionController {
           magnitude: upwardBias,
           direction: { x: 0, y: -1 }
         }),
-        weight: 1 - hexWeight - brownianWeight,
+        weight: adjustedUpwardWeight,
         type: 'additive'
       },
       // Hex grid alignment (restrictive)
@@ -69,7 +78,7 @@ export class PositionController {
           aspect: cellAspect,
           scale: cellScale
         }),
-        weight: hexWeight,
+        weight: adjustedHexWeight,
         type: 'restrictive'
       }
     ]);

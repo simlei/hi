@@ -234,18 +234,30 @@ export const forceFields = {
       }
       const state = vertexStates.get(context.currentVertex)!;
 
-      // Update angle velocity using smooth noise
-      const timeScale = time * directionChangeRate * state.personalFreq;
+      // Scale time with speed to maintain consistent motion patterns
+      const speedFactor = Math.min(1, 1 / baseSpeed); // Normalize for high speeds
+      const timeScale = time * directionChangeRate * state.personalFreq * speedFactor;
+      
+      // Multi-layered noise for more organic motion
       const noiseX = Math.sin(timeScale + context.currentVertex.x * 0.1);
       const noiseY = Math.cos(timeScale + context.currentVertex.y * 0.1);
-      const noiseZ = Math.sin(timeScale * 1.3); // Additional dimension for more variation
+      const noiseZ = Math.sin(timeScale * 1.3);
+      const noiseW = Math.cos(timeScale * 0.7); // Fourth dimension for richer motion
       
-      // Combine noise dimensions for angular acceleration
-      const angularAccel = (noiseX * noiseY * noiseZ) * 0.2;
+      // Combine noise dimensions with varied weights
+      const angularAccel = (
+        noiseX * noiseY * 0.5 +  // Primary rotation
+        noiseZ * 0.3 +           // Medium frequency variation
+        noiseW * 0.2             // Slow variation
+      ) * 0.3;                   // Overall scale
       
-      // Update angle velocity with some damping
-      state.angleVelocity = state.angleVelocity * 0.95 + angularAccel * 0.05;
-      state.angle += state.angleVelocity;
+      // Update angle velocity with adaptive damping
+      const dampingFactor = 0.95 + (1 - speedFactor) * 0.03; // More damping at higher speeds
+      state.angleVelocity = state.angleVelocity * dampingFactor + angularAccel * (1 - dampingFactor);
+      
+      // Scale angle change with speed
+      const angleChange = state.angleVelocity * (1 + baseSpeed * 0.1);
+      state.angle += angleChange;
 
       // Normalize angle to [0, 2π]
       state.angle = state.angle % (Math.PI * 2);

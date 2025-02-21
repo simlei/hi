@@ -62,10 +62,11 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - Deployment: Migrating from gh-pages to GitHub Actions
 
 2. Testing and Deployment
-   - Primary test command: `dev.sh test` (fast, for content changes)
-   - Deployment: Moving to GitHub Actions workflow
-   - Status: In progress - implementing automated deployment
-   - Focus: Streamlining deployment scripts, removing complexity
+   - Primary test command: `dev.sh test` (fast, validates build and content)
+   - Deployment command: `scripts/deploy.sh` (uses GitHub Actions)
+   - Dry run testing: `scripts/deploy.sh --dry-run` (local validation)
+   - Status: Automated deployment via GitHub Actions
+   - Focus: Clean, DRY code with centralized functionality
 
 3. Current Goals
    - Implement GitHub Actions workflow for deployment

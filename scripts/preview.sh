@@ -1,24 +1,15 @@
 #!/bin/bash
 set -e
 
+# Get absolute paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WEBSITE_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+DEV_SCRIPT="${WEBSITE_DIR}/website/scripts/dev.sh"
+
 echo "🌐 Setting up website preview..."
 
-# Build the website
-echo "🏗️ Building website..."
-npm run build
+# Build and serve using dev.sh
+echo "🏗️ Building and serving website..."
+"$DEV_SCRIPT" server --port 8000
 
-# Start a local server to preview the build
-echo "🚀 Starting preview server..."
-cd out && python3 -m http.server 8000 &
-SERVER_PID=$!
-
-echo "
-🌍 Website preview is available at:
-   http://localhost:8000
-
-Press Ctrl+C to stop the preview server.
-"
-
-# Wait for Ctrl+C
-trap "kill $SERVER_PID" INT
-wait $SERVER_PID
+# The dev.sh script handles server management and cleanup

@@ -47,11 +47,12 @@ export function GraphBackground() {
 
     // Create position controller with hex grid
     const positionController = PositionController.createHexGrid({
-      gridSize: 225,    // Base size of hex cells
-      upwardBias: 0.2,  // Strength of upward force
-      hexWeight: 0.35,  // Weight of hex grid vs upward force
+      gridSize: 325,    // Base size of hex cells
+      upwardBias: 0.3,  // Strength of upward force
+      hexWeight: 0.25,  // Weight of hex grid vs upward force
       cellAspect: 0.9,  // Slightly compressed vertically
-      cellScale: 1.0    // Overall scale multiplier
+      cellScale: 1.0,   // Overall scale multiplier
+      brownianFactor: 5.0 // Brownian motion relative to field strength (4.0/50)
     });
 
     // Visualization parameters
@@ -86,15 +87,15 @@ export function GraphBackground() {
       outerGlowIntensity: 1.2,
       edgeGradientStops: 6,
       // Pulsation parameters
-      pulseSpeed: 0.01, // Slightly faster base pulsation
-      pulseAmount: 0.6, // More pronounced pulsation
-      pulseFreqMin: 0.1, // Wider frequency range
-      pulseFreqMax: 0.3,
+      pulseSpeed: 0.2, // Slightly faster base pulsation
+      pulseAmount: 0.5, // More pronounced pulsation
+      pulseFreqMin: 0.03, // Wider frequency range
+      pulseFreqMax: 0.1,
       baseSizeMin: 0.5,
       baseSizeMax: 1.5,
-      pulseActivityBoost: 2.0, // Stronger activity influence on pulse
+      pulseActivityBoost: 3.0, // Stronger activity influence on pulse
       directionBias: Math.PI * 0.5,
-      directionStrength: 0.7,
+      directionStrength: 0.8,
       traverseProb: (from: Vertex, to: Vertex) => {
         // More selective connection probability
         const dy = to.y - from.y;
@@ -122,8 +123,8 @@ export function GraphBackground() {
       return {
         x: xCluster + (Math.random() - 0.5) * canvas.width * 0.3,
         y: yMin + Math.random() * (yMax - yMin),
-        vx: (Math.random() - 0.5) * PARAMS.vertexSpeed,
-        vy: (Math.random() - 0.5) * PARAMS.vertexSpeed * 0.4,
+        vx: 0, // Let force field determine velocities
+        vy: 0,
         activity: 0,
         // Individual pulsation state
         pulsePhase: Math.random() * Math.PI * 2,
@@ -364,6 +365,18 @@ export function GraphBackground() {
         ctx.fillStyle = innerGlow;
         ctx.arc(vertex.x, vertex.y, baseRadius, 0, Math.PI * 2);
         ctx.fill();
+
+        // Debug: Draw velocity vector
+        const velocityScale = 20; // Scale up velocity for visibility
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.moveTo(vertex.x, vertex.y);
+        ctx.lineTo(
+          vertex.x + vertex.vx * velocityScale,
+          vertex.y + vertex.vy * velocityScale
+        );
+        ctx.stroke();
       });
 
       requestAnimationFrame(animate);

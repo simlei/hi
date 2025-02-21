@@ -20,7 +20,7 @@ export class PositionController {
 
   constructor(
     forceFields: Array<ForceFieldConfig>,
-    damping: number = 0.98
+    damping: number = 0.98 // Increased damping for more subtle motion
   ) {
     this.forceField = combineForceFields(forceFields);
     this.damping = damping;

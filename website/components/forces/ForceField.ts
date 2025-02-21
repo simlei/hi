@@ -219,6 +219,9 @@ export const forceFields = {
       personalFreq: number;
     }>();
     
+    // Store base speed for use in motion calculations
+    const speed = baseSpeed;
+    
     return (pos, time, context) => {
       if (!context?.currentVertex) {
         return { magnitude: 0, direction: { x: 0, y: 0 } };
@@ -235,7 +238,7 @@ export const forceFields = {
       const state = vertexStates.get(context.currentVertex)!;
 
       // Scale time with speed to maintain consistent motion patterns
-      const speedFactor = Math.min(1, 1 / baseSpeed); // Normalize for high speeds
+      const speedFactor = Math.min(1, 1 / speed); // Normalize for high speeds
       const timeScale = time * directionChangeRate * state.personalFreq * speedFactor;
       
       // Multi-layered noise for more organic motion
@@ -256,7 +259,7 @@ export const forceFields = {
       state.angleVelocity = state.angleVelocity * dampingFactor + angularAccel * (1 - dampingFactor);
       
       // Scale angle change with speed
-      const angleChange = state.angleVelocity * (1 + baseSpeed * 0.1);
+      const angleChange = state.angleVelocity * (1 + speed * 0.1);
       state.angle += angleChange;
 
       // Normalize angle to [0, 2π]
@@ -267,7 +270,7 @@ export const forceFields = {
 
       // Always maintain the base speed
       return {
-        magnitude: baseSpeed,
+        magnitude: speed,
         direction: {
           x: Math.cos(state.angle),
           y: Math.sin(state.angle)

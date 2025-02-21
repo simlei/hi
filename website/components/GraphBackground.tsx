@@ -23,8 +23,12 @@ interface Edge {
   }>;
 }
 
+import { PositionController } from './forces/PositionController';
+
 export function GraphBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const timeRef = useRef(0);
+  const lastFrameTimeRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -41,6 +45,15 @@ export function GraphBackground() {
     resize();
     window.addEventListener('resize', resize);
 
+    // Create position controller with hex grid
+    const positionController = PositionController.createHexGrid({
+      gridSize: 225,    // Base size of hex cells
+      upwardBias: 0.2,  // Strength of upward force
+      hexWeight: 0.35,  // Weight of hex grid vs upward force
+      cellAspect: 0.9,  // Slightly compressed vertically
+      cellScale: 1.0,    // Overall scale multiplier
+    );
+
     // Visualization parameters
     interface VertexState extends Vertex {
       pulsePhase: number;
@@ -49,36 +62,36 @@ export function GraphBackground() {
     }
 
     const PARAMS = {
-      numVertices: 40,
-      vertexBaseRadius: 0.8,
-      vertexGlowMultiplier: 2.7,
+      numVertices: 50, // Increased from 80
+      vertexBaseRadius: 0.53, // Scaled down by 1.5
+      vertexGlowMultiplier: 2.8, // Scaled down by 1.5
       vertexSpeed: 0.3,
-      maxDistance: 250, // Slightly increased from 230
-      edgeBaseWidth: 0.90,
-      edgeActivityMultiplier: 2.8,
+      maxDistance: 375, // Increased for more spread (250 * 1.5)
+      edgeBaseWidth: 1.27, // Scaled down by 1.5
+      edgeActivityMultiplier: 1.87, // Scaled down by 1.5
       baseAlpha: 0.35,
       activityDecay: 0.008,
       branchSpeed: 0.9,
       branchSpawnChance: 0.28,
       // Edge animation parameters
-      edgePulseSpeed: 0.024,
-      edgePulseAmount: 0.375, // Reduced from 0.5 (scaled by 3/4)
-      gradientSpeed: 0.1,
+      edgePulseSpeed: 0.008,
+      edgePulseAmount: 0.275, // Reduced from 0.5 (scaled by 3/4)
+      gradientSpeed: 0.003,
       gradientLength: 0.5,
       // Activity parameters
       activityBoost: 1.8, // New: increases activity effect
       activitySpreadProb: 0.65, // New: chance to spread activity
       // Visual enhancement parameters
-      innerGlowSize: 0.4,
-      outerGlowIntensity: 0.8,
-      edgeGradientStops: 4,
+      innerGlowSize: 0.75,
+      outerGlowIntensity: 1.2,
+      edgeGradientStops: 6,
       // Pulsation parameters
-      pulseSpeed: 0.025, // Slightly faster base pulsation
-      pulseAmount: 1.4, // More pronounced pulsation
-      pulseFreqMin: 0.6, // Wider frequency range
-      pulseFreqMax: 1.4,
-      baseSizeMin: 0.7,
-      baseSizeMax: 1.3,
+      pulseSpeed: 0.01, // Slightly faster base pulsation
+      pulseAmount: 0.6, // More pronounced pulsation
+      pulseFreqMin: 0.1, // Wider frequency range
+      pulseFreqMax: 0.3,
+      baseSizeMin: 0.5,
+      baseSizeMax: 1.5,
       pulseActivityBoost: 2.0, // Stronger activity influence on pulse
       directionBias: Math.PI * 0.5,
       directionStrength: 0.7,
@@ -165,11 +178,22 @@ export function GraphBackground() {
       }
 
       // Update vertex positions, activity, and pulsation
-      vertices.forEach(vertex => {
-        vertex.x += vertex.vx;
-        vertex.y += vertex.vy;
+      // Update time
+      const currentTime = performance.now() / 1000;
+      const deltaTime = lastFrameTimeRef.current ? currentTime - lastFrameTimeRef.current : 0.016;
+      lastFrameTimeRef.current = currentTime;
+      timeRef.current += deltaTime;
 
-        // Bounce off edges
+      // Update positions using force field
+      positionController.updatePositions(vertices, {
+        width: canvas.width,
+        height: canvas.height,
+        time: timeRef.current,
+        deltaTime
+      });
+
+      vertices.forEach(vertex => {
+        // Bounce off edges (as safety measure)
         if (vertex.x < 0 || vertex.x > canvas.width) vertex.vx *= -1;
         if (vertex.y < 0 || vertex.y > canvas.height) vertex.vy *= -1;
 

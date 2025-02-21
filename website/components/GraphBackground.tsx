@@ -53,30 +53,33 @@ export function GraphBackground() {
       vertexBaseRadius: 0.8,
       vertexGlowMultiplier: 2.7,
       vertexSpeed: 0.3,
-      maxDistance: 230,
+      maxDistance: 250, // Slightly increased from 230
       edgeBaseWidth: 0.93,
-      edgeActivityMultiplier: 2.4, // Doubled for more visible pulsation
+      edgeActivityMultiplier: 2.8, // Increased from 2.4
       baseAlpha: 0.35,
-      activityDecay: 0.006,
+      activityDecay: 0.005, // Slightly slower decay for longer pulses
       branchSpeed: 0.8,
-      branchSpawnChance: 0.15,
+      branchSpawnChance: 0.18, // Increased from 0.15
       // Edge animation parameters
-      edgePulseSpeed: 0.015, // Speed of edge width pulsation
-      edgePulseAmount: 0.4, // Amount of width variation
-      gradientSpeed: 0.004, // Speed of gradient movement
-      gradientLength: 0.5, // Length of the moving gradient relative to edge
+      edgePulseSpeed: 0.018, // Increased from 0.015
+      edgePulseAmount: 0.5, // Increased from 0.4
+      gradientSpeed: 0.004,
+      gradientLength: 0.5,
+      // Activity parameters
+      activityBoost: 1.8, // New: increases activity effect
+      activitySpreadProb: 0.65 // New: chance to spread activity
       // Visual enhancement parameters
       innerGlowSize: 0.4,
       outerGlowIntensity: 0.8,
       edgeGradientStops: 3,
       // Pulsation parameters
-      pulseSpeed: 0.02, // Base speed of pulsation
-      pulseAmount: 1.2, // Increased by 4x (was 0.3)
-      pulseFreqMin: 0.7, // Slightly wider frequency range
-      pulseFreqMax: 1.3,
-      baseSizeMin: 0.7, // More size variation
+      pulseSpeed: 0.025, // Slightly faster base pulsation
+      pulseAmount: 1.4, // More pronounced pulsation
+      pulseFreqMin: 0.6, // Wider frequency range
+      pulseFreqMax: 1.4,
+      baseSizeMin: 0.7,
       baseSizeMax: 1.3,
-      activityBoost: 1.6, // Increased activity influence
+      activityBoost: 2.0, // Stronger activity influence on pulse
       directionBias: Math.PI * 0.5,
       directionStrength: 0.7,
       traverseProb: (from: Vertex, to: Vertex) => {
@@ -184,12 +187,23 @@ export function GraphBackground() {
         const from = vertices[edge.from];
         const to = vertices[edge.to];
         
-        // Propagate activity along edges
+        // Enhanced activity propagation
         if (from.activity > 0.1 || to.activity > 0.1) {
-          edge.activity = Math.max(from.activity, to.activity);
+          // Calculate boosted activity
+          const maxActivity = Math.max(from.activity, to.activity);
+          edge.activity = Math.min(1, maxActivity * PARAMS.activityBoost);
           
-          // Create new branches
-          if (Math.random() < PARAMS.branchSpawnChance && edge.activity > 0.5) {
+          // Spread activity between vertices
+          if (Math.random() < PARAMS.activitySpreadProb) {
+            if (from.activity > to.activity) {
+              to.activity = Math.max(to.activity, from.activity * 0.85);
+            } else {
+              from.activity = Math.max(from.activity, to.activity * 0.85);
+            }
+          }
+          
+          // Create new branches with boosted probability
+          if (Math.random() < PARAMS.branchSpawnChance * (1 + edge.activity) && edge.activity > 0.4) {
             const midX = (from.x + to.x) / 2;
             const midY = (from.y + to.y) / 2;
             // Bias angle towards upward direction

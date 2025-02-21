@@ -42,15 +42,15 @@ export function GraphBackground() {
     // Visualization parameters
     const PARAMS = {
       numVertices: 20,
-      vertexBaseRadius: 2.4,
-      vertexGlowMultiplier: 3.2,
+      vertexBaseRadius: 14.4,
+      vertexGlowMultiplier: 19.2,
       vertexSpeed: 0.5,
-      maxDistance: 120,
-      edgeBaseWidth: 0.8,
-      edgeActivityMultiplier: 1.2,
+      maxDistance: 720,
+      edgeBaseWidth: 4.8,
+      edgeActivityMultiplier: 7.2,
       baseAlpha: 0.2,
       activityDecay: 0.02,
-      branchSpeed: 1.2,
+      branchSpeed: 7.2,
       branchSpawnChance: 0.3,
       // Tree-like behavior parameters
       directionBias: Math.PI * 0.5, // Points connections upward
@@ -64,13 +64,19 @@ export function GraphBackground() {
     };
 
     // Create vertices
-    const vertices: Vertex[] = Array.from({ length: PARAMS.numVertices }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * PARAMS.vertexSpeed,
-      vy: (Math.random() - 0.5) * PARAMS.vertexSpeed,
-      activity: 0,
-    }));
+    const vertices: Vertex[] = Array.from({ length: PARAMS.numVertices }, () => {
+      // Distribute vertices more evenly vertically
+      const section = Math.floor(Math.random() * 3); // 0, 1, or 2
+      const yMin = (section * canvas.height) / 3;
+      const yMax = ((section + 1) * canvas.height) / 3;
+      return {
+        x: Math.random() * canvas.width,
+        y: yMin + Math.random() * (yMax - yMin),
+        vx: (Math.random() - 0.5) * PARAMS.vertexSpeed,
+        vy: (Math.random() - 0.5) * PARAMS.vertexSpeed * 0.5, // Reduced vertical movement
+        activity: 0,
+      };
+    });
 
     // Create edges between nearby vertices
     const edges: Edge[] = [];
@@ -83,12 +89,16 @@ export function GraphBackground() {
           const dy = vertices[i].y - vertices[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           if (distance < PARAMS.maxDistance) {
-            edges.push({ 
-              from: i, 
-              to: j, 
-              activity: 0,
-              branches: []
-            });
+            // Apply directional bias using traversal probability
+            const prob = PARAMS.traverseProb(vertices[i], vertices[j]);
+            if (Math.random() < prob) {
+              edges.push({ 
+                from: i, 
+                to: j, 
+                activity: 0,
+                branches: []
+              });
+            }
           }
         }
       }
@@ -101,10 +111,14 @@ export function GraphBackground() {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Randomly trigger vertex activity
+      // Randomly trigger vertex activity at bottom vertices
       if (Math.random() < 0.02) {
-        const randomVertex = vertices[Math.floor(Math.random() * vertices.length)];
-        randomVertex.activity = 1.0;
+        // Prefer vertices in the lower third of the canvas
+        const candidates = vertices.filter(v => v.y > canvas.height * 0.67);
+        if (candidates.length > 0) {
+          const randomVertex = candidates[Math.floor(Math.random() * candidates.length)];
+          randomVertex.activity = 1.0;
+        }
       }
 
       // Update vertex positions and activity
@@ -134,7 +148,10 @@ export function GraphBackground() {
           if (Math.random() < PARAMS.branchSpawnChance && edge.activity > 0.5) {
             const midX = (from.x + to.x) / 2;
             const midY = (from.y + to.y) / 2;
-            const angle = Math.random() * Math.PI * 2;
+            // Bias angle towards upward direction
+            const baseAngle = -Math.PI/2; // Upward
+            const spread = Math.PI * (1 - PARAMS.directionStrength);
+            const angle = baseAngle + (Math.random() - 0.5) * spread;
             edge.branches.push({
               x: midX,
               y: midY,

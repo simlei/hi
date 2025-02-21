@@ -885,17 +885,83 @@ export function GraphBackground() {
         cancelAnimationFrame(animationFrameId);
       }
     };
+
+    // Animate turbulence effect
+    let phase = 0;
+    const animateTurbulence = () => {
+      const turbulence = document.querySelector('#turbulence feTurbulence');
+      if (!turbulence) return;
+      
+      phase += 0.002;
+      turbulence.setAttribute('seed', (Math.sin(phase) + 1).toString());
+      requestAnimationFrame(animateTurbulence);
+    };
+    const animationFrame = requestAnimationFrame(animateTurbulence);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+    };
   }, []); // Empty dependency array ensures effect runs only once
 
   return (
-    <canvas
+    <div>
+      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+        <defs>
+          {/* Turbulence effect - creates a crystalline, flowing distortion */}
+          <filter id="turbulence">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.02"
+              numOctaves="3"
+              seed="1"
+              stitchTiles="stitch"
+            />
+            <feDisplacementMap in="SourceGraphic" scale="15" />
+            <feGaussianBlur stdDeviation="1.5" />
+          </filter>
+
+          {/* Hexagonal mosaic effect */}
+          <filter id="hexagonize">
+            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="1" />
+            <feColorMatrix values="0 0 0 9 -4   0 0 0 9 -4   0 0 0 9 -4  0 0 0 0 1"/>
+            <feGaussianBlur stdDeviation="1.5" />
+          </filter>
+
+          {/* Glass morphism effect */}
+          <filter id="glassmorphism">
+            <feGaussianBlur stdDeviation="2" />
+            <feColorMatrix type="matrix" 
+              values="1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 0 15 -6"
+            />
+            <feComposite operator="in" in2="SourceGraphic" />
+          </filter>
+
+          {/* Crystallize effect */}
+          <filter id="crystallize">
+            <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" seed="1" />
+            <feDisplacementMap in="SourceGraphic" scale="20" />
+            <feGaussianBlur stdDeviation="1" />
+            <feColorMatrix type="matrix"
+              values="1.5 0 0 0 -0.2
+                      0 1.5 0 0 -0.2
+                      0 0 1.5 0 -0.2
+                      0 0 0 2 -0.2"
+            />
+          </filter>
+        </defs>
+      </svg>
+      <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none opacity-100 -z-10"
       style={{ 
-        filter: 'blur(1px) brightness(1.2)',
         willChange: 'transform', // Optimize for animations
-        transform: 'translateZ(0)' // Force GPU acceleration
+        transform: 'translateZ(0)', // Force GPU acceleration
+        filter: `url(#turbulence) brightness(1.2)`
       }}
     />
+    </div>
   );
 }

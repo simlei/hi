@@ -33,27 +33,81 @@ export interface ForceFieldContext {
   currentVertex?: Forceable;
 }
 
+// Type for force field configuration
+export interface ForceFieldConfig {
+  field: ForceField;
+  weight: number;
+  type?: 'additive' | 'restrictive';
+}
+
 // Helper to combine multiple force fields with weights
 export const combineForceFields = (
-  fields: Array<{ field: ForceField; weight: number }>
+  fields: Array<ForceFieldConfig>
 ): ForceField => {
   return (pos, time, context) => {
-    const forces = fields.map(({ field, weight }) => {
-      const force = field(pos, time, context);
-      return {
-        magnitude: force.magnitude * weight,
-        direction: force.direction
-      };
-    });
+    // Separate additive (like Brownian) and restrictive (like grid) forces
+    const additive = fields
+      .filter(f => f.type !== 'restrictive')
+      .map(({ field, weight }) => {
+        const force = field(pos, time, context);
+        return {
+          magnitude: force.magnitude * weight,
+          direction: force.direction
+        };
+      });
 
-    // Sum up all force vectors
-    return forces.reduce((acc, force) => ({
+    const restrictive = fields
+      .filter(f => f.type === 'restrictive')
+      .map(({ field, weight }) => {
+        const force = field(pos, time, context);
+        return {
+          magnitude: force.magnitude * weight,
+          direction: force.direction
+        };
+      });
+
+    // Sum up additive forces first
+    const additiveForce = additive.reduce((acc, force) => ({
       magnitude: acc.magnitude + force.magnitude,
       direction: {
         x: acc.direction.x + force.direction.x * force.magnitude,
         y: acc.direction.y + force.direction.y * force.magnitude
       }
     }), { magnitude: 0, direction: { x: 0, y: 0 } });
+
+    // Normalize additive direction
+    const additiveMag = Math.sqrt(
+      additiveForce.direction.x * additiveForce.direction.x +
+      additiveForce.direction.y * additiveForce.direction.y
+    );
+    if (additiveMag > 0) {
+      additiveForce.direction.x /= additiveMag;
+      additiveForce.direction.y /= additiveMag;
+    }
+
+    // Apply restrictive forces as direction modifiers only
+    const finalForce = restrictive.reduce((acc, force) => {
+      const restrictionFactor = 1 - Math.min(1, force.magnitude);
+      return {
+        magnitude: acc.magnitude,
+        direction: {
+          x: acc.direction.x * (1 - force.magnitude) + force.direction.x * force.magnitude,
+          y: acc.direction.y * (1 - force.magnitude) + force.direction.y * force.magnitude
+        }
+      };
+    }, additiveForce);
+
+    // Normalize final direction
+    const finalMag = Math.sqrt(
+      finalForce.direction.x * finalForce.direction.x +
+      finalForce.direction.y * finalForce.direction.y
+    );
+    if (finalMag > 0) {
+      finalForce.direction.x /= finalMag;
+      finalForce.direction.y /= finalMag;
+    }
+
+    return finalForce;
   };
 };
 
@@ -155,34 +209,56 @@ export const forceFields = {
 
   // Brownian motion with constant speed but changing direction
   brownianMotion: (
-    speed: number,
+    baseSpeed: number,
     directionChangeRate: number = 0.5
   ): ForceField => {
-    // Store individual vertex angles
-    const vertexAngles = new Map<Forceable, number>();
+    // Store individual vertex angles and their personal frequencies
+    const vertexStates = new Map<Forceable, {
+      angle: number;
+      angleVelocity: number;
+      personalFreq: number;
+    }>();
     
     return (pos, time, context) => {
       if (!context?.currentVertex) {
         return { magnitude: 0, direction: { x: 0, y: 0 } };
       }
 
-      // Initialize or get current angle for this vertex
-      if (!vertexAngles.has(context.currentVertex)) {
-        vertexAngles.set(context.currentVertex, Math.random() * Math.PI * 2);
+      // Initialize or get current state for this vertex
+      if (!vertexStates.has(context.currentVertex)) {
+        vertexStates.set(context.currentVertex, {
+          angle: Math.random() * Math.PI * 2,
+          angleVelocity: (Math.random() - 0.5) * 0.2,
+          personalFreq: 0.5 + Math.random() * 0.5 // Individual frequency
+        });
       }
-      let angle = vertexAngles.get(context.currentVertex)!;
+      const state = vertexStates.get(context.currentVertex)!;
 
-      // Slowly change direction using time and noise
-      const noiseOffset = Math.sin(time * directionChangeRate + context.currentVertex.x * 0.1) * 
-                         Math.cos(time * directionChangeRate + context.currentVertex.y * 0.1);
-      angle += noiseOffset * 0.1;
-      vertexAngles.set(context.currentVertex, angle);
+      // Update angle velocity using smooth noise
+      const timeScale = time * directionChangeRate * state.personalFreq;
+      const noiseX = Math.sin(timeScale + context.currentVertex.x * 0.1);
+      const noiseY = Math.cos(timeScale + context.currentVertex.y * 0.1);
+      const noiseZ = Math.sin(timeScale * 1.3); // Additional dimension for more variation
+      
+      // Combine noise dimensions for angular acceleration
+      const angularAccel = (noiseX * noiseY * noiseZ) * 0.2;
+      
+      // Update angle velocity with some damping
+      state.angleVelocity = state.angleVelocity * 0.95 + angularAccel * 0.05;
+      state.angle += state.angleVelocity;
 
+      // Normalize angle to [0, 2π]
+      state.angle = state.angle % (Math.PI * 2);
+      if (state.angle < 0) state.angle += Math.PI * 2;
+
+      vertexStates.set(context.currentVertex, state);
+
+      // Always maintain the base speed
       return {
-        magnitude: speed,
+        magnitude: baseSpeed,
         direction: {
-          x: Math.cos(angle),
-          y: Math.sin(angle)
+          x: Math.cos(state.angle),
+          y: Math.sin(state.angle)
         }
       };
     };

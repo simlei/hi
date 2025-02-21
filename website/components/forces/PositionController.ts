@@ -48,26 +48,29 @@ export class PositionController {
     } = config;
     const totalWeight = hexWeight + brownianWeight + (1 - hexWeight - brownianWeight);
     return new PositionController([
-      // Hex grid alignment
-      {
-        field: forceFields.hexGrid(gridSize, {
-          aspect: cellAspect,
-          scale: cellScale
-        }),
-        weight: hexWeight
-      },
-      // Brownian motion
+      // Brownian motion (additive)
       {
         field: forceFields.brownianMotion(brownianSpeed),
-        weight: brownianWeight
+        weight: brownianWeight,
+        type: 'additive'
       },
-      // Gentle upward flow
+      // Gentle upward flow (additive)
       {
         field: (pos) => ({
           magnitude: upwardBias,
           direction: { x: 0, y: -1 }
         }),
-        weight: 1 - hexWeight - brownianWeight
+        weight: 1 - hexWeight - brownianWeight,
+        type: 'additive'
+      },
+      // Hex grid alignment (restrictive)
+      {
+        field: forceFields.hexGrid(gridSize, {
+          aspect: cellAspect,
+          scale: cellScale
+        }),
+        weight: hexWeight,
+        type: 'restrictive'
       }
     ]);
   }

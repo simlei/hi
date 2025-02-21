@@ -62,25 +62,25 @@ export function GraphBackground() {
     }
 
     const PARAMS = {
-      numVertices: 50, // Increased from 80
+      numVertices: 42, // Increased from 80
       vertexBaseRadius: 0.53, // Scaled down by 1.5
       vertexGlowMultiplier: 2.8, // Scaled down by 1.5
-      vertexSpeed: 0.3,
+      vertexSpeed: 0.2,
       maxDistance: 375, // Increased for more spread (250 * 1.5)
       edgeBaseWidth: 1.27, // Scaled down by 1.5
-      edgeActivityMultiplier: 1.87, // Scaled down by 1.5
+      edgeActivityMultiplier: 1.57, // Scaled down by 1.5
       baseAlpha: 0.35,
       activityDecay: 0.008,
       branchSpeed: 0.9,
       branchSpawnChance: 0.28,
       // Edge animation parameters
-      edgePulseSpeed: 0.008,
-      edgePulseAmount: 0.275, // Reduced from 0.5 (scaled by 3/4)
+      edgePulseSpeed: 0.004,
+      edgePulseAmount: 0.2, // Reduced from 0.5 (scaled by 3/4)
       gradientSpeed: 0.003,
       gradientLength: 0.5,
       // Activity parameters
-      activityBoost: 1.8, // New: increases activity effect
-      activitySpreadProb: 0.65, // New: chance to spread activity
+      activityBoost: 1.5, // New: increases activity effect
+      activitySpreadProb: 0.80, // New: chance to spread activity
       // Visual enhancement parameters
       innerGlowSize: 0.75,
       outerGlowIntensity: 1.2,

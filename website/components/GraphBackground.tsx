@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { LightningController } from './forces/LightningController';
 
 interface Vertex {
   x: number;
@@ -52,13 +53,48 @@ export function GraphBackground() {
 
     // Create position controller with hex grid
     const positionController = PositionController.createHexGrid({
-      gridSize: 320,    // Base size of hex cells
-      upwardBias: 0.3,  // Strength of upward force
-      hexWeight: 0.6,  // Weight of hex grid vs upward force
+      gridSize: 48,     // Base size of hex cells (increased by 1.2x)
+      upwardBias: 0.25, // Slightly reduced upward force
+      hexWeight: 0.30,  // Increased grid influence for more stability
       cellAspect: 1.0,  // Slightly compressed vertically
       cellScale: 1.0,   // Overall scale multiplier
-      brownianFactor: 4.0, // Brownian motion relative to field strength
-      baseForce: 8.0,  // Base force scale for the system, controls amount of movement
+      brownianFactor: 2.5, // Reduced random motion
+      baseForce: 6.0,   // Reduced force for calmer movement
+    });
+
+    // Create lightning controller
+    const lightningController = new LightningController({
+      medianInterval: 3.0,  // Median time between lightnings in seconds
+      burstModeProb: 0.3,   // 30% chance to enter burst mode
+      burstDuration: 2.0,   // Burst mode lasts 2 seconds
+      quietDuration: 5.0,   // Quiet mode lasts 5 seconds
+      forkingProb: 0.6,    // 60% chance to fork at each node
+      maxForks: 14,        // Maximum number of forks per lightning
+      decayFactor: 0.85,   // Path selection decay factor
+      propagationDuration: 0.6,  // Initial propagation takes 0.6 seconds
+      fadeDuration: 0.4,        // Fade to orange takes 4 seconds
+      colorVariations: [
+        {
+          start: 'rgb(255, 120, 120)', // Bright red
+          peak: 'rgb(230, 240, 255)',  // Cool white
+          end: 'rgb(180, 140, 60)',    // Warm gold
+        },
+        {
+          start: 'rgb(190, 90, 90)',   // Deep blue-purple
+          peak: 'rgb(240, 245, 255)',  // Bright white
+          end: 'rgb(160, 140, 80)',    // Muted gold
+        },
+        {
+          start: 'rgb(90, 100, 200)',   // Ice blue
+          peak: 'rgb(240, 255, 255)',  // Pure white
+          end: 'rgb(170, 150, 70)',    // Rich gold
+        },
+        {
+          start: 'rgb(255, 255, 200)',   // Flashy yellow-white
+          peak: 'rgb(245, 250, 255)',  // Ice white
+          end: 'rgb(150, 130, 90)',    // Warm bronze
+        }
+      ]
     });
 
     // Visualization parameters
@@ -81,37 +117,37 @@ export function GraphBackground() {
 
     const PARAMS = {
       numVertices: 80, // More nodes for wider coverage
-      vertexBaseRadius: 0.43, // Smaller nodes since we have more
+      vertexBaseRadius: 0.52, // Increased for 1.2x zoom
       vertexGlowMultiplier: 2.8,
-      vertexSpeed: 0.2,
-      maxDistance: 500, // Longer-range connections
-      edgeBaseWidth: 1.00, // Scaled down by 1.5
-      edgeActivityMultiplier: 1.57, // Scaled down by 1.5
-      baseAlpha: 0.35,
-      activityDecay: 0.01,
-      branchSpeed: 0.6,
-      branchSpawnChance: 0.05,
+      vertexSpeed: 0.08, // Reduced for calmer movement
+      maxDistance: 180, // Adjusted for 1.2x zoom
+      edgeBaseWidth: 1.20, // Adjusted for 1.2x zoom
+      edgeActivityMultiplier: 1.0, // Reduced activity
+      baseAlpha: 0.30, // Slightly reduced for calmer look
+      activityDecay: 0.02, // Faster decay for less persistent activity
+      branchSpeed: 0.4, // Slower branches
+      branchSpawnChance: 0.03, // Fewer branches
       // Edge animation parameters
-      edgePulseSpeed: 0.004,
-      edgePulseAmount: 0.2, // Reduced from 0.5 (scaled by 3/4)
-      gradientSpeed: 0.003,
+      edgePulseSpeed: 0.003, // Slower pulse
+      edgePulseAmount: 0.15, // Reduced pulse intensity
+      gradientSpeed: 0.002, // Slower gradient movement
       gradientLength: 0.5,
       // Activity parameters
-      activityBoost: 1.5, // New: increases activity effect
-      activitySpreadProb: 0.50, // New: chance to spread activity
+      activityBoost: 0.8, // Reduced activity boost
+      activitySpreadProb: 0.20, // Lower spread chance
       // Visual enhancement parameters
       innerGlowSize: 0.9,
-      outerGlowIntensity: 1.9,
-      edgeGradientStops: 20,
+      outerGlowIntensity: 1.6, // Slightly reduced intensity
+      edgeGradientStops: 3,
       // Pulsation parameters
       // Pulse wave parameters
-      pulseSpawnInterval: 13.0,    // Average seconds between new pulses
-      pulseSpawnChance: 0.015,     // Chance per frame to spawn new pulse
-      pulseSpeed: 30,            // Units per second pulse travels
-      pulseWavelength: 100,       // Distance between pulse peaks
-      pulseDecay: 0.12,           // Decay per unit distance
-      pulseStrengthMin: 0.5,     // Minimum initial pulse strength
-      pulseStrengthMax: 1.0,     // Maximum initial pulse strength
+      pulseSpawnInterval: 18.0,    // Longer interval between pulses
+      pulseSpawnChance: 0.010,     // Lower chance for new pulses
+      pulseSpeed: 2.5,           // Slower pulse travel
+      pulseWavelength: 120,      // Longer wavelength for smoother effect
+      pulseDecay: 0.15,          // Faster decay for more localized effect
+      pulseStrengthMin: 0.4,     // Lower minimum strength
+      pulseStrengthMax: 0.8,     // Lower maximum strength
       // Size parameters
       baseSizeMin: 0.5,
       baseSizeMax: 1.5,
@@ -319,6 +355,176 @@ export function GraphBackground() {
 
       // Update pulse propagation
       updatePulses(timeRef.current);
+
+      // Update lightning effects
+      const activeLightnings = lightningController.update(
+        timeRef.current,
+        deltaTime,
+        adjacencyList,
+        vertices.length
+      );
+
+      // Draw lightning paths and highlight affected vertices
+      activeLightnings.forEach(lightning => {
+        const nodes = lightning.nodes;
+        
+        // Calculate temperature based on energy level
+        const temp = Math.min(1, Math.max(0, lightning.energy * 2));
+        
+        // First draw all vertex highlights with sketchy style
+        for (let i = 0; i < nodes.length - 1; i++) {
+          const vertex = vertices[nodes[i]];
+          
+          // Base parameters
+          const baseRadius = PARAMS.vertexBaseRadius * vertex.baseSize;
+          
+          // Draw multiple concentric sketchy circles
+          const numCircles = 2 + Math.floor(temp * 3);
+          for (let c = 0; c < numCircles; c++) {
+            const radius = baseRadius * (1.5 + c * 0.5 + lightning.energy);
+            const segments = 8 + Math.floor(temp * 8);
+            const jitterAmount = (0.5 + temp * 1.5) * lightning.energy;
+            
+            ctx.beginPath();
+            
+            // Create jittered circle
+            for (let j = 0; j <= segments; j++) {
+              const angle = (j / segments) * Math.PI * 2;
+              const nextAngle = ((j + 1) / segments) * Math.PI * 2;
+              
+              // Add time-based oscillation and random jitter
+              const jitter = (
+                Math.sin(timeRef.current * 6 + angle * 3) * 0.6 +
+                (Math.random() - 0.5) * 0.4
+              ) * jitterAmount;
+              
+              const r = radius * (1 + jitter * 0.2);
+              const x = vertex.x + Math.cos(angle) * r;
+              const y = vertex.y + Math.sin(angle) * r;
+              
+              if (j === 0) {
+                ctx.moveTo(x, y);
+              } else {
+                // Add a slight curve between points
+                const controlX = vertex.x + Math.cos((angle + nextAngle) / 2) * r * 1.1;
+                const controlY = vertex.y + Math.sin((angle + nextAngle) / 2) * r * 1.1;
+                ctx.quadraticCurveTo(controlX, controlY, x, y);
+              }
+            }
+            
+            // Draw with varying opacity
+            const circleAlpha = lightning.alpha * (0.2 + temp * 0.3) * (1 - c/numCircles * 0.7);
+            ctx.strokeStyle = lightning.color.replace('rgb', 'rgba').replace(')', `,${circleAlpha})`);
+            ctx.lineWidth = PARAMS.edgeBaseWidth * 0.5 * (1 - c/numCircles * 0.5);
+            ctx.stroke();
+          }
+          
+          // Add "energy dots" when hot
+          if (temp > 0.5) {
+            const dotCount = Math.floor(temp * 8 * lightning.energy);
+            for (let d = 0; d < dotCount; d++) {
+              const angle = Math.random() * Math.PI * 2;
+              const r = baseRadius * (1 + Math.random() * 2);
+              const x = vertex.x + Math.cos(angle) * r;
+              const y = vertex.y + Math.sin(angle) * r;
+              
+              ctx.beginPath();
+              ctx.arc(x, y, PARAMS.edgeBaseWidth * 0.3, 0, Math.PI * 2);
+              const dotAlpha = lightning.alpha * (0.3 + Math.random() * 0.4);
+              ctx.fillStyle = lightning.color.replace('rgb', 'rgba').replace(')', `,${dotAlpha})`);
+              ctx.fill();
+            }
+          }
+        }
+        
+        // Then draw the lightning paths with temperature-based jitter
+        for (let i = 0; i < nodes.length - 1; i++) {
+          const from = vertices[nodes[i]];
+          const to = vertices[nodes[i + 1]];
+          
+          // Calculate base parameters
+          const dx = to.x - from.x;
+          const dy = to.y - from.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx);
+          
+          // Use the same temperature as before
+          const temp = Math.min(1, Math.max(0, lightning.energy * 2));
+          
+          // Jitter parameters based on temperature and energy
+          const jitterCount = Math.floor(4 + temp * 4); // More segments when hotter
+          const jitterAmplitude = (2 + temp * 4) * lightning.energy; // Larger jitter when hotter
+          const jitterFreq = (0.2 + temp * 0.4) * Math.PI; // Faster oscillation when hotter
+          
+          // Draw multiple sketch lines with varying opacity
+          const numStrokes = 2 + Math.floor(temp * 2); // More strokes when hotter
+          for (let stroke = 0; stroke < numStrokes; stroke++) {
+            const strokeOffset = (stroke - (numStrokes - 1) / 2) * 0.5;
+            
+            // Calculate perpendicular vector once
+            const perpX = Math.cos(angle + Math.PI/2);
+            const perpY = Math.sin(angle + Math.PI/2);
+
+            // Create jittered path
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            
+            // Generate points along the path with controlled randomness
+            for (let j = 1; j <= jitterCount; j++) {
+              const t = j / jitterCount;
+              const x = from.x + dx * t;
+              const y = from.y + dy * t;
+              
+              // Add temperature-based jitter
+              const jitterPhase = timeRef.current * 8 + t * jitterFreq * Math.PI;
+              
+              // Combine smooth oscillation with random jitter
+              const jitter = (
+                Math.sin(jitterPhase) * 0.7 + // Smooth oscillation
+                (Math.random() - 0.5) * 0.3    // Random noise
+              ) * jitterAmplitude;
+              
+              // Apply jitter perpendicular to the line
+              const jitteredX = x + perpX * jitter + perpX * strokeOffset;
+              const jitteredY = y + perpY * jitter + perpY * strokeOffset;
+              
+              ctx.lineTo(jitteredX, jitteredY);
+            }
+            ctx.lineTo(to.x + perpX * strokeOffset, to.y + perpY * strokeOffset);
+            
+            // Draw with varying opacity and width
+            const baseAlpha = lightning.alpha * (0.4 + temp * 0.6);
+            const strokeAlpha = baseAlpha * (0.5 + Math.random() * 0.5) / numStrokes;
+            ctx.strokeStyle = lightning.color.replace('rgb', 'rgba').replace(')', `,${strokeAlpha})`);
+            ctx.lineWidth = PARAMS.edgeBaseWidth * (0.5 + lightning.energy * 0.5) * (1 - stroke/numStrokes * 0.3);
+            ctx.stroke();
+          }
+          
+          // Add small "sparks" when temperature is high
+          if (temp > 0.6) {
+            const sparkCount = Math.floor(temp * 6 * lightning.energy);
+            for (let s = 0; s < sparkCount; s++) {
+              const t = Math.random();
+              const baseX = from.x + dx * t;
+              const baseY = from.y + dy * t;
+              const sparkLength = (2 + Math.random() * 4) * lightning.energy;
+              const sparkAngle = angle + (Math.random() - 0.5) * Math.PI * 0.8;
+              
+              ctx.beginPath();
+              ctx.moveTo(baseX, baseY);
+              ctx.lineTo(
+                baseX + Math.cos(sparkAngle) * sparkLength,
+                baseY + Math.sin(sparkAngle) * sparkLength
+              );
+              
+              const sparkAlpha = lightning.alpha * (0.3 + Math.random() * 0.3);
+              ctx.strokeStyle = lightning.color.replace('rgb', 'rgba').replace(')', `,${sparkAlpha})`);
+              ctx.lineWidth = PARAMS.edgeBaseWidth * 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+      });
 
       // Update positions using force field
       positionController.updatePositions(vertices, {

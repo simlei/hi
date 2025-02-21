@@ -85,7 +85,7 @@ describe('ForceField', () => {
 
   describe('applyForce', () => {
     test('updates vertex position and velocity', () => {
-      const vertex = { x: 0, y: 0, vx: 0, vy: 0 };
+      const vertex = { x: 0, y: 0, vx: 0, vy: 0, mass: 1, inertia: 0 };
       const force = {
         magnitude: 1,
         direction: { x: 1, y: 0 }
@@ -97,7 +97,7 @@ describe('ForceField', () => {
     });
 
     test('applies damping', () => {
-      const vertex = { x: 0, y: 0, vx: 1, vy: 1 };
+      const vertex = { x: 0, y: 0, vx: 1, vy: 1, mass: 1, inertia: 0 };
       const force = {
         magnitude: 0,
         direction: { x: 0, y: 0 }

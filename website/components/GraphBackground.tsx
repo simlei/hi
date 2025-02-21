@@ -31,11 +31,15 @@ export function GraphBackground() {
   const lastFrameTimeRef = useRef(0);
 
   useEffect(() => {
+    console.log('GraphBackground mounting...');
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Store animation frame ID for cleanup
+    let animationFrameId: number;
 
     // Make canvas fill the container
     const resize = () => {
@@ -379,22 +383,31 @@ export function GraphBackground() {
         ctx.stroke();
       });
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
 
-    const animation = requestAnimationFrame(animate);
+    // Start the animation
+    animationFrameId = requestAnimationFrame(animate);
 
+    // Cleanup function
     return () => {
+      console.log('GraphBackground cleanup...');
       window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animation);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
-  }, []);
+  }, []); // Empty dependency array ensures effect runs only once
 
   return (
     <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none opacity-60 -z-10"
-      style={{ filter: 'blur(1px) brightness(1.2)' }}
+      style={{ 
+        filter: 'blur(1px) brightness(1.2)',
+        willChange: 'transform', // Optimize for animations
+        transform: 'translateZ(0)' // Force GPU acceleration
+      }}
     />
   );
 }

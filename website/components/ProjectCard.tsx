@@ -46,25 +46,49 @@ export function ProjectCard({ title, description, image, technologies, company }
       >
         <div
           onClick={() => setIsOpen(true)}
-          className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm border border-primary-100"
+          className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm border border-primary-100 w-full transform hover:-rotate-1 hover:scale-[1.02]"
         >
-          <div className="aspect-w-4 aspect-h-3">
-            <div className="relative w-full h-full">
+          <div className="flex flex-col md:flex-row">
+            <div className="md:w-1/3 relative h-48 md:h-auto">
               <Image
                 src={image}
                 alt={title}
                 fill
                 loading="lazy"
                 quality={90}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-primary-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-              <h3 className="text-lg font-semibold">{title}</h3>
-              <p className="text-sm opacity-90">{description.substring(0, 100)}...</p>
+            <div className="flex-1 p-6 relative">
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent-100 rounded-full opacity-10 group-hover:scale-150 transition-transform duration-500"></div>
+              <h3 className="text-xl font-semibold text-primary-800 mb-2">{title}</h3>
+              <p className="text-primary-700 mb-4">{description.substring(0, 150)}...</p>
+              <div className="flex flex-wrap gap-2">
+                {technologies.map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-3 py-1 bg-accent-50 text-accent-800 rounded-full text-sm transform hover:scale-110 transition-transform duration-200"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+              {company && (
+                <div className="mt-4 flex items-center">
+                  <div className="relative h-6 w-24">
+                    <Image
+                      src={company.logo}
+                      alt={company.name}
+                      fill
+                      quality={90}
+                      sizes="96px"
+                      className="object-contain"
+                    />
+                  </div>
+                  <span className="ml-2 text-primary-600 text-sm">{company.name}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -95,68 +119,72 @@ export function ProjectCard({ title, description, image, technologies, company }
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-xl transition-all border border-primary-100">
-                  <div className="aspect-w-16 aspect-h-9 mb-4">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={image}
-                        alt={title}
-                        fill
-                        quality={90}
-                        sizes="(max-width: 1200px) 100vw, 75vw"
-                        priority
-                        className="object-cover rounded-lg"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mb-4">
-                    <Dialog.Title className="text-2xl font-semibold">
-                      {title}
-                    </Dialog.Title>
-                    {company && (
-                      <div className="flex items-center">
-                        <div className="relative h-8 w-32">
+                <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm p-8 shadow-xl transition-all border border-primary-100">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                      <div className="aspect-w-4 aspect-h-3 mb-4 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
+                        <div className="relative w-full h-full">
                           <Image
-                            src={company.logo}
-                            alt={company.name}
+                            src={image}
+                            alt={title}
                             fill
                             quality={90}
-                            sizes="128px"
-                            className="object-contain"
+                            sizes="(max-width: 1200px) 100vw, 50vw"
+                            priority
+                            className="object-cover"
                           />
                         </div>
-                        <span className="ml-2 text-gray-600">{company.name}</span>
                       </div>
-                    )}
-                  </div>
+                      {company && (
+                        <div className="flex items-center p-4 bg-primary-50/50 rounded-lg">
+                          <div className="relative h-10 w-40">
+                            <Image
+                              src={company.logo}
+                              alt={company.name}
+                              fill
+                              quality={90}
+                              sizes="160px"
+                              className="object-contain"
+                            />
+                          </div>
+                          <span className="ml-4 text-primary-700 font-medium">{company.name}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <Dialog.Title className="text-2xl font-bold text-primary-800 mb-4">
+                        {title}
+                      </Dialog.Title>
 
-                  <div className="prose max-w-none">
-                    <p>{description}</p>
-                  </div>
+                      <div className="prose max-w-none text-primary-700">
+                        <p>{description}</p>
+                      </div>
 
-                  <div className="mt-4">
-                    <h4 className="text-sm font-semibold text-gray-500 mb-2">
-                      Technologies
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 bg-accent-50 text-accent-700 rounded-full text-sm"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+                      <div className="mt-6">
+                        <h4 className="text-lg font-semibold text-primary-700 mb-3">
+                          Technologies
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {technologies.map((tech) => (
+                            <span
+                              key={tech}
+                              className="px-4 py-2 bg-accent-50 text-accent-800 rounded-full text-sm font-medium transform hover:scale-110 hover:-rotate-2 transition-all duration-200"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setIsOpen(false)}
+                        className="mt-8 px-6 py-3 bg-primary-50 hover:bg-primary-100 rounded-lg transition-all duration-300 text-primary-800 border border-primary-200 transform hover:scale-105 hover:shadow-md"
+                      >
+                        Close
+                      </button>
                     </div>
                   </div>
-
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="mt-6 px-4 py-2 bg-neutral-50 hover:bg-neutral-100 rounded-lg transition-colors text-neutral-700 border border-neutral-200"
-                  >
-                    Close
-                  </button>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

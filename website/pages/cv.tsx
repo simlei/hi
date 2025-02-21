@@ -1,5 +1,6 @@
 import { GoldenGraph } from '../components/GoldenGraph';
 import { Layout } from '../components/Layout';
+import { ProjectCard } from '../components/ProjectCard';
 
 export default function CV() {
   return (
@@ -11,49 +12,48 @@ export default function CV() {
         {/* Header */}
         <div className="mb-8 bg-white/80 backdrop-blur-sm rounded-lg p-8 shadow-lg border border-primary-100">
           <h1 className="text-3xl font-bold text-primary-900">Simon Leischnig</h1>
-          <p className="text-lg text-primary-600">Autonomous Systems Master Student at TU Darmstadt</p>
-          <div className="mt-4 text-primary-700 space-y-1">
+          <p className="text-lg text-primary-700">Software and Algorithms Engineer</p>
+          <div className="mt-4 text-primary-700/90 space-y-1">
             <p>Address: Am Teich 8, 07743 Jena, Germany</p>
             <p>Phone: 01590 / 5077 303</p>
             <p>Email: simon.leischnig@stud.tu-darmstadt.de</p>
-            <p>GitHub: <a href="http://github.com/simlei" className="text-accent-600 hover:text-accent-700 transition-colors">@simlei</a></p>
-            <p>Website: <a href="http://simlei.github.io/hi" className="text-accent-600 hover:text-accent-700 transition-colors">simlei.github.io/hi</a></p>
+            <p>GitHub: <a href="http://github.com/simlei" className="text-accent-700 hover:text-accent-800 transition-colors">@simlei</a></p>
+            <p>Website: <a href="http://simlei.github.io/hi" className="text-accent-700 hover:text-accent-800 transition-colors">simlei.github.io/hi</a></p>
           </div>
         </div>
 
         {/* Work Experience Section */}
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-primary-800 mb-4 flex items-center">
-            <span className="bg-primary-100/50 px-4 py-2 rounded-lg">Professional Experience</span>
+          <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
+            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+              Professional Experience
+            </span>
           </h2>
           <div className="space-y-6">
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-700">Research Assistant - TU Darmstadt</h3>
-              <p className="text-primary-500">2017</p>
-              <p className="text-primary-600">Project organisation and management under Dr. Eichberg</p>
+              <h3 className="text-lg font-medium text-primary-800">Software and Algorithms Engineer - Spleenlab GmbH</h3>
+              <p className="text-primary-600">May 2023 - Present</p>
+              <p className="text-primary-700">Developing algorithms for autonomous systems and robotics, one standalone product and one successful complex algorithm transcription to C99 and complete coverage with tests</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-700">Research Assistant - TU Darmstadt</h3>
-              <p className="text-primary-500">2014</p>
-              <p className="text-primary-600">Recommender systems lab under Prof. Brefeld</p>
+              <h3 className="text-lg font-medium text-primary-800">Project Lead - Esslinger IT Consulting</h3>
+              <p className="text-primary-600">2020 - 2023</p>
+              <p className="text-primary-700">JCrypTool project lead, core development and dev-ops responsibilities</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-700">Software Developer - Cynops GmbH</h3>
-              <p className="text-primary-500">2009 - 2015</p>
-              <p className="text-primary-600">Cryptography and Security</p>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-700">Freelance Developer - Lufthansa</h3>
-              <p className="text-primary-500">2013 - 2014</p>
-              <p className="text-primary-600">Mobile applications</p>
+              <h3 className="text-lg font-medium text-primary-800">Software Developer - Cynops GmbH</h3>
+              <p className="text-primary-600">2009 - 2015</p>
+              <p className="text-primary-700">Cryptography and Security solutions development</p>
             </div>
           </div>
         </section>
 
         {/* Publications Section */}
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-primary-800 mb-4 flex items-center">
-            <span className="bg-primary-100/50 px-4 py-2 rounded-lg">Publications</span>
+          <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
+            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+              Publications
+            </span>
           </h2>
           <div className="space-y-4">
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
@@ -71,35 +71,66 @@ export default function CV() {
 
         {/* Technical Skills Section */}
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-primary-800 mb-4 flex items-center">
-            <span className="bg-primary-100/50 px-4 py-2 rounded-lg">Technical Skills</span>
+          <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
+            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+              Technical Skills
+            </span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-4">
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-700 mb-3">Languages</h3>
+              <h3 className="text-lg font-medium text-primary-800 mb-3">Highly Proficient</h3>
               <div className="flex flex-wrap gap-2">
-                {['Java', 'Scala', 'Python', 'C++', 'JavaScript', 'TypeScript'].map((skill) => (
-                  <span key={skill} className="px-3 py-1 bg-accent-50 text-accent-800 rounded-full text-sm">
+                {[
+                  'C++',
+                  'Scala 2/3',
+                  'Bash',
+                  'Python',
+                  'Maven',
+                  'Java',
+                  'Build Tools',
+                  'DevOps',
+                  'Linux',
+                  'Automation',
+                  'Interface Design',
+                  'Software Design',
+                  'Planning'
+                ].map((skill) => (
+                  <span key={skill} className="px-3 py-1.5 bg-accent-100 text-accent-900 rounded-full text-sm font-medium transform hover:scale-105 transition-transform duration-200">
                     {skill}
                   </span>
                 ))}
               </div>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-700 mb-3">Technologies</h3>
+              <h3 className="text-lg font-medium text-primary-800 mb-3">Adept</h3>
               <div className="flex flex-wrap gap-2">
-                {['Git', 'UNIX', 'OSGi', 'Eclipse RCP', 'LaTeX', 'HTML/CSS'].map((skill) => (
-                  <span key={skill} className="px-3 py-1 bg-accent-50 text-accent-800 rounded-full text-sm">
+                {[
+                  'Git',
+                  'Docker',
+                  'CI/CD',
+                  'TypeScript',
+                  'React',
+                  'Next.js',
+                  'GUI Frameworks'
+                ].map((skill) => (
+                  <span key={skill} className="px-3 py-1.5 bg-accent-50/80 text-accent-800 rounded-full text-sm transform hover:scale-105 transition-transform duration-200">
                     {skill}
                   </span>
                 ))}
               </div>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-700 mb-3">Domains</h3>
+              <h3 className="text-lg font-medium text-primary-800 mb-3">Educated</h3>
               <div className="flex flex-wrap gap-2">
-                {['Machine Learning', 'Computer Vision', 'Cryptography', 'Statistics'].map((skill) => (
-                  <span key={skill} className="px-3 py-1 bg-accent-50 text-accent-800 rounded-full text-sm">
+                {[
+                  'Robotics',
+                  'Machine Learning',
+                  'Cryptography',
+                  'Computer Vision',
+                  'Autonomous Systems',
+                  'Algorithm Design'
+                ].map((skill) => (
+                  <span key={skill} className="px-3 py-1.5 bg-accent-50/50 text-accent-700 rounded-full text-sm transform hover:scale-105 transition-transform duration-200">
                     {skill}
                   </span>
                 ))}
@@ -110,58 +141,86 @@ export default function CV() {
 
         {/* Education Section - Condensed */}
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-primary-800 mb-4 flex items-center">
-            <span className="bg-primary-100/50 px-4 py-2 rounded-lg">Education</span>
+          <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
+            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+              Education
+            </span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-700">MSc Autonomous Systems</h3>
-              <p className="text-primary-600">Technische Universität Darmstadt</p>
-              <p className="text-primary-500">2016 - Present</p>
-              <p className="text-primary-600 mt-2">Focus on Machine Learning & Robotics</p>
+              <h3 className="text-lg font-medium text-primary-800">MSc Autonomous Systems</h3>
+              <p className="text-primary-700">Technische Universität Darmstadt</p>
+              <p className="text-primary-600">2016 - 2023</p>
+              <p className="text-primary-700 mt-2">Specialized in Machine Learning, Robotics, and Autonomous Systems</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-700">BSc Informatics</h3>
-              <p className="text-primary-600">Technische Universität Darmstadt</p>
-              <p className="text-primary-500">2009 - 2013</p>
-              <p className="text-primary-600 mt-2">Carl-Zeiss-Gymnasium Jena (Mathematics/Technology Focus)</p>
+              <h3 className="text-lg font-medium text-primary-800">BSc Informatics</h3>
+              <p className="text-primary-700">Technische Universität Darmstadt</p>
+              <p className="text-primary-600">2009 - 2013</p>
+              <p className="text-primary-700 mt-2">Focus on Software Engineering and Cryptography</p>
             </div>
           </div>
         </section>
 
         {/* Notable Projects Section */}
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-primary-800 mb-4 flex items-center">
-            <span className="bg-primary-100/50 px-4 py-2 rounded-lg">Notable Projects</span>
+          <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
+            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+              Notable Projects
+            </span>
           </h2>
-          <div className="space-y-6">
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-700">JCrypTool</h3>
-              <p className="text-primary-600">Core contributor to the <a href="https://github.com/jcryptool" className="text-accent-600 hover:text-accent-700 transition-colors">JCrypTool</a> open-source project since graduating from high school. Responsible for GUI and core programming, project management, and documentation. It's a comprehensive Eclipse Rich Client Platform project with over 100 plug-ins providing cryptography functionality and visualizations.</p>
-              <p className="text-primary-600 mt-2">Current focus: Integrating the <a href="https://www.bouncycastle.org/" className="text-accent-600 hover:text-accent-700 transition-colors">Bouncy Castle crypto provider library</a> using Scala with a Domain Specific Language for generic GUI and console functionality. Long-term vision includes integration with <a href="https://github.com/milessabin/shapeless" className="text-accent-600 hover:text-accent-700 transition-colors">Shapeless</a> and <a href="http://ammonite.io" className="text-accent-600 hover:text-accent-700 transition-colors">Ammonite</a> REPL, with plans to utilize Free Applicatives for theoretical foundation.</p>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-700">USB Guitar</h3>
-              <p className="text-primary-600">Developed during a Virtual and Augmented Reality class, this project combines music and computing. Using an <a href="https://www.arduino.cc/" className="text-accent-600 hover:text-accent-700 transition-colors">Arduino</a>, modified a Western guitar for USB connectivity, enabling real-time fingering position detection.</p>
-              <p className="text-primary-600 mt-2">Created a guitar teacher application using marker-based computer vision with <a href="http://opencv.org/" className="text-accent-600 hover:text-accent-700 transition-colors">OpenCV</a> for guitar position tracking and <a href="http://openframeworks.cc/" className="text-accent-600 hover:text-accent-700 transition-colors">Openframeworks</a> for OpenGL integration. The app visualizes chords and scale information directly on the guitar fretboard in the video feed. Full project documentation available at <a href="https://simlei.github.io/VAR2017Project" className="text-accent-600 hover:text-accent-700 transition-colors">simlei.github.io/VAR2017Project</a>.</p>
-            </div>
+          <div className="space-y-8">
+            <ProjectCard
+              title="JCrypTool"
+              description="Core contributor to the JCrypTool open-source project since graduating from high school. Responsible for GUI and core programming, project management, and documentation. It's a comprehensive Eclipse Rich Client Platform project with over 100 plug-ins providing cryptography functionality and visualizations. Current focus: Integrating the Bouncy Castle crypto provider library using Scala with a Domain Specific Language for generic GUI and console functionality. Long-term vision includes integration with Shapeless and Ammonite REPL, with plans to utilize Free Applicatives for theoretical foundation."
+              image="/images/projects/jcryptool.png"
+              technologies={['Java', 'Scala', 'Eclipse RCP', 'OSGi', 'Cryptography', 'GUI Development', 'Project Management']}
+              company={{
+                name: 'JCrypTool Project',
+                logo: '/images/companies/jcryptool-logo.png'
+              }}
+            />
+            <ProjectCard
+              title="USB Guitar Teacher"
+              description="Developed during a Virtual and Augmented Reality class, this project combines music and computing. Using an Arduino, modified a Western guitar for USB connectivity, enabling real-time fingering position detection. Created a guitar teacher application using marker-based computer vision with OpenCV for guitar position tracking and Openframeworks for OpenGL integration. The app visualizes chords and scale information directly on the guitar fretboard in the video feed."
+              image="/images/projects/guitar-project.png"
+              technologies={['Arduino', 'OpenCV', 'OpenGL', 'C++', 'Computer Vision', 'Hardware Integration', 'Real-time Processing']}
+            />
+            <ProjectCard
+              title="Autonomous Systems Algorithm Development"
+              description="At Spleenlab GmbH, developed sophisticated algorithms for autonomous systems and robotics. Successfully delivered a standalone product and completed a complex algorithm transcription to C99 with comprehensive test coverage. The work involved optimization for real-time performance and ensuring reliability in critical applications."
+              image="/images/projects/autonomous-systems.png"
+              technologies={['C99', 'C++', 'Robotics', 'Algorithm Design', 'Test-Driven Development', 'Performance Optimization']}
+              company={{
+                name: 'Spleenlab GmbH',
+                logo: '/images/companies/spleenlab-logo.png'
+              }}
+            />
           </div>
         </section>
 
         {/* Languages Section */}
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-primary-800 mb-4 flex items-center">
-            <span className="bg-primary-100/50 px-4 py-2 rounded-lg">Languages</span>
+          <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
+            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+              Languages
+            </span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-md border border-primary-50 text-center">
-              <span className="text-primary-700 font-medium">German (Native)</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 text-center transform hover:scale-105 transition-transform duration-300">
+              <div className="text-2xl mb-2">🇩🇪</div>
+              <h3 className="text-lg font-semibold text-primary-800">German</h3>
+              <p className="text-primary-600">Native</p>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-md border border-primary-50 text-center">
-              <span className="text-primary-700 font-medium">English (C1/C2)</span>
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 text-center transform hover:scale-105 transition-transform duration-300">
+              <div className="text-2xl mb-2">🇬🇧</div>
+              <h3 className="text-lg font-semibold text-primary-800">English</h3>
+              <p className="text-primary-600">Professional (C1/C2)</p>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-md border border-primary-50 text-center">
-              <span className="text-primary-700 font-medium">Spanish (B2)</span>
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 text-center transform hover:scale-105 transition-transform duration-300">
+              <div className="text-2xl mb-2">🇪🇸</div>
+              <h3 className="text-lg font-semibold text-primary-800">Spanish</h3>
+              <p className="text-primary-600">Advanced (B2)</p>
             </div>
           </div>
         </section>

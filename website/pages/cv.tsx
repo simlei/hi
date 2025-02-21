@@ -25,25 +25,25 @@ export default function CV() {
         {/* Work Experience Section */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+            <span className="bg-gradient-to-br from-primary-100/90 via-accent-50/60 to-primary-50/80 px-6 py-3 rounded-lg shadow-sm border border-primary-100/20">
               Professional Experience
             </span>
           </h2>
           <div className="space-y-6">
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-800">Software and Algorithms Engineer - Spleenlab GmbH</h3>
+              <h3 className="text-lg font-semibold text-primary-800">Software and Algorithms Engineer - Spleenlab GmbH</h3>
               <p className="text-primary-600">May 2023 - Present</p>
-              <p className="text-primary-700">Developing algorithms for autonomous systems and robotics, one standalone product and one successful complex algorithm transcription to C99 and complete coverage with tests</p>
+              <p className="text-primary-700">Developing algorithms for autonomous systems and robotics. Successfully delivered a standalone product and completed a complex algorithm transcription to C99 with comprehensive test coverage.</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-800">Project Lead - Esslinger IT Consulting</h3>
+              <h3 className="text-lg font-semibold text-primary-800">Project Lead JCrypTool - Esslinger IT Consulting</h3>
               <p className="text-primary-600">2020 - 2023</p>
-              <p className="text-primary-700">JCrypTool project lead, core development and dev-ops responsibilities</p>
+              <p className="text-primary-700">Led core development and DevOps initiatives for the JCrypTool project, managing plugin architecture and deployment infrastructure.</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
-              <h3 className="text-lg font-medium text-primary-800">Software Developer - Cynops GmbH</h3>
+              <h3 className="text-lg font-semibold text-primary-800">Software Developer - Cynops GmbH</h3>
               <p className="text-primary-600">2009 - 2015</p>
-              <p className="text-primary-700">Cryptography and Security solutions development</p>
+              <p className="text-primary-700">Developed cryptography and security solutions, focusing on robust implementation and system integration.</p>
             </div>
           </div>
         </section>
@@ -51,7 +51,7 @@ export default function CV() {
         {/* Publications Section */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+            <span className="bg-gradient-to-br from-primary-100/90 via-accent-50/60 to-primary-50/80 px-6 py-3 rounded-lg shadow-sm border border-primary-100/20">
               Publications
             </span>
           </h2>
@@ -72,65 +72,48 @@ export default function CV() {
         {/* Technical Skills Section */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+            <span className="bg-gradient-to-br from-primary-100/90 via-accent-50/60 to-primary-50/80 px-6 py-3 rounded-lg shadow-sm border border-primary-100/20">
               Technical Skills
             </span>
           </h2>
           <div className="space-y-4">
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-800 mb-3">Highly Proficient</h3>
+              <h3 className="text-lg font-semibold text-primary-800 mb-3">Expert Level</h3>
               <div className="flex flex-wrap gap-2">
                 {[
-                  'C++',
-                  'Scala 2/3',
-                  'Bash',
-                  'Python',
-                  'Maven',
-                  'Java',
-                  'Build Tools',
                   'DevOps',
+                  'Bash',
+                  'C++',
+                  'Rust',
+                  'C99',
+                  'Scala 2/3',
+                  'Java',
+                  'GUI-frameworks',
+                  'Maven',
+                  'Docker',
+                  'Git',
                   'Linux',
-                  'Automation',
-                  'Interface Design',
-                  'Software Design',
-                  'Planning'
+                  'Software Architecture'
                 ].map((skill) => (
-                  <span key={skill} className="px-3 py-1.5 bg-accent-100 text-accent-900 rounded-full text-sm font-medium transform hover:scale-105 transition-transform duration-200">
+                  <span key={skill} className="px-4 py-2 bg-primary-100/90 text-primary-900 rounded-lg text-sm font-medium">
                     {skill}
                   </span>
                 ))}
               </div>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-800 mb-3">Adept</h3>
+              <h3 className="text-lg font-semibold text-primary-800 mb-3">Additional Expertise</h3>
               <div className="flex flex-wrap gap-2">
                 {[
-                  'Git',
-                  'Docker',
                   'CI/CD',
                   'TypeScript',
                   'React',
                   'Next.js',
-                  'GUI Frameworks'
+                  'System Design',
+                  'Build Systems',
+                  'Test Automation'
                 ].map((skill) => (
-                  <span key={skill} className="px-3 py-1.5 bg-accent-50/80 text-accent-800 rounded-full text-sm transform hover:scale-105 transition-transform duration-200">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-800 mb-3">Educated</h3>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  'Robotics',
-                  'Machine Learning',
-                  'Cryptography',
-                  'Computer Vision',
-                  'Autonomous Systems',
-                  'Algorithm Design'
-                ].map((skill) => (
-                  <span key={skill} className="px-3 py-1.5 bg-accent-50/50 text-accent-700 rounded-full text-sm transform hover:scale-105 transition-transform duration-200">
+                  <span key={skill} className="px-4 py-2 bg-primary-50/80 text-primary-800 rounded-lg text-sm">
                     {skill}
                   </span>
                 ))}
@@ -142,22 +125,22 @@ export default function CV() {
         {/* Education Section - Condensed */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+            <span className="bg-gradient-to-br from-primary-100/90 via-accent-50/60 to-primary-50/80 px-6 py-3 rounded-lg shadow-sm border border-primary-100/20">
               Education
             </span>
           </h2>
           <div className="grid grid-cols-1 gap-4">
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-800">MSc Autonomous Systems</h3>
+              <h3 className="text-lg font-semibold text-primary-800">MSc Autonomous Systems</h3>
               <p className="text-primary-700">Technische Universität Darmstadt</p>
-              <p className="text-primary-600">2016 - 2023</p>
-              <p className="text-primary-700 mt-2">Specialized in Machine Learning, Robotics, and Autonomous Systems</p>
+              <p className="text-primary-600">Graduated 2023</p>
+              <p className="text-primary-700 mt-2">Advanced research in Machine Learning, Robotics, and Autonomous Systems. Completed while maintaining professional roles in software development.</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50">
-              <h3 className="text-lg font-medium text-primary-800">BSc Informatics</h3>
+              <h3 className="text-lg font-semibold text-primary-800">BSc Informatics</h3>
               <p className="text-primary-700">Technische Universität Darmstadt</p>
-              <p className="text-primary-600">2009 - 2013</p>
-              <p className="text-primary-700 mt-2">Focus on Software Engineering and Cryptography</p>
+              <p className="text-primary-600">Graduated 2013</p>
+              <p className="text-primary-700 mt-2">Core focus on Software Engineering and Cryptography. Foundation for professional work in security and systems development.</p>
             </div>
           </div>
         </section>
@@ -165,7 +148,7 @@ export default function CV() {
         {/* Notable Projects Section */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+            <span className="bg-gradient-to-br from-primary-100/90 via-accent-50/60 to-primary-50/80 px-6 py-3 rounded-lg shadow-sm border border-primary-100/20">
               Notable Projects
             </span>
           </h2>
@@ -202,7 +185,7 @@ export default function CV() {
         {/* Languages Section */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-primary-100/80 to-accent-50/50 px-6 py-3 rounded-lg shadow-sm">
+            <span className="bg-gradient-to-br from-primary-100/90 via-accent-50/60 to-primary-50/80 px-6 py-3 rounded-lg shadow-sm border border-primary-100/20">
               Languages
             </span>
           </h2>

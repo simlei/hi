@@ -82,15 +82,17 @@ if [[ $DRY_RUN -eq 1 ]]; then
     exit 0
 fi
 
+git push origin HEAD:master || { echo "❌ Failed to push changes"; exit 1; }
+
 # Only check for token if we're not doing a dry run
-export token="$(cat /tmp/token.txt 2>/dev/null || : )"
-if [[ -z "${token}" ]]; then
-    echo "❌ GITHUB_TOKEN environment variable is required for deployment"
-    echo "💡 For local testing, use --dry-run"
-    exit 1
-else
-    export GITHUB_TOKEN="${token}"
-fi
+# export token="$(cat /tmp/token.txt 2>/dev/null || : )"
+# if [[ -z "${token}" ]]; then
+#     echo "❌ GITHUB_TOKEN environment variable is required for deployment"
+#     echo "💡 For local testing, use --dry-run"
+#     exit 1
+# else
+#     export GITHUB_TOKEN="${token}"
+# fi
 
 # Get repository information
 if ! REPO_URL=$(git config --get remote.origin.url); then
@@ -102,19 +104,19 @@ fi
 REPO_OWNER=$(echo "$REPO_URL" | sed -n 's/.*github.com[:/]\([^/]*\).*/\1/p')
 REPO_NAME=$(echo "$REPO_URL" | sed -n 's/.*github.com[:/][^/]*\/\([^.]*\).*/\1/p')
 
-# Trigger GitHub Actions workflow using the API
-echo "🚀 Triggering GitHub Actions workflow..."
-RESPONSE=$(curl -s -X POST \
-    -H "Authorization: Bearer $GITHUB_TOKEN" \
-    -H "Accept: application/vnd.github.v3+json" \
-    "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/workflows/nextjs.yml/dispatches" \
-    -d "{\"ref\":\"main\"}")
+# # Trigger GitHub Actions workflow using the API
+# echo "🚀 Triggering GitHub Actions workflow..."
+# RESPONSE=$(curl -s -X POST \
+#     -H "Authorization: Bearer $GITHUB_TOKEN" \
+#     -H "Accept: application/vnd.github.v3+json" \
+#     "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/workflows/nextjs.yml/dispatches" \
+#     -d "{\"ref\":\"main\"}")
 
-if [[ -n "$RESPONSE" ]]; then
-    echo "❌ Failed to trigger workflow: $RESPONSE"
-    exit 1
-fi
+# if [[ -n "$RESPONSE" ]]; then
+#     echo "❌ Failed to trigger workflow: $RESPONSE"
+#     exit 1
+# fi
+# echo "✨ Deployment triggered successfully!"
 
-echo "✨ Deployment triggered successfully!"
-echo "🌐 Check the Actions tab in GitHub for deployment status"
+echo "🌐 Check the Actions tab in GitHub for deployment status: https://github.com/simlei/hi/actions"
 echo "⏳ The site will be available in a few minutes"

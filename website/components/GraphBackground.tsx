@@ -39,19 +39,32 @@ export function GraphBackground() {
     resize();
     window.addEventListener('resize', resize);
 
+    // Visualization parameters
+    const PARAMS = {
+      numVertices: 20,
+      vertexBaseRadius: 6, // Increased from 3
+      vertexGlowMultiplier: 8, // Increased from 5
+      vertexSpeed: 0.5,
+      maxDistance: 300, // Increased from 150
+      edgeBaseWidth: 2, // Increased from 1
+      edgeActivityMultiplier: 3, // Increased from 2
+      baseAlpha: 0.2, // Increased from 0.15
+      activityDecay: 0.02,
+      branchSpeed: 3, // Increased from 2
+      branchSpawnChance: 0.3
+    };
+
     // Create vertices
-    const numVertices = 20;
-    const vertices: Vertex[] = Array.from({ length: numVertices }, () => ({
+    const vertices: Vertex[] = Array.from({ length: PARAMS.numVertices }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
+      vx: (Math.random() - 0.5) * PARAMS.vertexSpeed,
+      vy: (Math.random() - 0.5) * PARAMS.vertexSpeed,
       activity: 0,
     }));
 
     // Create edges between nearby vertices
     const edges: Edge[] = [];
-    const maxDistance = 150;
 
     function updateEdges() {
       edges.length = 0;
@@ -60,7 +73,7 @@ export function GraphBackground() {
           const dx = vertices[i].x - vertices[j].x;
           const dy = vertices[i].y - vertices[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < maxDistance) {
+          if (distance < PARAMS.maxDistance) {
             edges.push({ 
               from: i, 
               to: j, 
@@ -95,7 +108,7 @@ export function GraphBackground() {
         if (vertex.y < 0 || vertex.y > canvas.height) vertex.vy *= -1;
 
         // Decay activity
-        vertex.activity = Math.max(0, vertex.activity - 0.02);
+        vertex.activity = Math.max(0, vertex.activity - PARAMS.activityDecay);
       });
 
       // Update edges and propagate activity
@@ -109,20 +122,20 @@ export function GraphBackground() {
           edge.activity = Math.max(from.activity, to.activity);
           
           // Create new branches
-          if (Math.random() < 0.3 && edge.activity > 0.5) {
+          if (Math.random() < PARAMS.branchSpawnChance && edge.activity > 0.5) {
             const midX = (from.x + to.x) / 2;
             const midY = (from.y + to.y) / 2;
             const angle = Math.random() * Math.PI * 2;
             edge.branches.push({
               x: midX,
               y: midY,
-              vx: Math.cos(angle) * 2,
-              vy: Math.sin(angle) * 2,
+              vx: Math.cos(angle) * PARAMS.branchSpeed,
+              vy: Math.sin(angle) * PARAMS.branchSpeed,
               life: 1.0
             });
           }
         }
-        edge.activity = Math.max(0, edge.activity - 0.02);
+        edge.activity = Math.max(0, edge.activity - PARAMS.activityDecay);
 
         // Update and draw branches
         edge.branches = edge.branches.filter(branch => {
@@ -135,7 +148,7 @@ export function GraphBackground() {
             const midY = (from.y + to.y) / 2;
             ctx.beginPath();
             ctx.strokeStyle = `rgba(217, 119, 6, ${branch.life * 0.4})`;
-            ctx.lineWidth = branch.life;
+            ctx.lineWidth = branch.life * PARAMS.edgeBaseWidth;
             ctx.moveTo(midX, midY);
             ctx.lineTo(branch.x, branch.y);
             ctx.stroke();
@@ -151,16 +164,15 @@ export function GraphBackground() {
         const to = vertices[edge.to];
         const gradient = ctx.createLinearGradient(from.x, from.y, to.x, to.y);
         
-        const baseAlpha = 0.15;
         const activityAlpha = edge.activity * 0.5;
         
         // Using primary-600 color from theme
-        gradient.addColorStop(0, `rgba(217, 119, 6, ${baseAlpha + from.activity * 0.4})`);
-        gradient.addColorStop(1, `rgba(217, 119, 6, ${baseAlpha + to.activity * 0.4})`);
+        gradient.addColorStop(0, `rgba(217, 119, 6, ${PARAMS.baseAlpha + from.activity * 0.4})`);
+        gradient.addColorStop(1, `rgba(217, 119, 6, ${PARAMS.baseAlpha + to.activity * 0.4})`);
         
         ctx.beginPath();
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 1 + edge.activity * 2;
+        ctx.lineWidth = PARAMS.edgeBaseWidth + edge.activity * PARAMS.edgeActivityMultiplier;
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
         ctx.stroke();
@@ -168,8 +180,7 @@ export function GraphBackground() {
 
       // Draw vertices with activity effect
       vertices.forEach(vertex => {
-        const baseRadius = 3;
-        const glowRadius = baseRadius + vertex.activity * 5;
+        const glowRadius = PARAMS.vertexBaseRadius + vertex.activity * PARAMS.vertexGlowMultiplier;
         
         // Draw glow
         if (vertex.activity > 0) {
@@ -189,7 +200,7 @@ export function GraphBackground() {
         // Draw vertex
         ctx.beginPath();
         ctx.fillStyle = `rgba(217, 119, 6, ${0.25 + vertex.activity * 0.5})`;
-        ctx.arc(vertex.x, vertex.y, baseRadius, 0, Math.PI * 2);
+        ctx.arc(vertex.x, vertex.y, PARAMS.vertexBaseRadius, 0, Math.PI * 2);
         ctx.fill();
       });
 
@@ -207,8 +218,8 @@ export function GraphBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none opacity-40 -z-10"
-      style={{ filter: 'blur(2px) brightness(1.2)' }}
+      className="fixed inset-0 w-full h-full pointer-events-none opacity-60 -z-10"
+      style={{ filter: 'blur(1px) brightness(1.2)' }}
     />
   );
 }

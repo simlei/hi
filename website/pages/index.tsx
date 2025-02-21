@@ -7,31 +7,31 @@ const projects = [
   {
     title: 'Project Management System',
     description: 'A comprehensive project management system built with React and Node.js. Features include task tracking, team collaboration, and real-time updates.',
-    image: '/images/projects/project1.png',
+    image: `${process.env.NEXT_PUBLIC_BASE_PATH}/images/projects/project1.png`,
     technologies: ['React', 'Node.js', 'MongoDB', 'WebSocket'],
     company: {
       name: 'TechCorp',
-      logo: '/images/companies/techcorp.png'
+      logo: `${process.env.NEXT_PUBLIC_BASE_PATH}/images/companies/techcorp.png`
     }
   },
   {
     title: 'Data Analytics Platform',
     description: 'Advanced data analytics platform that processes and visualizes large datasets. Implements machine learning algorithms for predictive analytics.',
-    image: '/images/projects/project2.png',
+    image: `${process.env.NEXT_PUBLIC_BASE_PATH}/images/projects/project2.png`,
     technologies: ['Python', 'TensorFlow', 'PostgreSQL', 'D3.js'],
     company: {
       name: 'DevSys',
-      logo: '/images/companies/devsys.png'
+      logo: `${process.env.NEXT_PUBLIC_BASE_PATH}/images/companies/devsys.png`
     }
   },
   {
     title: 'E-commerce Solution',
     description: 'Scalable e-commerce platform with features like inventory management, payment processing, and analytics dashboard.',
-    image: '/images/projects/project3.png',
+    image: `${process.env.NEXT_PUBLIC_BASE_PATH}/images/projects/project3.png`,
     technologies: ['Next.js', 'Stripe', 'Redis', 'AWS'],
     company: {
       name: 'CodeLabs',
-      logo: '/images/companies/codelabs.png'
+      logo: `${process.env.NEXT_PUBLIC_BASE_PATH}/images/companies/codelabs.png`
     }
   }
 ];

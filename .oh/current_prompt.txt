@@ -1,10 +1,124 @@
-I want a style update for the website of this repo.
+this website shows a CV and landing page for a developer looking for work. I really like the style! past projects cards are still not really filled with content (at least I see none, and in any case they seem a bit too small -- they should horizontally fill the screen and vary in height only, also be a bit playful in style. the overall style however should stay as is i.e. color scheme, landing page design; for the CV page I think bringing in the past project tiles is a good idea, best in code that is not duplicated with the landing page, but still allows differentiation in how it's displayed (e.g. size, style) in both places (-> don't abstract too hard, just formulaic change-resistant "summoning" of the desired page content re: past project tiles at that point in the code.
+But first, all these things have to be filled with the right content for the CV (which still should be like a monolithic "paper" page, also in style and font, but with a discrete transition to the past projects part of the document where it should get a bit more playful with the tiles.
 
-The page generated as a personal networking / CV github pages has been updated lately by introducing a fancy graph in the background, and has introduced assets like .png files, but it's not yet nicely done. Also, many of the information about the Curriculum Vita owner was lost in favor of John Doe.
-Original CV info is still available in: /workspace/website/cv/index.html but it is not used. transfer and prune it.
+make the colorscheme of the landing page (blue/purple) and the CV page match more, by pulling it more into the gold / ochre / orange palette with one distinct contract color (e.g. dark, saturated green, and a light green also? make a color palette update and use it throughout the style!
 
-Also, the style is kind of old fashioned. I want modern, clean top-to-bottom scrolling with the blurry graph covering most of the background. I want not that muted colors, but some from an alternative PaperColor palette, maybe with a twist (but well coordinated on a palette of colors inspired by a web search for a good template). I also want the CV page look not fully, but in overall font and underlining style, and document structure, like an old-fashioned CV. The project tiles then are a transition to a more modern part here, and the transition to the project cards should be smooth using modern next.js + consorts.
+The desired content of the CV is:
 
-The landing page should have one friendly welcome sentence, a CV link somewhere in the top right, and state some of the contact details, and a link to a lorem ipsum "tile-blog" where there are two posts, both as big tiles that can be scrolled by, and slightly react to be in focus by color shading and code highlight activation.
+```
+Simon Leischnig
+Autonomous Systems Master Student at TU Darmstadt
 
-I want that tested using /workspace/scripts/deploy.sh --dry-run.
+Address: Am Teich 8, 07743 Jena, Germany
+
+Phone: 01590 / 5077 303
+
+Email: simon.leischnig@stud.tu-darmstadt.de
+
+GitHub: @simlei
+
+Website: simlei.github.io/hi
+
+Education
+MSc Autonomous Systems, Informatics
+Technische Universität Darmstadt
+
+2016 - Present
+
+School of Informatics
+Universidad Politécnica de Valencia
+
+2015 - 2016
+
+MSc Autonomous Systems, Informatics
+Technische Universität Darmstadt
+
+2013 - 2015
+
+1-year Lab under Prof. Peters and Dr. Kroemer
+
+BSc Informatics
+Technische Universität Darmstadt
+
+2009 - 2013
+
+Thesis: Adaptris-Tetris with dynamic difficulty as implementation of the ISA algorithm
+
+Highschool
+Carl-Zeiss-Gymnasium Jena
+
+2008
+
+Work Experience
+Research Assistant - TU Darmstadt
+2017
+
+Project organisation and management under Dr. Eichberg
+
+Research Assistant - TU Darmstadt
+2014
+
+Recommender systems lab under Prof. Brefeld
+
+Software Developer - Cynops GmbH
+2009 - 2015
+
+Cryptography and Security
+
+Freelance Developer - Lufthansa
+2013 - 2014
+
+Mobile applications
+
+Internships
+2007 - 2008
+
+Eset Germany and Deutsche Bank (two months each)
+
+Publications
+A Kernel-based Approach to Learning Contact Distributions for Robot Manipulation Tasks
+Kroemer, O.; Leischnig, S.; Luettgen, S.; Peters, J.
+
+Autonomous Robots (AuRo), 2017
+
+A Comparison of Contact Distribution Representations for Learning to Predict Object Interactions
+Leischnig, S.; Luettgen, S.; Kroemer, O.; Peters, J.
+
+IEEE-RAS International Conference on Humanoid Robots (Humanoids), 2015
+
+Technical Skills
+Languages
+Java, Scala, scalaz
+Python
+C++
+JavaScript, TypeScript
+Technologies
+Git
+UNIX
+OSGi, Eclipse RCP
+Java SWT, JavaFX
+Ammonite Shell
+LaTeX
+HTML, CSS
+Domains
+Machine Learning
+Computer Vision
+Cryptography
+Statistics
+Languages
+German (Native)
+English (C1/C2)
+Spanish (B2)
+Notable Projects
+JCrypTool
+Core contributor to the JCrypTool open-source project since graduating from high school. Responsible for GUI and core programming, project management, and documentation. It's a comprehensive Eclipse Rich Client Platform project with over 100 plug-ins providing cryptography functionality and visualizations.
+
+Current focus: Integrating the Bouncy Castle crypto provider library using Scala with a Domain Specific Language for generic GUI and console functionality. Long-term vision includes integration with Shapeless and Ammonite REPL, with plans to utilize Free Applicatives for theoretical foundation.
+
+USB Guitar
+Developed during a Virtual and Augmented Reality class, this project combines music and computing. Using an Arduino, modified a Western guitar for USB connectivity, enabling real-time fingering position detection.
+
+Created a guitar teacher application using marker-based computer vision with OpenCV for guitar position tracking and Openframeworks for OpenGL integration. The app visualizes chords and scale information directly on the guitar fretboard in the video feed. Full project documentation available at simlei.github.io/VAR2017Project.
+```
+
+The current occupation is moreover, "Spleenlab GmbH", "Software and Algorithms Engineer", "May 2023-Present", "Developing algorithms for autonomous systems and robotics, one standalone product and one successful complex algorithm transcription to C99 and complete coverage with tests"; before that: "Esslinger IT Consulting", "Project Lead JCrypTool, core development and dev-ops". Also adapt it so that it's clear that I'm not a student anymore but a professional with wide experience. make the "technical skills" section a bit less whimsy; my strengths are "devops, bash, C++, rust, C99, Scala 2/3, Java, GUI-frameworks, maven, docker, git, linux, software architecture" -- all these are proficient to expert. the second category should be the other keyword, but a bit boiled down.

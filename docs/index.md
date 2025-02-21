@@ -76,29 +76,36 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - ✅ Bash tooling library enhanced
 
 2. Current Task: Graph Background Integration & Enhancement
-   - Objective: Get graph background working and visible on landing page with proper theme integration
+   - Objective: Get graph background working with proper Brownian motion and hex grid structure
    - Current State:
-     * GraphBackground component exists but is not visible on landing page
-     * Component imported but not rendering (needs investigation)
-     * Basic animation system implemented but untested in production
-     * Using hardcoded colors instead of theme colors
-   - Required Changes:
-     * Debug why GraphBackground is not visible despite being imported
-     * Investigate proper Next.js/React practices for canvas background
-     * Ensure correct z-index and positioning in page layout
-     * Import and use theme colors from Tailwind config
-     * Match background opacity with page style
-     * Test animation performance in production
-   - Investigation Points:
-     * Component mounting/lifecycle in Next.js
-     * Canvas initialization timing
-     * Layer ordering and CSS stacking context
-     * React 18 strict mode compatibility
-   - Key Files:
-     * `/website/components/GraphBackground.tsx` - Main visualization (currently not visible)
-     * `/website/pages/index.tsx` - Landing page integration needs fixing
-     * `/website/tailwind.config.js` - Color definitions to use
-     * `/website/styles/globals.css` - Check for conflicting styles
+     * GraphBackground component is visible and integrated
+     * Investigating force field and Brownian motion interaction
+     * Found potential issue with force application scaling
+     * Currently testing with disabled hex grid for debugging
+   - Debug Status:
+     * Issue identified: Double deltaTime scaling in force application
+     * Temporary solution: Disabled hex grid to isolate Brownian motion
+     * Modified force application to normalize to 60fps
+     * Increased base Brownian motion speed for testing
+   - Current Debug Configuration:
+     * Only Brownian motion active (speed: 0.5)
+     * Hex grid and upward forces temporarily disabled
+     * Force application normalized to 60fps
+     * Added velocity vector visualization
+   - Next Steps:
+     * Confirm if force application fix resolves the motion issue
+     * Re-enable hex grid and upward forces once confirmed
+     * Fine-tune force balance between grid and motion
+     * Remove debug visualization
+   - Key Files Modified:
+     * `/website/components/forces/ForceField.ts` - Force application fix
+     * `/website/components/forces/PositionController.ts` - Force field configuration
+     * `/website/components/GraphBackground.tsx` - Debug visualization
+   - Pending Tasks:
+     * Re-enable and balance hex grid force field
+     * Remove temporary debug configuration
+     * Fine-tune motion parameters for production
+     * Test performance with all forces active
 
 3. Testing & Development:
    ```bash

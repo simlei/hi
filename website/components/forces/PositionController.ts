@@ -57,29 +57,11 @@ export class PositionController {
     const adjustedUpwardWeight = (1 - hexWeight) * remainingWeight;
 
     return new PositionController([
-      // Brownian motion (additive) - speed scaled by field strength
+      // Only Brownian motion for testing
       {
-        field: forceFields.brownianMotion(brownianSpeed),
-        weight: brownianWeight,
+        field: forceFields.brownianMotion(0.5), // Increased speed to account for new force application
+        weight: 1.0,
         type: 'additive'
-      },
-      // Gentle upward flow (additive)
-      {
-        field: (pos) => ({
-          magnitude: upwardBias,
-          direction: { x: 0, y: -1 }
-        }),
-        weight: adjustedUpwardWeight,
-        type: 'additive'
-      },
-      // Hex grid alignment (restrictive)
-      {
-        field: forceFields.hexGrid(gridSize, {
-          aspect: cellAspect,
-          scale: cellScale
-        }),
-        weight: adjustedHexWeight,
-        type: 'restrictive'
       }
     ]);
   }

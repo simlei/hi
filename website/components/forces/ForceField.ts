@@ -292,14 +292,18 @@ export const applyForce = (
   deltaTime: number,
   damping: number = 0.98
 ) => {
-  vertex.vx += force.direction.x * force.magnitude * deltaTime;
-  vertex.vy += force.direction.y * force.magnitude * deltaTime;
+  // Scale force by deltaTime
+  const scaledForce = force.magnitude * deltaTime * 60; // Normalize to 60fps
+
+  // Apply force directly to velocity
+  vertex.vx += force.direction.x * scaledForce;
+  vertex.vy += force.direction.y * scaledForce;
   
   // Apply damping
   vertex.vx *= damping;
   vertex.vy *= damping;
   
-  // Update position
-  vertex.x += vertex.vx * deltaTime;
-  vertex.y += vertex.vy * deltaTime;
+  // Update position (no additional deltaTime scaling needed)
+  vertex.x += vertex.vx;
+  vertex.y += vertex.vy;
 };

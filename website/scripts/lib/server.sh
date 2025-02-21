@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 # Function to get base path from next.config.js
-get_base_path() {
-    node -e "const config = require('$WEBSITE_DIR/next.config.js'); console.log(config.basePath || '')"
+get_server_base_path() {
+    # Use the base path from env.sh
+    source "$LIB_DIR/env.sh"
+    get_base_path
 }
 
 # Function to get server URL
@@ -11,7 +13,7 @@ get_server_url() {
     local path="${2:-}"
     local base_url="http://localhost:$port"
     local base_path
-    base_path=$(get_base_path)
+    base_path=$(get_server_base_path)
     
     if [[ -n "$path" ]]; then
         echo "${base_url}${base_path}${path}"
@@ -75,7 +77,7 @@ stop_server() {
 run_server_with_cleanup() {
     local port="${1:-$DEFAULT_PORT}"
     local base_path
-    base_path=$(get_base_path)
+    base_path=$(get_server_base_path)
     trap stop_server EXIT
     start_dev_server "$port"
     

@@ -79,14 +79,20 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - Objective: Get graph background working with proper Brownian motion and hex grid structure
    - Current State:
      * GraphBackground component is visible and integrated
-     * Investigating force field and Brownian motion interaction
-     * Found potential issue with force application scaling
+     * Implementing proper physics-based motion system
+     * Added mass and inertia to vertices
      * Currently testing with disabled hex grid for debugging
+   - Physics Implementation:
+     * Each vertex has random mass (0.8 to 1.2)
+     * Force application uses F = ma
+     * Proper time-step based integration
+     * Added air drag proportional to v²
+     * Inertia tracking for each vertex
    - Debug Status:
-     * Issue identified: Double deltaTime scaling in force application
-     * Temporary solution: Disabled hex grid to isolate Brownian motion
-     * Modified force application to normalize to 60fps
-     * Increased base Brownian motion speed for testing
+     * Temporary solution: Disabled hex grid to isolate motion
+     * Added mass/inertia visualization
+     * Using proper deltaTime integration
+     * Testing new physics-based motion
    - Current Debug Configuration:
      * Only Brownian motion active (speed: 0.5)
      * Hex grid and upward forces temporarily disabled
@@ -102,10 +108,13 @@ Each task or component has its own directory under `/workspace/docs/` with:
      * `/website/components/forces/PositionController.ts` - Force field configuration
      * `/website/components/GraphBackground.tsx` - Debug visualization
    - Pending Tasks:
-     * Re-enable and balance hex grid force field
-     * Remove temporary debug configuration
-     * Fine-tune motion parameters for production
-     * Test performance with all forces active
+     * Verify physics-based motion behavior
+     * Re-enable hex grid with proper force scaling
+     * Adjust field strength relative to vertex mass
+     * Fine-tune drag and damping coefficients
+     * Remove debug visualization
+     * Test performance with physics system
+     * Document physics parameters for future reference
 
 3. Testing & Development:
    ```bash

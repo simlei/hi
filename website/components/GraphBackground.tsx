@@ -124,16 +124,22 @@ export function GraphBackground() {
         Math.random() * canvas.width * 0.5 : 
         canvas.width * 0.5 + Math.random() * canvas.width * 0.5;
       
+      // Generate random mass around 1.0 (0.8 to 1.2)
+      const mass = 0.8 + Math.random() * 0.4;
+      
       return {
         x: xCluster + (Math.random() - 0.5) * canvas.width * 0.3,
         y: yMin + Math.random() * (yMax - yMin),
         vx: 0, // Let force field determine velocities
         vy: 0,
+        mass,
+        inertia: 0, // Initial inertia is 0 (at rest)
         activity: 0,
         // Individual pulsation state
         pulsePhase: Math.random() * Math.PI * 2,
         pulseFreq: PARAMS.pulseFreqMin + Math.random() * (PARAMS.pulseFreqMax - PARAMS.pulseFreqMin),
-        baseSize: PARAMS.baseSizeMin + Math.random() * (PARAMS.baseSizeMax - PARAMS.baseSizeMin),
+        // Base size proportional to mass for visual feedback
+        baseSize: PARAMS.baseSizeMin + (mass - 0.8) / 0.4 * (PARAMS.baseSizeMax - PARAMS.baseSizeMin),
       };
     });
 

@@ -16,6 +16,8 @@ export interface Forceable {
   y: number;
   vx: number;
   vy: number;
+  mass: number;     // Mass of the vertex (around 1.0)
+  inertia: number;  // Current inertial energy
 }
 
 // Type for force field functions
@@ -285,25 +287,54 @@ export const forceFields = {
   ): ForceField => forceFn
 };
 
-// Apply forces to a vertex
+// Physics constants
+const PHYSICS = {
+  INERTIA_SCALE: 1000,    // Scale factor for inertia calculations
+  MIN_VELOCITY: 0.0001,   // Minimum velocity magnitude to consider
+  BASE_TIMESTEP: 1/60,    // Base timestep for 60fps
+  DRAG_COEFF: 0.02       // Air drag coefficient
+};
+
+// Apply forces to a vertex using proper physics
 export const applyForce = (
   vertex: Forceable,
   force: Force,
   deltaTime: number,
   damping: number = 0.98
 ) => {
-  // Scale force by deltaTime
-  const scaledForce = force.magnitude * deltaTime * 60; // Normalize to 60fps
+  // Normalize timestep relative to our base rate
+  const dt = deltaTime / PHYSICS.BASE_TIMESTEP;
+  
+  // Calculate current velocity magnitude and direction
+  const currentSpeed = Math.sqrt(vertex.vx * vertex.vx + vertex.vy * vertex.vy);
+  const currentInertia = 0.5 * vertex.mass * currentSpeed * currentSpeed;
+  
+  // Apply force using F = ma
+  const acceleration = {
+    x: force.direction.x * force.magnitude / vertex.mass,
+    y: force.direction.y * force.magnitude / vertex.mass
+  };
 
-  // Apply force directly to velocity
-  vertex.vx += force.direction.x * scaledForce;
-  vertex.vy += force.direction.y * scaledForce;
+  // Calculate drag force (proportional to velocity squared)
+  const dragMagnitude = currentSpeed * currentSpeed * PHYSICS.DRAG_COEFF;
+  const drag = currentSpeed > PHYSICS.MIN_VELOCITY ? {
+    x: -vertex.vx / currentSpeed * dragMagnitude,
+    y: -vertex.vy / currentSpeed * dragMagnitude
+  } : { x: 0, y: 0 };
+
+  // Update velocity using acceleration and drag (v = v0 + at)
+  vertex.vx += (acceleration.x + drag.x / vertex.mass) * dt;
+  vertex.vy += (acceleration.y + drag.y / vertex.mass) * dt;
   
-  // Apply damping
-  vertex.vx *= damping;
-  vertex.vy *= damping;
+  // Apply damping as a general energy loss factor
+  vertex.vx *= Math.pow(damping, dt);
+  vertex.vy *= Math.pow(damping, dt);
   
-  // Update position (no additional deltaTime scaling needed)
-  vertex.x += vertex.vx;
-  vertex.y += vertex.vy;
+  // Update position (x = x0 + vt)
+  vertex.x += vertex.vx * dt;
+  vertex.y += vertex.vy * dt;
+  
+  // Update inertia
+  const newSpeed = Math.sqrt(vertex.vx * vertex.vx + vertex.vy * vertex.vy);
+  vertex.inertia = 0.5 * vertex.mass * newSpeed * newSpeed;
 };

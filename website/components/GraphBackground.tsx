@@ -55,19 +55,19 @@ export function GraphBackground() {
       vertexSpeed: 0.3,
       maxDistance: 250, // Slightly increased from 230
       edgeBaseWidth: 0.93,
-      edgeActivityMultiplier: 2.8, // Increased from 2.4
+      edgeActivityMultiplier: 2.8,
       baseAlpha: 0.35,
-      activityDecay: 0.005, // Slightly slower decay for longer pulses
+      activityDecay: 0.005,
       branchSpeed: 0.8,
-      branchSpawnChance: 0.18, // Increased from 0.15
+      branchSpawnChance: 0.18,
       // Edge animation parameters
-      edgePulseSpeed: 0.018, // Increased from 0.015
-      edgePulseAmount: 0.5, // Increased from 0.4
-      gradientSpeed: 0.004,
-      gradientLength: 0.5,
+      edgePulseSpeed: 0.018,
+      edgePulseAmount: 0.375, // Reduced from 0.5 (scaled by 3/4)
+      gradientSpeed: 0.04,
+      gradientLength: 0.3,
       // Activity parameters
       activityBoost: 1.8, // New: increases activity effect
-      activitySpreadProb: 0.65 // New: chance to spread activity
+      activitySpreadProb: 0.65, // New: chance to spread activity
       // Visual enhancement parameters
       innerGlowSize: 0.4,
       outerGlowIntensity: 0.8,
@@ -79,7 +79,7 @@ export function GraphBackground() {
       pulseFreqMax: 1.4,
       baseSizeMin: 0.7,
       baseSizeMax: 1.3,
-      activityBoost: 2.0, // Stronger activity influence on pulse
+      pulseActivityBoost: 2.0, // Stronger activity influence on pulse
       directionBias: Math.PI * 0.5,
       directionStrength: 0.7,
       traverseProb: (from: Vertex, to: Vertex) => {
@@ -174,7 +174,7 @@ export function GraphBackground() {
         if (vertex.y < 0 || vertex.y > canvas.height) vertex.vy *= -1;
 
         // Update pulsation
-        vertex.pulsePhase += PARAMS.pulseSpeed * vertex.pulseFreq * (1 + vertex.activity * PARAMS.activityBoost);
+        vertex.pulsePhase += PARAMS.pulseSpeed * vertex.pulseFreq * (1 + vertex.activity * PARAMS.pulseActivityBoost);
         if (vertex.pulsePhase > Math.PI * 2) vertex.pulsePhase -= Math.PI * 2;
 
         // Decay activity

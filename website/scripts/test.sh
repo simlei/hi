@@ -61,11 +61,28 @@ log_step "Running server test..."
 start_dev_server "$PORT"
 URL=$(get_server_url "$PORT")
 
-if curl -s "$URL" > /dev/null; then
-    log_success "Server test passed"
-    stop_server
-else
-    log_error "Server test failed"
+# Test main page
+log_step "Testing main page at $URL"
+if ! curl --fail -s "$URL" > /dev/null; then
+    log_error "Failed to access main page at $URL"
+    log_error "HTTP response:"
+    curl -v "$URL"
     stop_server
     exit 1
 fi
+
+# Test a few key pages
+for path in "/about" "/cv"; do
+    TEST_URL=$(get_server_url "$PORT" "$path")
+    log_step "Testing page at $TEST_URL"
+    if ! curl --fail -s "$TEST_URL" > /dev/null; then
+        log_error "Failed to access page at $TEST_URL"
+        log_error "HTTP response:"
+        curl -v "$TEST_URL"
+        stop_server
+        exit 1
+    fi
+done
+
+log_success "All server tests passed"
+stop_server

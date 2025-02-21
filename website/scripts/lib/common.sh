@@ -1,16 +1,36 @@
 #!/usr/bin/env bash
 
-# Common variables
-WEBSITE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-SCRIPTS_DIR="$WEBSITE_DIR/scripts"
-LIB_DIR="$SCRIPTS_DIR/lib"
-PID_FILE="/tmp/website-dev-server.pid"
-URL_FILE="/tmp/website-dev-server.url"
-DEFAULT_PORT=3000
+# Ensure we have absolute paths regardless of PWD
+readonly SCRIPT_PATH="${BASH_SOURCE[0]}"
+readonly SCRIPT_DIR="$(cd "$(dirname "${SCRIPT_PATH}")" && pwd)"
+readonly WEBSITE_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+readonly SCRIPTS_DIR="${WEBSITE_DIR}/scripts"
+readonly LIB_DIR="${SCRIPTS_DIR}/lib"
+
+# Runtime files (using mktemp for safety)
+readonly TEMP_DIR="$(mktemp -d)"
+readonly PID_FILE="${TEMP_DIR}/website-dev-server.pid"
+readonly URL_FILE="${TEMP_DIR}/website-dev-server.url"
+readonly LOG_FILE="${TEMP_DIR}/website-dev-server.log"
+
+# Configuration
+readonly DEFAULT_PORT=3000
+
+# Cleanup function
+cleanup() {
+    local exit_code=$?
+    [[ -d "${TEMP_DIR}" ]] && rm -rf "${TEMP_DIR}"
+    exit $exit_code
+}
+trap cleanup EXIT
 
 # Import other modules
 source "$LIB_DIR/log.sh"
 source "$LIB_DIR/deps_advanced.sh"
+source "$LIB_DIR/env.sh"
+
+# Setup environment
+setup_next_env "$DEFAULT_PORT"
 source "$LIB_DIR/server.sh"
 
 # Add .local paths to gitignore if not already there

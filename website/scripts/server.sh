@@ -2,8 +2,13 @@
 
 set -euo pipefail
 
-# Import common library
-source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
+# Get absolute paths
+readonly SERVER_SCRIPT_PATH="${BASH_SOURCE[0]}"
+readonly SERVER_SCRIPT_DIR="$(cd "$(dirname "${SERVER_SCRIPT_PATH}")" && pwd)"
+readonly SERVER_LIB_DIR="${SERVER_SCRIPT_DIR}/lib"
+
+# Import common library (which will set up other paths)
+source "${SERVER_LIB_DIR}/common.sh"
 
 # Parse arguments
 PORT=$DEFAULT_PORT

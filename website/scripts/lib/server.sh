@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 
+# Function to get base path from next.config.js
+get_base_path() {
+    node -e "const config = require('$WEBSITE_DIR/next.config.js'); console.log(config.basePath || '')"
+}
+
 # Function to get server URL
 get_server_url() {
     local port="${1:-$DEFAULT_PORT}"
-    echo "http://localhost:$port"
+    local path="${2:-}"
+    local base_url="http://localhost:$port"
+    local base_path
+    base_path=$(get_base_path)
+    
+    if [[ -n "$path" ]]; then
+        echo "${base_url}${base_path}${path}"
+    else
+        echo "${base_url}${base_path}"
+    fi
 }
 
 # Function to wait for server
@@ -35,7 +49,7 @@ start_dev_server() {
     fi
 
     log_step "Starting development server..."
-    PORT=$port npm run dev > server.log 2>&1 & echo $! > "$PID_FILE"
+    PORT=$port npm run dev > "${LOG_FILE}" 2>&1 & echo $! > "$PID_FILE"
 
     if ! wait_for_server "$port"; then
         log_error "Server failed to start"
@@ -60,8 +74,21 @@ stop_server() {
 # Function to run server with cleanup
 run_server_with_cleanup() {
     local port="${1:-$DEFAULT_PORT}"
+    local base_path
+    base_path=$(get_base_path)
     trap stop_server EXIT
     start_dev_server "$port"
-    log_success "Server running at $(get_server_url "$port")"
+    
+    # Show clear instructions
+    log_success "Development server is running"
+    log_step "Main website URL: $(get_server_url "$port")"
+    if [[ -n "$base_path" ]]; then
+        log_step "NOTE: This site uses a base path of '$base_path'"
+        log_step "      The root URL (http://localhost:$port) will show a 404 page"
+    fi
+    log_step "Available pages:"
+    log_step "  - Home:     $(get_server_url "$port")"
+    log_step "  - CV:       $(get_server_url "$port" "/cv")"
+    log_step "  - About:    $(get_server_url "$port" "/about")"
     wait
 }

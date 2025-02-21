@@ -1,0 +1,14 @@
+
+✅ Build completed successfully
+Usage: server.sh [options]
+
+Start the development server
+
+Options:
+    -p, --port PORT    Port to run the server on (default: 3000)
+    -u, --url-only    Only print the server URL
+    -h, --help       Show this help message
+ERROR: $?=1
+sleischnig@spleenlab-nb-sleischnig:~/sandbox/mb-ws/path/simlei_cv_hi/website/scripts$ ./dev.sh
+
+Important: determine paths from script location ($BASH_SOURCE)

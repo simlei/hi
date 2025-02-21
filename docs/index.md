@@ -43,6 +43,14 @@ Each task or component has its own directory under `/workspace/docs/` with:
 - Specific documentation files for different aspects
 - Task-specific guides and references
 
+### Key Guidelines
+
+1. [Bash Style Guide](/workspace/docs/bash_style.md)
+   - Location-independent script execution
+   - DRY principles and code reuse
+   - Robust error handling
+   - Common library structure
+
 ## Current Progress
 
 1. CV Website Implementation

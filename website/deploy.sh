@@ -88,9 +88,9 @@ if [[ $SKIP_TESTS -eq 0 ]]; then
     "$DEV_SCRIPT" test || { echo "❌ Tests failed"; exit 1; }
 fi
 
-# Build the site using dev.sh
+# Build the site using dev.sh with GitHub Pages environment
 echo "🏗️ Building site..."
-run_dev npm run build || { echo "❌ Build failed"; exit 1; }
+GITHUB_ACTIONS=true run_dev npm run build || { echo "❌ Build failed"; exit 1; }
 
 # Create and switch to gh-pages branch
 echo "🔄 Preparing gh-pages branch..."
@@ -113,6 +113,8 @@ git push -f origin gh-pages
 # Switch back to previous branch
 git checkout -
 
+# Get the actual site URL
+REPO_NAME=$(cd "$WEBSITE_DIR" && git config --get remote.origin.url | sed -n 's/.*\/\([^/]*\)\.git$/\1/p')
 echo "✨ Deployment complete!"
-echo "🌐 Site will be available at: https://<username>.github.io"
+echo "🌐 Site will be available at: https://simlei.github.io/$REPO_NAME"
 echo "⏳ Allow a few minutes for GitHub Pages to update"

@@ -2,12 +2,18 @@
 
 set -euo pipefail
 
-# Import common library
-source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
+# Get absolute paths
+readonly DEV_SCRIPT_PATH="${BASH_SOURCE[0]}"
+readonly DEV_SCRIPT_DIR="$(cd "$(dirname "${DEV_SCRIPT_PATH}")" && pwd)"
+readonly DEV_LIB_DIR="${DEV_SCRIPT_DIR}/lib"
+
+# Import common library (which will set up other paths)
+source "${DEV_LIB_DIR}/common.sh"
 
 # Parse arguments
 PORT=$DEFAULT_PORT
 COMMAND="server"
+SKIP_BUILD=0
 
 usage() {
     show_usage "$(basename "$0")" \
@@ -17,11 +23,11 @@ usage() {
     exec <cmd>         Run command with local environment
     -h, --help        Show this help message
 
-Server options:
-    -p, --port PORT   Port to run the server on (default: $DEFAULT_PORT)
+Common options:
+    --skip-build      Skip build step
 
-Test options:
-    --skip-build      Skip build test"
+Server options:
+    -p, --port PORT   Port to run the server on (default: $DEFAULT_PORT)"
 }
 
 # Parse command and options
@@ -31,6 +37,10 @@ while [[ $# -gt 0 ]]; do
             COMMAND="$1"
             shift
             break
+            ;;
+        --skip-build)
+            SKIP_BUILD=1
+            shift
             ;;
         -h|--help)
             usage
@@ -54,6 +64,15 @@ if ! ensure_project_deps "$WEBSITE_DIR"; then
     exit 1
 fi
 
+# Run build step unless skipped
+if [[ $SKIP_BUILD -eq 0 ]]; then
+    log_step "Running build step..."
+    if ! run_npm_cmd "build" "Build failed"; then
+        exit 1
+    fi
+    log_success "Build completed successfully"
+fi
+
 # Handle commands
 case "$COMMAND" in
     server)
@@ -62,7 +81,11 @@ case "$COMMAND" in
         ;;
     test)
         # Run tests
-        run_with_local_env "$SCRIPTS_DIR/test.sh" "$@"
+        if [[ $SKIP_BUILD -eq 1 ]]; then
+            run_with_local_env "$SCRIPTS_DIR/test.sh" --skip-build "$@"
+        else
+            run_with_local_env "$SCRIPTS_DIR/test.sh" "$@"
+        fi
         ;;
     exec)
         # Execute command with local environment

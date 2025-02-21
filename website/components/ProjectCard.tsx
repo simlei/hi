@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import Image from 'next/image';
 
 interface ProjectCardProps {
   title: string;
@@ -48,11 +49,17 @@ export function ProjectCard({ title, description, image, technologies, company }
           className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
         >
           <div className="aspect-w-4 aspect-h-3">
-            <img
-              src={image}
-              alt={title}
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={image}
+                alt={title}
+                fill
+                loading="lazy"
+                quality={90}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
@@ -90,11 +97,17 @@ export function ProjectCard({ title, description, image, technologies, company }
               >
                 <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
                   <div className="aspect-w-16 aspect-h-9 mb-4">
-                    <img
-                      src={image}
-                      alt={title}
-                      className="object-cover rounded-lg"
-                    />
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={image}
+                        alt={title}
+                        fill
+                        quality={90}
+                        sizes="(max-width: 1200px) 100vw, 75vw"
+                        priority
+                        className="object-cover rounded-lg"
+                      />
+                    </div>
                   </div>
                   
                   <div className="flex items-center justify-between mb-4">
@@ -103,11 +116,16 @@ export function ProjectCard({ title, description, image, technologies, company }
                     </Dialog.Title>
                     {company && (
                       <div className="flex items-center">
-                        <img
-                          src={company.logo}
-                          alt={company.name}
-                          className="h-8 w-auto"
-                        />
+                        <div className="relative h-8 w-32">
+                          <Image
+                            src={company.logo}
+                            alt={company.name}
+                            fill
+                            quality={90}
+                            sizes="128px"
+                            className="object-contain"
+                          />
+                        </div>
                         <span className="ml-2 text-gray-600">{company.name}</span>
                       </div>
                     )}

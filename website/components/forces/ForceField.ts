@@ -153,6 +153,41 @@ export const forceFields = {
     };
   },
 
+  // Brownian motion with constant speed but changing direction
+  brownianMotion: (
+    speed: number,
+    directionChangeRate: number = 0.5
+  ): ForceField => {
+    // Store individual vertex angles
+    const vertexAngles = new Map<Forceable, number>();
+    
+    return (pos, time, context) => {
+      if (!context?.currentVertex) {
+        return { magnitude: 0, direction: { x: 0, y: 0 } };
+      }
+
+      // Initialize or get current angle for this vertex
+      if (!vertexAngles.has(context.currentVertex)) {
+        vertexAngles.set(context.currentVertex, Math.random() * Math.PI * 2);
+      }
+      let angle = vertexAngles.get(context.currentVertex)!;
+
+      // Slowly change direction using time and noise
+      const noiseOffset = Math.sin(time * directionChangeRate + context.currentVertex.x * 0.1) * 
+                         Math.cos(time * directionChangeRate + context.currentVertex.y * 0.1);
+      angle += noiseOffset * 0.1;
+      vertexAngles.set(context.currentVertex, angle);
+
+      return {
+        magnitude: speed,
+        direction: {
+          x: Math.cos(angle),
+          y: Math.sin(angle)
+        }
+      };
+    };
+  },
+
   // Custom force field from lambda
   custom: (
     forceFn: (pos: Vector2D, time: number, context?: ForceFieldContext) => Force

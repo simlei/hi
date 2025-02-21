@@ -33,6 +33,8 @@ export class PositionController {
       hexWeight?: number;     // Weight of hex grid vs upward force
       cellAspect?: number;    // Vertical stretch factor (1 = regular hexagons)
       cellScale?: number;     // Overall scale multiplier
+      brownianSpeed?: number; // Speed of Brownian motion
+      brownianWeight?: number; // Weight of Brownian motion vs other forces
     } = {}
   ): PositionController {
     const {
@@ -40,8 +42,11 @@ export class PositionController {
       upwardBias = 0.3,
       hexWeight = 0.4,
       cellAspect = 1,
-      cellScale = 1
+      cellScale = 1,
+      brownianSpeed = 0.15,
+      brownianWeight = 0.25
     } = config;
+    const totalWeight = hexWeight + brownianWeight + (1 - hexWeight - brownianWeight);
     return new PositionController([
       // Hex grid alignment
       {
@@ -51,13 +56,18 @@ export class PositionController {
         }),
         weight: hexWeight
       },
+      // Brownian motion
+      {
+        field: forceFields.brownianMotion(brownianSpeed),
+        weight: brownianWeight
+      },
       // Gentle upward flow
       {
         field: (pos) => ({
           magnitude: upwardBias,
           direction: { x: 0, y: -1 }
         }),
-        weight: 1 - hexWeight
+        weight: 1 - hexWeight - brownianWeight
       }
     ]);
   }
@@ -73,7 +83,8 @@ export class PositionController {
         {
           canvasWidth: context.width,
           canvasHeight: context.height,
-          vertices: objects
+          vertices: objects,
+          currentVertex: obj
         }
       );
       applyForce(obj, force, context.deltaTime, this.damping);

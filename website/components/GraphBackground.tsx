@@ -890,7 +890,7 @@ export function GraphBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none opacity-60 -z-10"
+      className="fixed inset-0 w-full h-full pointer-events-none opacity-100 -z-10"
       style={{ 
         filter: 'blur(1px) brightness(1.2)',
         willChange: 'transform', // Optimize for animations

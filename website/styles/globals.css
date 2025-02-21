@@ -10,12 +10,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: transparent;
 }
 
 @layer base {
@@ -31,6 +26,14 @@ body {
 @layer components {
   .project-card {
     @apply transform transition-all duration-300 hover:scale-105;
+  }
+
+  .project-card-content {
+    @apply bg-white/[0.55] backdrop-filter;
+  }
+
+  .project-card-image {
+    @apply opacity-[0.55];
   }
 
   .skill-tag {

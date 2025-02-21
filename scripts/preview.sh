@@ -10,6 +10,16 @@ echo "🌐 Setting up website preview..."
 
 # Build and serve using dev.sh
 echo "🏗️ Building and serving website..."
+
+kill_port() {
+    port=$1
+    pid=$(lsof -t -i:$port)
+    if [ -n "$pid" ]; then
+      kill -9 $pid
+    fi
+}
+
+kill_port 8000 || true
 "$DEV_SCRIPT" server --port 8000
 
 # The dev.sh script handles server management and cleanup

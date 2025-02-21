@@ -33,7 +33,7 @@ wait_for_server() {
     log_step "Waiting for server to start..."
     while [[ $attempt -le $max_attempts ]]; do
         log_step "Checking server status... $url"
-        if curl --fail -s "$url"; then
+        if curl --fail -s "$url" >/dev/null; then
             echo "$url" > "$URL_FILE"
             return 0
         fi
@@ -97,5 +97,20 @@ run_server_with_cleanup() {
     log_step "  - Home:     $(get_server_url "$port")"
     log_step "  - CV:       $(get_server_url "$port" "/cv")"
     log_step "  - About:    $(get_server_url "$port" "/about")"
-    wait
+    # echo "DDD: waiting for $(cat "$PID_FILE")..."
+    wait $(cat "$PID_FILE") || {
+        log_error "Server failed to start"
+        stop_server
+
+        echo "DBG: server log: <<<<<<<<<<<<<<<<" >&2
+        cat "${LOG_FILE}" >&2
+        echo "DBG: server log: >>>>>>>>>>>>>>>>" >&2
+
+        exit 1
+    }
+
+    echo "DBG: server log: <<<<<<<<<<<<<<<<" >&2
+    cat "${LOG_FILE}" >&2
+    echo "DBG: server log: >>>>>>>>>>>>>>>>" >&2
+    # echo "DDD: fin"
 }

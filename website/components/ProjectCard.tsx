@@ -47,7 +47,7 @@ export function ProjectCard({ title, description, image, technologies, company }
       >
         <div
           onClick={() => setIsOpen(true)}
-          className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm border border-primary-100 w-full transform hover:-rotate-1 hover:scale-[1.02]"
+          className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 project-card-content border border-primary-100 w-full transform hover:-rotate-1 hover:scale-[1.02]"
         >
           <div className="flex flex-col md:flex-row">
             <div className="md:w-1/3 relative h-48">
@@ -57,7 +57,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                   alt={title}
                   width={800}
                   height={600}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300 project-card-image"
                 />
               </div>
             </div>
@@ -83,7 +83,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                       alt={company.name}
                       width={400}
                       height={200}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain project-card-image"
                     />
                   </div>
                   <span className="ml-2 text-primary-600 text-sm">{company.name}</span>
@@ -128,7 +128,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                           alt={title}
                           width={800}
                           height={600}
-                          className="w-full h-auto object-cover"
+                          className="w-full h-auto object-cover project-card-image"
                         />
                       </div>
                       {company && (
@@ -139,7 +139,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                               alt={company.name}
                               width={400}
                               height={200}
-                              className="w-full h-full object-contain"
+                              className="w-full h-full object-contain project-card-image"
                             />
                           </div>
                           <span className="ml-4 text-primary-700 font-medium">{company.name}</span>

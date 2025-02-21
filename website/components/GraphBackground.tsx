@@ -51,8 +51,8 @@ export function GraphBackground() {
       upwardBias: 0.2,  // Strength of upward force
       hexWeight: 0.35,  // Weight of hex grid vs upward force
       cellAspect: 0.9,  // Slightly compressed vertically
-      cellScale: 1.0,    // Overall scale multiplier
-    );
+      cellScale: 1.0    // Overall scale multiplier
+    });
 
     // Visualization parameters
     interface VertexState extends Vertex {

@@ -168,6 +168,14 @@ fi
 
 log_success "All static export tests passed"
 
+# Run Jest unit tests
+log_step "Running unit tests..."
+if ! npm test -- --watchAll=false --ci; then
+    log_error "Unit tests failed"
+    exit 1
+fi
+log_success "Unit tests passed"
+
 # Run runtime tests unless skipped
 if [[ $SKIP_RUNTIME -eq 0 ]]; then
     RUNTIME_TIMEOUT=$RUNTIME_TIMEOUT CI_MODE=$CI_MODE "$(dirname "${BASH_SOURCE[0]}")/runtime-test.sh"

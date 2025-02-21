@@ -1,1 +1,58 @@
-w.r.t. the visualization in the background on the landing page, it is showing, but only very small moving lumps. extract out meaningful size- and other visual-param variables so that they can be edited next to each other, and increase size of displayed objects / zoom / whatever is convnient, by ca. 15x.
+This is an error that appears in the browser e.g. in localhost:8000 during local deployment. This must be a bug in paths or whatever because it worked a minute ago.
+I was not happy to see that the "runtime error test script" within dev.sh does not catch that. maybe inspect the content of the returned HTML by keywords like "ServerError".
+
+Further, run then the `dev.sh test` routine which should include the runtime test, and work until the test passes i.e. the GUI and the graph / forcefield combination works as desired.
+
+Output:
+
+Server Error
+TypeError: __webpack_require__.a is not a function
+
+This error happened while generating the page. Any console logs will be displayed in the terminal window.
+Call Stack
+eval
+webpack-internal:/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js (1:21)
+./node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js?kind=PAGES&page=%2F&preferredRegion=&absolutePagePath=.%2Fpages%2Findex.tsx&absoluteAppPath=private-next-pages%2F_app&absoluteDocumentPath=private-next-pages%2F_document&middlewareConfigBase64=e30%3D!
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/.next/server/pages/index.js (33:1)
+__webpack_require__
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/.next/server/webpack-runtime.js (33:42)
+__webpack_exec__
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/.next/server/pages/index.js (1338:39)
+<unknown>
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/.next/server/pages/index.js (1339:28)
+Object.<anonymous>
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/.next/server/pages/index.js (1342:3)
+Module._compile
+node:internal/modules/cjs/loader (1358:14)
+Module._extensions..js
+node:internal/modules/cjs/loader (1416:10)
+Module.load
+node:internal/modules/cjs/loader (1208:32)
+Module._load
+node:internal/modules/cjs/loader (1024:12)
+Module.require
+node:internal/modules/cjs/loader (1233:19)
+require
+node:internal/modules/helpers (179:18)
+requirePage
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/require.js (112:75)
+<unknown>
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/load-components.js (80:84)
+process.processTicksAndRejections
+node:internal/process/task_queues (95:5)
+async loadComponentsImpl
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/load-components.js (80:26)
+async DevServer.findPageComponentsImpl
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/next-server.js (439:36)
+async DevServer.findPageComponents
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/dev/next-dev-server.js (556:20)
+async DevServer.renderPageComponent
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/base-server.js (1439:24)
+async DevServer.renderToResponseImpl
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/base-server.js (1495:32)
+async DevServer.pipeImpl
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/base-server.js (735:25)
+async DevServer.handleCatchallRenderRequest
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/next-server.js (703:13)
+async DevServer.handleRequestImpl
+file:///home/sleischnig/sandbox/mb-ws/path/simlei_cv_hi/website/node_modules/next/dist/server/base-server.js (647:17)

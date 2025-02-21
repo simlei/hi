@@ -70,20 +70,20 @@ export function GraphBackground() {
       cellAspect: 1.0,  // Slightly compressed vertically
       cellScale: 1.0,   // Overall scale multiplier
       brownianFactor: 2.60, // Reduced random motion
-      baseForce: 30.0,   // Reduced force for calmer movement
+      baseForce: 22.0,   // Reduced force for calmer movement
     });
 
     // Create lightning controller
     const lightningController = new LightningController({
-      medianInterval: 4.0,  // Much longer interval between lightnings
-      burstModeProb: 0.5,   // Lower chance to enter burst mode
-      burstDuration: 3.0,   // Longer burst mode duration
+      medianInterval: 5.0,  // Much longer interval between lightnings
+      burstModeProb: 0.3,   // Lower chance to enter burst mode
+      burstDuration: 2.0,   // Longer burst mode duration
       quietDuration: 8.0,  // Much longer quiet periods
-      forkingProb: 0.8,    // 60% chance to fork at each node
+      forkingProb: 0.6,    // 60% chance to fork at each node
       maxForks: 40,        // Maximum number of forks per lightning
-      decayFactor: 0.9,   // Path selection decay factor
-      propagationDuration: 0.5,  // Initial propagation takes 0.6 seconds
-      fadeDuration: 0.25,        // Fade to orange takes all in all ~1sec
+      decayFactor: 0.8,   // Path selection decay factor
+      propagationDuration: 0.65,  // Initial propagation takes 0.6 seconds
+      fadeDuration: 0.35,        // Fade to orange takes all in all ~1sec
       colorVariations: [
         {
           start: 'rgb(255, 120, 120)', // Bright red

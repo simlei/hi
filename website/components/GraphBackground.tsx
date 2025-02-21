@@ -8,6 +8,7 @@ interface Vertex {
   vy: number;
   mass: number;
   activity: number;
+  index: number;  // Store the vertex index for familiarity tracking
 }
 
 interface Edge {
@@ -16,6 +17,8 @@ interface Edge {
   activity: number;
   pulsePhase: number;
   gradientPhase: number;
+  lastValidTime: number;     // Last time this edge was considered valid
+  lastInvalidTime: number;   // Last time this edge was considered invalid
   branches: Array<{
     x: number;
     y: number;
@@ -23,6 +26,14 @@ interface Edge {
     vy: number;
     life: number;
   }>;
+}
+
+// Track potential edges that are being considered for creation
+interface PotentialEdge {
+  from: number;
+  to: number;
+  firstValidTime: number;  // When this potential edge first became valid
+  lastValidTime: number;   // Last time this edge was considered valid
 }
 
 import { PositionController } from './forces/PositionController';
@@ -53,26 +64,26 @@ export function GraphBackground() {
 
     // Create position controller with hex grid
     const positionController = PositionController.createHexGrid({
-      gridSize: 48,     // Base size of hex cells (increased by 1.2x)
-      upwardBias: 0.25, // Slightly reduced upward force
-      hexWeight: 0.30,  // Increased grid influence for more stability
+      gridSize: 400,     // Base size of hex cells (increased by 1.2x)
+      upwardBias: 0.10, // Slightly reduced upward force
+      hexWeight: 0.20,  // Increased grid influence for more stability
       cellAspect: 1.0,  // Slightly compressed vertically
       cellScale: 1.0,   // Overall scale multiplier
-      brownianFactor: 2.5, // Reduced random motion
-      baseForce: 6.0,   // Reduced force for calmer movement
+      brownianFactor: 2.60, // Reduced random motion
+      baseForce: 30.0,   // Reduced force for calmer movement
     });
 
     // Create lightning controller
     const lightningController = new LightningController({
-      medianInterval: 3.0,  // Median time between lightnings in seconds
-      burstModeProb: 0.3,   // 30% chance to enter burst mode
-      burstDuration: 2.0,   // Burst mode lasts 2 seconds
-      quietDuration: 5.0,   // Quiet mode lasts 5 seconds
-      forkingProb: 0.6,    // 60% chance to fork at each node
-      maxForks: 14,        // Maximum number of forks per lightning
-      decayFactor: 0.85,   // Path selection decay factor
-      propagationDuration: 0.6,  // Initial propagation takes 0.6 seconds
-      fadeDuration: 0.4,        // Fade to orange takes 4 seconds
+      medianInterval: 4.0,  // Much longer interval between lightnings
+      burstModeProb: 0.5,   // Lower chance to enter burst mode
+      burstDuration: 3.0,   // Longer burst mode duration
+      quietDuration: 8.0,  // Much longer quiet periods
+      forkingProb: 0.8,    // 60% chance to fork at each node
+      maxForks: 40,        // Maximum number of forks per lightning
+      decayFactor: 0.9,   // Path selection decay factor
+      propagationDuration: 0.5,  // Initial propagation takes 0.6 seconds
+      fadeDuration: 0.25,        // Fade to orange takes all in all ~1sec
       colorVariations: [
         {
           start: 'rgb(255, 120, 120)', // Bright red
@@ -115,59 +126,81 @@ export function GraphBackground() {
       decay: number;          // How quickly pulse decays with distance
     }
 
+    // Familiarity tracking system
+    interface FamiliarityRecord {
+      lastSeen: number;      // Last time these nodes were in proximity
+      encounterCount: number; // Number of times nodes have been in proximity
+    }
+
+    // Map to store familiarity between nodes: "nodeA,nodeB" -> FamiliarityRecord
+    const familiarityMap = new Map<string, FamiliarityRecord>();
+
     const PARAMS = {
-      numVertices: 80, // More nodes for wider coverage
-      vertexBaseRadius: 0.52, // Increased for 1.2x zoom
+      numVertices: 40, // More nodes for wider coverage
+      vertexBaseRadius: 2.0, // Increased for 1.2x zoom
       vertexGlowMultiplier: 2.8,
-      vertexSpeed: 0.08, // Reduced for calmer movement
-      maxDistance: 180, // Adjusted for 1.2x zoom
-      edgeBaseWidth: 1.20, // Adjusted for 1.2x zoom
-      edgeActivityMultiplier: 1.0, // Reduced activity
-      baseAlpha: 0.30, // Slightly reduced for calmer look
-      activityDecay: 0.02, // Faster decay for less persistent activity
-      branchSpeed: 0.4, // Slower branches
-      branchSpawnChance: 0.03, // Fewer branches
+      vertexSpeed: 0.02, // Reduced for calmer movement
+      maxDistance: 370, // Adjusted for 1.2x zoom
+      edgeBaseWidth: 2.0, // Adjusted for 1.2x zoom
+      edgeActivityMultiplier: 0.8, // Increased activity for smoother transitions
+      // Familiarity system parameters
+      familiarityDecayTime: 5.0,  // Time in seconds before familiarity starts decaying
+      familiarityMaxAge: 120.0,    // Time in seconds after which familiarity is forgotten
+      edgePreferenceWeight: 0.3,   // Weight of familiarity in connection probability (0-1)
+      // Edge debouncing parameters
+      edgeRemovalDelay: 1.0,      // Time in seconds an edge must be invalid before removal
+      edgeCreationDelay: 0.5,     // Time in seconds a potential edge must be valid before creation
+      baseAlpha: 0.45, // Increased base opacity for more consistent visibility
+      activityDecay: 2.0, // Faster decay for less persistent activity
+      branchSpeed: 0.5, // Slower branches
+      branchSpawnChance: 0.01, // Fewer branches
       // Edge animation parameters
-      edgePulseSpeed: 0.003, // Slower pulse
-      edgePulseAmount: 0.15, // Reduced pulse intensity
-      gradientSpeed: 0.002, // Slower gradient movement
+      edgePulseSpeed: 0.002, // Slower pulse
+      edgePulseAmount: 0.12, // Reduced pulse intensity
+      gradientSpeed: 0.5, // Slower gradient movement
       gradientLength: 0.5,
       // Activity parameters
-      activityBoost: 0.8, // Reduced activity boost
-      activitySpreadProb: 0.20, // Lower spread chance
+      activityBoost: 0.5, // Reduced activity boost
+      activitySpreadProb: 0.57, // Lower spread chance
       // Visual enhancement parameters
-      innerGlowSize: 0.9,
-      outerGlowIntensity: 1.6, // Slightly reduced intensity
-      edgeGradientStops: 3,
+      innerGlowSize: 0.8,
+      outerGlowIntensity: 1.4, // Slightly reduced intensity
+      edgeGradientStops: 10,
       // Pulsation parameters
       // Pulse wave parameters
-      pulseSpawnInterval: 18.0,    // Longer interval between pulses
-      pulseSpawnChance: 0.010,     // Lower chance for new pulses
-      pulseSpeed: 2.5,           // Slower pulse travel
-      pulseWavelength: 120,      // Longer wavelength for smoother effect
-      pulseDecay: 0.15,          // Faster decay for more localized effect
-      pulseStrengthMin: 0.4,     // Lower minimum strength
-      pulseStrengthMax: 0.8,     // Lower maximum strength
+      pulseSpawnInterval: 5.0,    // Much longer interval between pulses
+      pulseSpawnChance: 0.01,     // Much lower chance for new pulses
+      pulseSpeed: 10.0,           // Even slower pulse travel
+      pulseWavelength: 800,      // Longer wavelength for smoother effect
+      pulseDecay: 0.35,          // Faster decay for more localized effect
+      pulseStrengthMin: 0.1,     // Lower minimum strength
+      pulseStrengthMax: 0.9,     // Lower maximum strength
       // Size parameters
-      baseSizeMin: 0.5,
-      baseSizeMax: 1.5,
+      baseSizeMin: 0.3,
+      baseSizeMax: 2.5,
       directionBias: Math.PI * 0.5,
-      directionStrength: 0.8,
+      directionStrength: 0.4,
       // Connection probability based on distance and direction
       traverseProb: (from: Vertex, to: Vertex) => {
         const dx = to.x - from.x;
         const dy = to.y - from.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        // Distance factor: more likely to connect to closer nodes
-        const distanceFactor = Math.max(0, 1 - distance / PARAMS.maxDistance);
+        // Distance factor: stronger preference for closer nodes
+        const distanceFactor = Math.max(0, 1 - Math.pow(distance / PARAMS.maxDistance, 1.5));
         
         // Direction bias: slight preference for upward connections
         const upwardness = -dy / (distance + 0.1);
         const directionFactor = 0.7 + 0.3 * upwardness;
+
+        // Familiarity factor: nodes that have been frequently close get a bonus
+        const familiarityScore = getFamiliarityScore(from.index, to.index, timeRef.current);
+        const familiarityFactor = 1 + PARAMS.edgePreferenceWeight * familiarityScore;
         
-        // Combined probability with distance having more weight
-        return Math.pow(distanceFactor, 1.2) * directionFactor;
+        // Combined probability with distance still being the dominant factor
+        // but familiarity providing a significant boost when nodes are already close
+        const baseProb = Math.pow(distanceFactor, 1.8) * directionFactor;
+        return baseProb * familiarityFactor;
       }
     };
 
@@ -202,6 +235,7 @@ export function GraphBackground() {
         mass,
         inertia: 0, // Initial inertia is 0 (at rest)
         activity: 0,
+        index: i, // Store vertex index for familiarity tracking
         // Pulse propagation state
         pulseValue: 0,
         distanceFromSource: Infinity,
@@ -216,6 +250,9 @@ export function GraphBackground() {
 
     // Create edges between nearby vertices
     const edges: Edge[] = [];
+    
+    // Track potential edges that are being considered for creation
+    const potentialEdges: Map<string, PotentialEdge> = new Map();
     
     // Create adjacency list for graph traversal
     const adjacencyList: number[][] = Array(PARAMS.numVertices).fill(0).map(() => []);
@@ -299,32 +336,132 @@ export function GraphBackground() {
       });
     }
 
+    // Helper functions for familiarity system
+    function getFamiliarityKey(i: number, j: number): string {
+      return i < j ? `${i},${j}` : `${j},${i}`;
+    }
+
+    function updateFamiliarity(i: number, j: number, currentTime: number) {
+      const key = getFamiliarityKey(i, j);
+      const record = familiarityMap.get(key) || { lastSeen: currentTime, encounterCount: 0 };
+      record.lastSeen = currentTime;
+      record.encounterCount++;
+      familiarityMap.set(key, record);
+    }
+
+    function getFamiliarityScore(i: number, j: number, currentTime: number): number {
+      const key = getFamiliarityKey(i, j);
+      const record = familiarityMap.get(key);
+      if (!record) return 0;
+
+      const timeSinceLastSeen = currentTime - record.lastSeen;
+      
+      // Return 0 if beyond max age
+      if (timeSinceLastSeen > PARAMS.familiarityMaxAge) {
+        familiarityMap.delete(key);
+        return 0;
+      }
+
+      // Calculate decay factor
+      const decayStart = Math.max(0, timeSinceLastSeen - PARAMS.familiarityDecayTime);
+      const decayDuration = PARAMS.familiarityMaxAge - PARAMS.familiarityDecayTime;
+      const decayFactor = decayStart > 0 ? 
+        Math.max(0, 1 - (decayStart / decayDuration)) : 1;
+
+      // Normalize encounter count (cap at 10 for reasonable bounds)
+      const normalizedCount = Math.min(record.encounterCount, 10) / 10;
+
+      return normalizedCount * decayFactor;
+    }
+
     function updateEdges() {
-      // Clear existing edges and adjacency list
-      edges.length = 0;
+      const currentTime = timeRef.current;
+      
+      // Clear adjacency list but keep edges (we'll clean them up selectively)
       adjacencyList.forEach(list => list.length = 0);
-      edges.length = 0;
+
+      // Helper to check if an edge should exist
+      function shouldHaveEdge(i: number, j: number, distance: number): boolean {
+        if (distance >= PARAMS.maxDistance) return false;
+        const prob = PARAMS.traverseProb(vertices[i], vertices[j]);
+        return Math.random() < prob;
+      }
+
+      // Check all possible vertex pairs
       for (let i = 0; i < vertices.length; i++) {
         for (let j = i + 1; j < vertices.length; j++) {
           const dx = vertices[i].x - vertices[j].x;
           const dy = vertices[i].y - vertices[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
+          const edgeKey = i < j ? `${i},${j}` : `${j},${i}`;
+          
+          // Update familiarity when nodes are in proximity
           if (distance < PARAMS.maxDistance) {
-            // Apply directional bias using traversal probability
-            const prob = PARAMS.traverseProb(vertices[i], vertices[j]);
-            if (Math.random() < prob) {
-              edges.push({ 
-                from: i, 
-                to: j, 
-                activity: 0,
-                pulsePhase: 0,
-                gradientPhase: Math.random() * Math.PI * 2,
-                branches: []
-              });
-              // Update adjacency list for both vertices
+            updateFamiliarity(i, j, currentTime);
+          }
+
+          // Check if this pair should have an edge
+          const shouldExist = shouldHaveEdge(i, j, distance);
+          
+          // Find existing edge if any
+          const existingEdge = edges.find(e => 
+            (e.from === i && e.to === j) || (e.from === j && e.to === i));
+          
+          if (existingEdge) {
+            // Update edge validity timing
+            if (shouldExist) {
+              existingEdge.lastValidTime = currentTime;
+            } else {
+              existingEdge.lastInvalidTime = currentTime;
+            }
+            
+            // Remove edge if it's been invalid for too long
+            if (!shouldExist && 
+                (currentTime - existingEdge.lastValidTime) > PARAMS.edgeRemovalDelay) {
+              const idx = edges.indexOf(existingEdge);
+              edges.splice(idx, 1);
+            } else {
+              // Keep edge in adjacency list if it still exists
               adjacencyList[i].push(j);
               adjacencyList[j].push(i);
             }
+          } else if (shouldExist) {
+            // Check potential edge
+            const potentialEdge = potentialEdges.get(edgeKey);
+            
+            if (potentialEdge) {
+              potentialEdge.lastValidTime = currentTime;
+              
+              // Create edge if it's been valid long enough
+              if ((currentTime - potentialEdge.firstValidTime) > PARAMS.edgeCreationDelay) {
+                edges.push({ 
+                  from: i, 
+                  to: j, 
+                  activity: 0,
+                  pulsePhase: 0,
+                  gradientPhase: Math.random() * Math.PI * 2,
+                  lastValidTime: currentTime,
+                  lastInvalidTime: 0,
+                  branches: []
+                });
+                potentialEdges.delete(edgeKey);
+                
+                // Update adjacency list for new edge
+                adjacencyList[i].push(j);
+                adjacencyList[j].push(i);
+              }
+            } else {
+              // Start tracking new potential edge
+              potentialEdges.set(edgeKey, {
+                from: i,
+                to: j,
+                firstValidTime: currentTime,
+                lastValidTime: currentTime
+              });
+            }
+          } else {
+            // Remove from potential edges if it exists there
+            potentialEdges.delete(edgeKey);
           }
         }
       }
@@ -333,12 +470,19 @@ export function GraphBackground() {
     function animate() {
       if (!canvas || !ctx) return;
 
+      // Update time first
+      const currentTime = performance.now() / 1000;
+      const deltaTime = lastFrameTimeRef.current ? currentTime - lastFrameTimeRef.current : 0.016;
+      lastFrameTimeRef.current = currentTime;
+      timeRef.current += deltaTime;
+
       // Clear canvas with blur effect (slower fade)
       ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Randomly trigger vertex activity at bottom vertices (less frequent)
-      if (Math.random() < 0.006) {
+      // Randomly trigger vertex activity at bottom vertices (much less frequent)
+      // With 0.001 probability per frame at 60fps, this means about once every ~17 seconds
+      if (Math.random() < 0.001) {
         // Prefer vertices in the lower third of the canvas
         const candidates = vertices.filter(v => v.y > canvas.height * 0.67);
         if (candidates.length > 0) {
@@ -347,11 +491,32 @@ export function GraphBackground() {
         }
       }
 
-      // Update time and pulses
-      const currentTime = performance.now() / 1000;
-      const deltaTime = lastFrameTimeRef.current ? currentTime - lastFrameTimeRef.current : 0.016;
-      lastFrameTimeRef.current = currentTime;
-      timeRef.current += deltaTime;
+      // Reset all positions every 5 minutes
+      const resetInterval = 5 * 60; // 5 minutes in seconds
+      const currentCycle = Math.floor(timeRef.current / resetInterval);
+      const previousCycle = Math.floor((timeRef.current - deltaTime) / resetInterval);
+      if (currentCycle > previousCycle) {
+        // Distribute vertices in a new pattern
+        vertices.forEach((vertex, i) => {
+          const phi = (1 + Math.sqrt(5)) / 2;
+          const idx = (i + currentCycle * 13) / vertices.length; // Add cycle offset for variation
+          const angle = 2 * Math.PI * idx * phi;
+          const radius = Math.sqrt(idx) * Math.min(canvas.width, canvas.height) * 0.45;
+          
+          const baseX = canvas.width * 0.5 + Math.cos(angle) * radius;
+          const baseY = canvas.height * 0.5 + Math.sin(angle) * radius;
+          
+          const offset = Math.min(canvas.width, canvas.height) * 0.1;
+          const xOffset = (Math.random() - 0.5) * offset;
+          const yOffset = (Math.random() - 0.5) * offset;
+          
+          vertex.x = Math.max(0, Math.min(canvas.width, baseX + xOffset));
+          vertex.y = Math.max(0, Math.min(canvas.height, baseY + yOffset));
+          vertex.vx = 0;
+          vertex.vy = 0;
+          vertex.activity = 0;
+        });
+      }
 
       // Update pulse propagation
       updatePulses(timeRef.current);

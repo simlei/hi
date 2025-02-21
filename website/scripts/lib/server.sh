@@ -32,12 +32,17 @@ wait_for_server() {
 
     log_step "Waiting for server to start..."
     while [[ $attempt -le $max_attempts ]]; do
-        if curl -s "$url" > /dev/null; then
+        log_step "Checking server status... $url"
+        if curl --fail -s "$url"; then
             echo "$url" > "$URL_FILE"
             return 0
         fi
+        log_step "Server not ready yet... attempt nr. $attempt of $max_attempts"
         sleep 1
         ((attempt++))
+        if [[ $attempt -gt 5 ]]; then
+            log_step "Server not ready yet... attempt nr. $attempt of $max_attempts"
+        fi
     done
     return 1
 }

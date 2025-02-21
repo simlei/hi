@@ -13,6 +13,7 @@ log_step "Starting test server..."
 PORT=3333
 ./scripts/dev.sh server --port $PORT > server.log 2>&1 &
 SERVER_PID=$!
+log_step "Server PID: $SERVER_PID"
 
 # Function to cleanup server
 cleanup() {
@@ -26,6 +27,7 @@ for i in {1..30}; do
     if grep -q "Development server is running" server.log; then
         break
     fi
+    log_step "DBG: attempt $i"
     if ! kill -0 $SERVER_PID 2>/dev/null; then
         log_error "Server failed to start"
         cat server.log

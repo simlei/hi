@@ -12,6 +12,8 @@ interface Edge {
   from: number;
   to: number;
   activity: number;
+  pulsePhase: number;
+  gradientPhase: number;
   branches: Array<{
     x: number;
     y: number;
@@ -51,13 +53,18 @@ export function GraphBackground() {
       vertexBaseRadius: 0.8,
       vertexGlowMultiplier: 2.7,
       vertexSpeed: 0.3,
-      maxDistance: 230, // Reduced from 400 (factor ~1.75)
+      maxDistance: 230,
       edgeBaseWidth: 0.93,
-      edgeActivityMultiplier: 1.2,
+      edgeActivityMultiplier: 2.4, // Doubled for more visible pulsation
       baseAlpha: 0.35,
       activityDecay: 0.006,
       branchSpeed: 0.8,
-      branchSpawnChance: 0.15, // Reduced from 0.25
+      branchSpawnChance: 0.15,
+      // Edge animation parameters
+      edgePulseSpeed: 0.015, // Speed of edge width pulsation
+      edgePulseAmount: 0.4, // Amount of width variation
+      gradientSpeed: 0.004, // Speed of gradient movement
+      gradientLength: 0.5, // Length of the moving gradient relative to edge
       // Visual enhancement parameters
       innerGlowSize: 0.4,
       outerGlowIntensity: 0.8,
@@ -127,6 +134,8 @@ export function GraphBackground() {
                 from: i, 
                 to: j, 
                 activity: 0,
+                pulsePhase: Math.random() * Math.PI * 2,
+                gradientPhase: Math.random() * Math.PI * 2,
                 branches: []
               });
             }
@@ -219,7 +228,7 @@ export function GraphBackground() {
         });
       });
 
-      // Draw edges with enhanced effect
+      // Draw edges with enhanced effect and animation
       edges.forEach(edge => {
         const from = vertices[edge.from];
         const to = vertices[edge.to];
@@ -227,21 +236,41 @@ export function GraphBackground() {
         const dy = to.y - from.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         
-        // Create multi-stop gradient for more interesting edge look
+        // Update edge animation phases
+        edge.pulsePhase += PARAMS.edgePulseSpeed;
+        if (edge.pulsePhase > Math.PI * 2) edge.pulsePhase -= Math.PI * 2;
+        
+        edge.gradientPhase += PARAMS.gradientSpeed;
+        if (edge.gradientPhase > Math.PI * 2) edge.gradientPhase -= Math.PI * 2;
+        
+        // Calculate pulsing width
+        const pulseFactor = 1 + Math.sin(edge.pulsePhase) * PARAMS.edgePulseAmount;
+        const baseWidth = PARAMS.edgeBaseWidth * pulseFactor;
+        const width = baseWidth + edge.activity * PARAMS.edgeActivityMultiplier;
+        
+        // Create animated gradient
         const gradient = ctx.createLinearGradient(from.x, from.y, to.x, to.y);
-        const stops = PARAMS.edgeGradientStops;
+        const gradientOffset = (Math.sin(edge.gradientPhase) + 1) * 0.5; // 0 to 1
+        const gradientLength = PARAMS.gradientLength;
         
-        for (let i = 0; i <= stops; i++) {
-          const t = i / stops;
-          const wave = Math.sin(t * Math.PI) * 0.3; // Adds subtle variation
-          const alpha = PARAMS.baseAlpha + 
-            (from.activity * (1 - t) + to.activity * t) * 0.4 +
-            edge.activity * wave;
-          gradient.addColorStop(t, `rgba(217, 119, 6, ${alpha})`);
+        // Add base color stops
+        gradient.addColorStop(0, `rgba(217, 119, 6, ${PARAMS.baseAlpha})`);
+        gradient.addColorStop(1, `rgba(217, 119, 6, ${PARAMS.baseAlpha})`);
+        
+        // Add moving highlight
+        const highlightPos = gradientOffset * (1 + gradientLength) - gradientLength;
+        const startPos = Math.max(0, highlightPos);
+        const peakPos = Math.min(1, Math.max(0, highlightPos + gradientLength * 0.5));
+        const endPos = Math.min(1, highlightPos + gradientLength);
+        
+        if (startPos < 1) gradient.addColorStop(startPos, `rgba(217, 119, 6, ${PARAMS.baseAlpha})`);
+        if (peakPos >= 0 && peakPos <= 1) {
+          const peakAlpha = PARAMS.baseAlpha + edge.activity * 0.4 + 0.1;
+          gradient.addColorStop(peakPos, `rgba(217, 119, 6, ${peakAlpha})`);
         }
+        if (endPos > 0) gradient.addColorStop(endPos, `rgba(217, 119, 6, ${PARAMS.baseAlpha})`);
         
-        // Draw edge with subtle glow
-        const width = PARAMS.edgeBaseWidth + edge.activity * PARAMS.edgeActivityMultiplier;
+        // Draw edge with glow effect
         if (edge.activity > 0.1) {
           ctx.beginPath();
           ctx.strokeStyle = `rgba(217, 119, 6, ${edge.activity * 0.15})`;
@@ -251,6 +280,7 @@ export function GraphBackground() {
           ctx.stroke();
         }
         
+        // Draw main edge
         ctx.beginPath();
         ctx.strokeStyle = gradient;
         ctx.lineWidth = width;

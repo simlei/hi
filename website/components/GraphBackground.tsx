@@ -64,13 +64,13 @@ export function GraphBackground() {
 
     // Create position controller with hex grid
     const positionController = PositionController.createHexGrid({
-      gridSize: 400,     // Base size of hex cells (increased by 1.2x)
-      upwardBias: 0.10, // Slightly reduced upward force
-      hexWeight: 0.20,  // Increased grid influence for more stability
+      gridSize: 600,     // Base size of hex cells (increased by 1.2x)
+      upwardBias: 0.13, // Slightly reduced upward force
+      hexWeight: 0.25,  // Increased grid influence for more stability
       cellAspect: 1.0,  // Slightly compressed vertically
       cellScale: 1.0,   // Overall scale multiplier
-      brownianFactor: 2.60, // Reduced random motion
-      baseForce: 22.0,   // Reduced force for calmer movement
+      brownianFactor: 2.30, // Reduced random motion
+      baseForce: 20.0,   // Reduced force for calmer movement
     });
 
     // Create lightning controller
@@ -136,21 +136,21 @@ export function GraphBackground() {
     const familiarityMap = new Map<string, FamiliarityRecord>();
 
     const PARAMS = {
-      numVertices: 40, // More nodes for wider coverage
+      numVertices: 50, // More nodes for wider coverage
       vertexBaseRadius: 2.0, // Increased for 1.2x zoom
       vertexGlowMultiplier: 2.8,
       vertexSpeed: 0.02, // Reduced for calmer movement
       maxDistance: 370, // Adjusted for 1.2x zoom
-      edgeBaseWidth: 2.0, // Adjusted for 1.2x zoom
+      edgeBaseWidth: 1.3, // Adjusted for 1.2x zoom
       edgeActivityMultiplier: 0.8, // Increased activity for smoother transitions
       // Familiarity system parameters
-      familiarityDecayTime: 5.0,  // Time in seconds before familiarity starts decaying
-      familiarityMaxAge: 120.0,    // Time in seconds after which familiarity is forgotten
-      edgePreferenceWeight: 0.3,   // Weight of familiarity in connection probability (0-1)
+      familiarityDecayTime: 2.0,  // Time in seconds before familiarity starts decaying
+      familiarityMaxAge: 8.0,    // Time in seconds after which familiarity is forgotten
+      edgePreferenceWeight: 0.4,   // Weight of familiarity in connection probability (0-1)
       // Edge debouncing parameters
       edgeRemovalDelay: 1.0,      // Time in seconds an edge must be invalid before removal
       edgeCreationDelay: 0.5,     // Time in seconds a potential edge must be valid before creation
-      baseAlpha: 0.45, // Increased base opacity for more consistent visibility
+      baseAlpha: 0.15, // Increased base opacity for more consistent visibility
       activityDecay: 2.0, // Faster decay for less persistent activity
       branchSpeed: 0.5, // Slower branches
       branchSpawnChance: 0.01, // Fewer branches
@@ -905,61 +905,12 @@ export function GraphBackground() {
 
   return (
     <div>
-      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-        <defs>
-          {/* Turbulence effect - creates a crystalline, flowing distortion */}
-          <filter id="turbulence">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.02"
-              numOctaves="3"
-              seed="1"
-              stitchTiles="stitch"
-            />
-            <feDisplacementMap in="SourceGraphic" scale="15" />
-            <feGaussianBlur stdDeviation="1.5" />
-          </filter>
-
-          {/* Hexagonal mosaic effect */}
-          <filter id="hexagonize">
-            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="1" />
-            <feColorMatrix values="0 0 0 9 -4   0 0 0 9 -4   0 0 0 9 -4  0 0 0 0 1"/>
-            <feGaussianBlur stdDeviation="1.5" />
-          </filter>
-
-          {/* Glass morphism effect */}
-          <filter id="glassmorphism">
-            <feGaussianBlur stdDeviation="2" />
-            <feColorMatrix type="matrix" 
-              values="1 0 0 0 0
-                      0 1 0 0 0
-                      0 0 1 0 0
-                      0 0 0 15 -6"
-            />
-            <feComposite operator="in" in2="SourceGraphic" />
-          </filter>
-
-          {/* Crystallize effect */}
-          <filter id="crystallize">
-            <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" seed="1" />
-            <feDisplacementMap in="SourceGraphic" scale="20" />
-            <feGaussianBlur stdDeviation="1" />
-            <feColorMatrix type="matrix"
-              values="1.5 0 0 0 -0.2
-                      0 1.5 0 0 -0.2
-                      0 0 1.5 0 -0.2
-                      0 0 0 2 -0.2"
-            />
-          </filter>
-        </defs>
-      </svg>
       <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none opacity-100 -z-10"
       style={{ 
         willChange: 'transform', // Optimize for animations
-        transform: 'translateZ(0)', // Force GPU acceleration
-        filter: `url(#turbulence) brightness(1.2)`
+        transform: 'translateZ(0)' // Force GPU acceleration
       }}
     />
     </div>

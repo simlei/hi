@@ -46,15 +46,7 @@ fi
 # Run build test
 if [[ $SKIP_BUILD -eq 0 ]]; then
     log_step "Running build test..."
-    # Save .nojekyll if it exists
-    if [[ -f "out/.nojekyll" ]]; then
-        mv out/.nojekyll out/.nojekyll.bak
-    fi
     run_npm_cmd "build" "Build failed"
-    # Restore .nojekyll if it was saved
-    if [[ -f "out/.nojekyll.bak" ]]; then
-        mv out/.nojekyll.bak out/.nojekyll
-    fi
     log_success "Build test passed"
 fi
 

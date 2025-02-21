@@ -1,8 +1,13 @@
 import Link from 'next/link';
+import Head from 'next/head';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-primary-50">
+      <Head>
+        <title>Simon Jena - Software Engineer</title>
+        <meta name="description" content="Software Engineer, Problem Solver, and Open Source Enthusiast" />
+      </Head>
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto text-center">
           <h1 className="text-4xl font-bold text-primary-900 mb-4">

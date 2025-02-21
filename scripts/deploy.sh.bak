@@ -1,14 +1,5 @@
 #!/bin/bash
-set -eo pipefail
-
-export token="$(cat /tmp/token.txt 2>/dev/null || : )"
-if [[ -z "${token}" ]]; then
-    echo "❌ GITHUB_TOKEN environment variable is required for deployment"
-    echo "💡 For local testing, use --dry-run"
-    exit 1
-else
-    export GITHUB_TOKEN="${token}"
-fi
+set -euo pipefail
 
 # Get absolute paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -72,17 +63,16 @@ run_step() {
 
 # Build and test using dev.sh
 cd "$WEBSITE_DIR/website"
-
-# Build first
-run_step "Building website" "$DEV_SCRIPT exec npm run build"
-
-# Create .nojekyll file right after build
-run_step "Creating .nojekyll" "mkdir -p out && touch out/.nojekyll"
-
-# Run tests if not skipped
-if [[ $SKIP_TESTS -eq 0 ]]; then
+if [[ $SKIP_TESTS -eq 1 ]]; then
+    run_step "Building website" "$DEV_SCRIPT exec npm run build"
+else
+    # Use --skip-build for test since we'll build first
+    run_step "Building website" "$DEV_SCRIPT exec npm run build"
     run_step "Running tests" "$DEV_SCRIPT test --skip-build"
 fi
+
+# Ensure .nojekyll exists in output directory
+run_step "Creating .nojekyll" "mkdir -p out && touch out/.nojekyll"
 
 # If this is a dry run, we're done
 if [[ $DRY_RUN -eq 1 ]]; then

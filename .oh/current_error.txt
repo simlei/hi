@@ -1,28 +1,6 @@
-✅ Build completed successfully
-👉 Running server test...
-👉 Starting development server...
-👉 Waiting for server to start...
-👉 Testing main page at http://localhost:3000
-❌ Failed to access main page at http://localhost:3000
-❌ HTTP response:
-* Uses proxy env variable no_proxy == '127.0.0.1,localhost'
-*   Trying 127.0.0.1:3000...
-* Connected to localhost (127.0.0.1) port 3000 (#0)
-> GET / HTTP/1.1
-> Host: localhost:3000
-> User-Agent: curl/7.81.0
-> Accept: */*
-> 
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 500 Internal Server Error
-< cache-control: no-cache, no-store, max-age=0, must-revalidate
-< content-length: 21
-< date: Fri, 21 Feb 2025 02:40:20 GMT
-< Connection: keep-alive
-< Keep-Alive: timeout=5
-< 
-* Connection #0 to host localhost left intact
-Internal Server Error👉 Stopping server (PID: 1083614)...
-❌ Running tests failed
-ERROR: $?=1
+🚀 Triggering GitHub Actions workflow...
+❌ Failed to trigger workflow: {
+  "message": "Not Found",
+  "documentation_url": "https://docs.github.com/rest/actions/workflows#create-a-workflow-dispatch-event",
+  "status": "404"
 

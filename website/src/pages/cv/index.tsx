@@ -1,8 +1,13 @@
 import Link from 'next/link';
+import Head from 'next/head';
 
 export default function CV() {
   return (
     <div className="min-h-screen bg-primary-50">
+      <Head>
+        <title>Simon Jena - Curriculum Vitae</title>
+        <meta name="description" content="Curriculum Vitae of Simon Jena - Software Engineer, Autonomous Systems Master Student at TU Darmstadt" />
+      </Head>
       <header className="bg-primary-100 py-4">
         <div className="container mx-auto px-4">
           <Link 

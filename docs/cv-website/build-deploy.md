@@ -2,29 +2,19 @@
 
 ## Development and Testing Scripts
 
-### Local Development Script
+### Local Development
 
-Location: `scripts/manage-website.sh`
-
-A versatile script that manages the development environment:
-- Dependency checking and installation
-- Build verification
-- Server management
-- Automated testing
-- URL extraction
+The project includes several scripts for local development and testing:
 
 ```bash
 # Start development server
-./scripts/manage-website.sh
+npm run dev
 
-# Run automated tests
-./scripts/manage-website.sh --test
+# Preview production build
+npm run preview
 
-# Get server URL
-./scripts/manage-website.sh --print-url
-
-# Clean up server
-./scripts/manage-website.sh --cleanup
+# Run build tests
+npm run test:build
 ```
 
 ### Build Test Script
@@ -36,11 +26,6 @@ A non-interactive script that verifies:
 2. Static content generation
 3. Basic content validation
 4. Directory structure
-
-```bash
-# Run build test
-npm run test:build
-```
 
 #### What's Tested
 - Build completion
@@ -58,91 +43,72 @@ npm run test:build
 
 ### GitHub Pages Setup
 
+The site is automatically deployed to GitHub Pages using GitHub Actions. To set this up:
+
 1. Repository Requirements:
-   - Name: `<username>.github.io`
-   - SSH key configured
-   - GitHub Pages enabled:
-     - Source: Deploy from branch
-     - Branch: gh-pages / root
+   - GitHub Pages enabled in repository settings
+   - Source: GitHub Actions
 
 2. First Time Setup:
-   ```bash
-   # Add remote
-   git remote add origin git@github.com:<username>/<username>.github.io.git
+   - Push the repository to GitHub
+   - Go to Settings > Pages
+   - Under "Build and deployment", select "GitHub Actions"
 
-   # Generate SSH key (if needed)
-   ssh-keygen -t ed25519 -C "your_email@example.com"
+### GitHub Actions Workflow
 
-   # Add key to GitHub: Settings > SSH and GPG keys
-   ```
-
-### Deployment Script
-
-Location: `website/deploy.sh`
+Location: `.github/workflows/nextjs.yml`
 
 Features:
-- Automated testing integration
-- Clean workspace handling
-- Error management
-- Self-cleanup
-- Clear feedback
-- Branch management
+- Automated builds on push to main branch
+- Dependency caching for faster builds
+- Comprehensive testing
+- Automatic deployment to GitHub Pages
+- Proper handling of base paths and assets
 
-```bash
-# Deploy with tests
-./deploy.sh
+The workflow:
+1. Triggers on push to main branch
+2. Sets up Node.js environment
+3. Caches dependencies and build outputs
+4. Builds the Next.js application
+5. Runs tests
+6. Deploys to GitHub Pages
 
-# Deploy without tests
-./deploy.sh --skip-tests
-```
+### Manual Deployment
 
-### Deployment Process
+While automatic deployment is preferred, you can trigger a manual deployment:
 
-1. Pre-deployment:
-   - Dependencies installation
-   - Automated testing (optional)
-   - Build verification
-
-2. Deployment:
-   - Branch preparation (gh-pages)
-   - Static file generation
-   - Content organization
-   - Git operations
-
-3. Post-deployment:
-   - Cleanup
-   - Status verification
-   - Branch restoration
+1. Go to the GitHub repository
+2. Click "Actions"
+3. Select "Deploy Next.js site to Pages"
+4. Click "Run workflow"
 
 ### Testing Strategy
 
-#### Quick Content Testing
+#### Local Testing
 ```bash
-# For content changes and quick verification
-./scripts/dev.sh test
-```
-- Fast execution
-- Verifies build process
-- Checks server functionality
-- Ideal for content updates
+# Quick development testing
+npm run dev
 
-#### Comprehensive Deployment Testing
-```bash
-# Full deployment test without pushing
-./deploy.sh --dry-run
+# Preview production build
+npm run preview
+
+# Run build tests
+npm run test:build
 ```
-- Complete deployment simulation
-- Includes all build steps
-- Creates and tests gh-pages branch
-- Cleans up automatically
-- Perfect for verifying deployment readiness
+
+#### GitHub Actions Testing
+The GitHub Actions workflow automatically:
+- Builds the application
+- Runs tests
+- Validates the build
+- Deploys only if all tests pass
 
 ### Notes
 
-- The deployment script integrates with the new development workflow
-- Automated testing ensures deployment readiness
-- Clean workspace management prevents artifacts
-- Progress indicators show deployment status
+- Deployments are automated via GitHub Actions
+- No manual branch management needed
+- Clean workspace handling is automated
+- Progress visible in GitHub Actions UI
 - Allow a few minutes for GitHub Pages to update after deployment
-- Use `--dry-run` to verify deployment without pushing
-- For content changes, prefer `dev.sh test` for faster feedback
+- Use local preview for quick testing
+- GitHub Actions provides detailed logs and status

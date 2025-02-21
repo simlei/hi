@@ -3,34 +3,22 @@ set -e
 
 echo "🌐 Setting up website preview..."
 
-# Create preview directory if it doesn't exist
-PREVIEW_DIR="/workspace/cv-website/.preview"
-mkdir -p "$PREVIEW_DIR"
-
-# Add to .gitignore if not already there
-if ! grep -q "^\.preview" .gitignore 2>/dev/null; then
-    echo ".preview" >> .gitignore
-    echo "Added .preview to .gitignore"
-fi
-
 # Build the website
 echo "🏗️ Building website..."
 npm run build
 
-# Copy to preview directory
-echo "📋 Copying to preview directory..."
-rm -rf "$PREVIEW_DIR/*"
-cp -r out/* "$PREVIEW_DIR/"
+# Start a local server to preview the build
+echo "🚀 Starting preview server..."
+cd out && python3 -m http.server 8000 &
+SERVER_PID=$!
 
 echo "
-🌍 Website is available at:
-   1. Development server (live updates): http://localhost:3001
-   2. Static preview: $PREVIEW_DIR
+🌍 Website preview is available at:
+   http://localhost:8000
 
-To start the development server:
-   npm run dev
-
-To view the static build:
-   cd $PREVIEW_DIR && python3 -m http.server 8000
-   Then visit: http://localhost:8000
+Press Ctrl+C to stop the preview server.
 "
+
+# Wait for Ctrl+C
+trap "kill $SERVER_PID" INT
+wait $SERVER_PID

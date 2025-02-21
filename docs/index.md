@@ -54,19 +54,27 @@ Each task or component has its own directory under `/workspace/docs/` with:
 ## Current Progress
 
 1. CV Website Implementation
-   - Status: Implementation complete, build issue pending
+   - Status: Transitioning deployment strategy
    - Landing page: Minimal, professional design
    - CV page: Content updated from legacy repository
    - Infrastructure: Next.js + TailwindCSS
    - Testing: Automated workflow with URL verification
-   - Deployment: GitHub Pages configuration ready
+   - Deployment: Migrating from gh-pages to GitHub Actions
 
 2. Testing and Deployment
    - Primary test command: `dev.sh test` (fast, for content changes)
-   - Full deployment test: `deploy.sh --dry-run` (comprehensive)
-   - Status: All tests passing, ready for deployment
+   - Deployment: Moving to GitHub Actions workflow
+   - Status: In progress - implementing automated deployment
+   - Focus: Streamlining deployment scripts, removing complexity
 
-3. Future Steps
+3. Current Goals
+   - Implement GitHub Actions workflow for deployment
+   - Remove gh-pages branch-based deployment
+   - Simplify bash tooling (dev.sh, deploy.sh)
+   - Resolve base-url configuration issues
+   - Maintain all existing functionality
+
+4. Future Steps
    - Add project thumbnails and descriptions
    - Implement PDF generation
    - Enhance responsive design features

@@ -63,23 +63,24 @@ URL=$(get_server_url "$PORT")
 
 # Test main page
 BASE_PATH=$(get_base_path)
-log_step "Testing main page at $URL$BASE_PATH"
-if ! curl --fail -s "$URL$BASE_PATH" > /dev/null; then
-    log_error "Failed to access main page at $URL$BASE_PATH"
+TEST_URL="$URL${BASE_PATH}"
+log_step "Testing main page at $TEST_URL"
+if ! curl --fail -s "$TEST_URL" > /dev/null; then
+    log_error "Failed to access main page at $TEST_URL"
     log_error "HTTP response:"
-    curl -v "$URL$BASE_PATH"
+    curl -v "$TEST_URL"
     stop_server
     exit 1
 fi
 
 # Test a few key pages
 for path in "/about" "/cv"; do
-    TEST_URL="$URL$BASE_PATH$path"
-    log_step "Testing page at $TEST_URL"
-    if ! curl --fail -s "$TEST_URL" > /dev/null; then
-        log_error "Failed to access page at $TEST_URL"
+    PAGE_URL="$URL${BASE_PATH}${path}"
+    log_step "Testing page at $PAGE_URL"
+    if ! curl --fail -s "$PAGE_URL" > /dev/null; then
+        log_error "Failed to access page at $PAGE_URL"
         log_error "HTTP response:"
-        curl -v "$TEST_URL"
+        curl -v "$PAGE_URL"
         stop_server
         exit 1
     fi

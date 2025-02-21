@@ -7,27 +7,15 @@ set -euo pipefail
 # 3. Branch: gh-pages / root
 # 4. Save
 # 5. Wait for first deployment to complete
-#
-# First-time setup:
-# 1. Create repository: <username>.github.io
-# 2. git remote add origin git@github.com:<username>/<username>.github.io.git
-# 3. Generate SSH key if needed: ssh-keygen -t ed25519 -C "openhands@all-hands.dev"
-# 4. Add key to GitHub: Settings > SSH and GPG keys
-# 5. Configure git:
-#    git config --global user.name "openhands"
-#    git config --global user.email "openhands@all-hands.dev"
-# 6. Run this script
-#
-# Note: This script relies on ssh-agent for key management. Make sure to:
-# - Start ssh-agent: eval "$(ssh-agent -s)"
-# - Add your key: ssh-add ~/.ssh/id_ed25519
-# The agent will prompt for the key password if needed.
 
 # Resolve paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WEBSITE_DIR="$SCRIPT_DIR"
 DEV_SCRIPT="$WEBSITE_DIR/scripts/dev.sh"
 BUILD_HASH_FILE="$WEBSITE_DIR/.build-hash"
+
+# Always use production for deployment
+export NODE_ENV=production
 
 # Function to show usage
 usage() {
@@ -58,7 +46,7 @@ run_dev() {
 
 # Function to calculate hash of source files
 calculate_source_hash() {
-    find src pages public -type f -exec sha256sum {} \; | sort | sha256sum | cut -d' ' -f1
+    find src pages public -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1
 }
 
 # Function to check if rebuild is needed
@@ -77,15 +65,10 @@ needs_rebuild() {
     fi
 
     local stored_hash
-    stored_hash=$(cat "$BUILD_HASH_FILE")
+    stored_hash=$(head -n1 "$BUILD_HASH_FILE" 2>/dev/null || echo "")
 
     if [[ "$current_hash" != "$stored_hash" ]]; then
         echo "📦 Source files changed since last build."
-        return 0
-    fi
-
-    if [[ "${NODE_ENV:-}" != "${BUILD_NODE_ENV:-}" ]]; then
-        echo "📦 NODE_ENV changed since last build."
         return 0
     fi
 
@@ -128,10 +111,12 @@ check_dev_script
 # Change to website directory
 cd "$WEBSITE_DIR"
 
-# Use dev.sh to handle dependencies and environment
+# Clean .next directory to avoid stale artifacts
+rm -rf .next
+
+# Use dev.sh to handle dependencies
 echo "📦 Setting up environment..."
 run_dev npm ci
-run_dev npm install
 
 if [[ $SKIP_TESTS -eq 0 ]]; then
     # Run automated tests through dev.sh
@@ -143,11 +128,10 @@ fi
 if [[ $FORCE_REBUILD -eq 1 ]] || needs_rebuild; then
     # Build the site using dev.sh with GitHub Pages environment
     echo "🏗️ Building site..."
-    GITHUB_ACTIONS=true run_dev npm run build || { echo "❌ Build failed"; exit 1; }
+    run_dev npm run build || { echo "❌ Build failed"; exit 1; }
     
-    # Store build hash and environment
+    # Store build hash
     calculate_source_hash > "$BUILD_HASH_FILE"
-    echo "NODE_ENV=${NODE_ENV:-}" >> "$BUILD_HASH_FILE"
 fi
 
 # Create and switch to gh-pages branch
@@ -156,8 +140,12 @@ git checkout -B gh-pages
 
 # Move build output to root and clean up
 echo "📦 Preparing files..."
+# Ensure .nojekyll exists to prevent Jekyll processing
+touch .nojekyll
+# Copy all files from out directory
 cp -r out/* .
-rm -rf out
+# Clean up build artifacts
+rm -rf out .next node_modules
 
 # Add and commit
 echo "💾 Committing changes..."
@@ -172,10 +160,8 @@ if [[ $DRY_RUN -eq 0 ]]; then
     # Switch back to previous branch
     git checkout -
 
-    # Get the actual site URL
-    REPO_NAME=$(cd "$WEBSITE_DIR" && git config --get remote.origin.url | sed -n 's/.*\/\([^/]*\)\.git$/\1/p')
     echo "✨ Deployment complete!"
-    echo "🌐 Site will be available at: https://simlei.github.io/$REPO_NAME"
+    echo "🌐 Site will be available at: https://simlei.github.io/hi"
     echo "⏳ Allow a few minutes for GitHub Pages to update"
 else
     echo "✨ Dry run completed successfully!"

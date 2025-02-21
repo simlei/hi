@@ -27,6 +27,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WEBSITE_DIR="$SCRIPT_DIR"
 DEV_SCRIPT="$WEBSITE_DIR/scripts/dev.sh"
+BUILD_HASH_FILE="$WEBSITE_DIR/.build-hash"
 
 # Function to show usage
 usage() {
@@ -36,6 +37,7 @@ Usage: $(basename "$0") [options]
 Options:
     -s, --skip-tests    Skip running tests before deployment
     --dry-run         Test the deployment process without pushing to GitHub
+    -f, --force       Force rebuild even if no changes detected
     -h, --help         Show this help message
 EOF
     exit 1
@@ -54,9 +56,47 @@ run_dev() {
     "$DEV_SCRIPT" exec "$@"
 }
 
+# Function to calculate hash of source files
+calculate_source_hash() {
+    find src pages public -type f -exec sha256sum {} \; | sort | sha256sum | cut -d' ' -f1
+}
+
+# Function to check if rebuild is needed
+needs_rebuild() {
+    if [[ ! -d "$WEBSITE_DIR/out" ]]; then
+        echo "📦 No existing build found."
+        return 0
+    fi
+
+    local current_hash
+    current_hash=$(calculate_source_hash)
+    
+    if [[ ! -f "$BUILD_HASH_FILE" ]]; then
+        echo "📦 No build hash found."
+        return 0
+    fi
+
+    local stored_hash
+    stored_hash=$(cat "$BUILD_HASH_FILE")
+
+    if [[ "$current_hash" != "$stored_hash" ]]; then
+        echo "📦 Source files changed since last build."
+        return 0
+    fi
+
+    if [[ "${NODE_ENV:-}" != "${BUILD_NODE_ENV:-}" ]]; then
+        echo "📦 NODE_ENV changed since last build."
+        return 0
+    fi
+
+    echo "✨ No changes detected, using existing build."
+    return 1
+}
+
 # Parse arguments
 SKIP_TESTS=0
 DRY_RUN=0
+FORCE_REBUILD=0
 while [[ $# -gt 0 ]]; do
     case $1 in
         -s|--skip-tests)
@@ -65,6 +105,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --dry-run)
             DRY_RUN=1
+            shift
+            ;;
+        -f|--force)
+            FORCE_REBUILD=1
             shift
             ;;
         -h|--help)
@@ -95,9 +139,16 @@ if [[ $SKIP_TESTS -eq 0 ]]; then
     "$DEV_SCRIPT" test || { echo "❌ Tests failed"; exit 1; }
 fi
 
-# Build the site using dev.sh with GitHub Pages environment
-echo "🏗️ Building site..."
-GITHUB_ACTIONS=true run_dev npm run build || { echo "❌ Build failed"; exit 1; }
+# Build only if needed or forced
+if [[ $FORCE_REBUILD -eq 1 ]] || needs_rebuild; then
+    # Build the site using dev.sh with GitHub Pages environment
+    echo "🏗️ Building site..."
+    GITHUB_ACTIONS=true run_dev npm run build || { echo "❌ Build failed"; exit 1; }
+    
+    # Store build hash and environment
+    calculate_source_hash > "$BUILD_HASH_FILE"
+    echo "NODE_ENV=${NODE_ENV:-}" >> "$BUILD_HASH_FILE"
+fi
 
 # Create and switch to gh-pages branch
 echo "🔄 Preparing gh-pages branch..."

@@ -24,7 +24,7 @@ export default function Home() {
       
       <footer className="fixed bottom-0 w-full bg-primary-100 py-4">
         <div className="container mx-auto px-4 text-center text-primary-600">
-          <p>Contact: openhands@all-hands.dev</p>
+          <p>Contact: simonjena@gmail.com / +49 15209975863</p>
         </div>
       </footer>
     </div>

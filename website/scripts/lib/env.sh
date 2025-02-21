@@ -10,13 +10,8 @@ is_github_pages() {
 
 # Function to get the repository name from git config
 get_repo_name() {
-    local remote_url
-    remote_url=$(git config --get remote.origin.url || echo "")
-    if [[ $remote_url =~ /([^/]+)(\.git)?$ ]]; then
-        echo "${BASH_REMATCH[1]}"
-    else
-        echo "hi"  # Default fallback
-    fi
+    # Always return "hi" as this is the fixed base path we want
+    echo "hi"
 }
 
 # Function to get the base path for the website

@@ -153,11 +153,11 @@ export class LightningController {
       b = Math.round(peak[2] + (end[2] - peak[2]) * p);
     }
     
-    // Apply energy factor to brightness
-    const energyFactor = 0.3 + energy * 0.7;
-    r = Math.round(r * energyFactor);
-    g = Math.round(g * energyFactor);
-    b = Math.round(b * energyFactor);
+    // // Apply energy factor to brightness
+    // const energyFactor = 0.3 + energy * 0.7;
+    // r = Math.round(r * energyFactor);
+    // g = Math.round(g * energyFactor);
+    // b = Math.round(b * energyFactor);
     
     return `rgb(${r},${g},${b})`;
   }

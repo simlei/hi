@@ -20,7 +20,7 @@ export function Layout({ children, title = 'Portfolio' }: LayoutProps) {
         <nav className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="text-xl font-semibold text-primary-900">
-              Simon Leischnig
+              hi
             </Link>
             <div className="flex items-center gap-6">
               <Link
@@ -58,7 +58,7 @@ export function Layout({ children, title = 'Portfolio' }: LayoutProps) {
             </p>
             <div className="flex items-center gap-6">
               <a
-                href="mailto:simon.leischnig@stud.tu-darmstadt.de"
+                href="mailto:simonjena@gmail.com"
                 className="text-neutral-600 hover:text-primary-700 transition-colors"
               >
                 Email

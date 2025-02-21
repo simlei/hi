@@ -10,16 +10,18 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: transparent;
+  @apply bg-gradient-to-br from-primary-50 to-accent-50/80;
+  min-height: 100vh;
 }
 
 @layer base {
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth min-h-full;
+    background: none;
   }
 
   body {
-    @apply antialiased;
+    @apply antialiased min-h-full;
   }
 }
 
@@ -29,11 +31,11 @@ body {
   }
 
   .project-card-content {
-    @apply bg-white/[0.40] backdrop-filter;
+    @apply bg-white/[0.55] backdrop-filter;
   }
 
   .project-card-image {
-    @apply opacity-[0.40];
+    @apply opacity-[0.55];
   }
 
   .skill-tag {

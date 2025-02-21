@@ -11,12 +11,12 @@ export default function CV() {
       <div className="relative max-w-4xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-8 bg-white/80 backdrop-blur-sm rounded-lg p-8 shadow-lg border border-primary-100">
-          <h1 className="text-3xl font-bold text-primary-900">Simon Leischnig</h1>
+          <h1 className="text-3xl font-bold text-primary-900">Curriculum Vitæ of Simon Leischnig</h1>
           <p className="text-lg text-primary-700">Software and Algorithms Engineer</p>
           <div className="mt-4 text-primary-700/90 space-y-1">
-            <p>Address: Am Teich 8, 07743 Jena, Germany</p>
-            <p>Phone: 01590 / 5077 303</p>
-            <p>Email: simon.leischnig@stud.tu-darmstadt.de</p>
+            <p>Address: Karl-Liebknecht-Str. 33, 07749, Jena, Germany</p>
+            <p>Phone: 015209975863</p>
+            <p>Email: simonjena@gmail.com</p>
             <p>GitHub: <a href="http://github.com/simlei" className="text-accent-700 hover:text-accent-800 transition-colors">@simlei</a></p>
             <p>Website: <a href="http://simlei.github.io/hi" className="text-accent-700 hover:text-accent-800 transition-colors">simlei.github.io/hi</a></p>
           </div>
@@ -38,12 +38,12 @@ export default function CV() {
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
               <h3 className="text-lg font-semibold text-primary-800">Project Lead JCrypTool - Esslinger IT Consulting</h3>
               <p className="text-primary-600">2020 - 2023</p>
-              <p className="text-primary-700">Led core development and DevOps initiatives for the JCrypTool project, managing plugin architecture and deployment infrastructure.</p>
+              <p className="text-primary-700">Leading the core development and dev-ops initiatives for the JCrypTool project, managing plugin architecture and deployment infrastructure.</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
               <h3 className="text-lg font-semibold text-primary-800">Software Developer - Cynops GmbH</h3>
               <p className="text-primary-600">2009 - 2015</p>
-              <p className="text-primary-700">Developed cryptography and security solutions, focusing on robust implementation and system integration.</p>
+              <p className="text-primary-700">Developing cryptography and security solutions, focusing on robust implementation and system integration.</p>
             </div>
           </div>
         </section>
@@ -83,9 +83,6 @@ export default function CV() {
                 {[
                   'DevOps',
                   'Bash',
-                  'C++',
-                  'Rust',
-                  'C99',
                   'Scala 2/3',
                   'Java',
                   'GUI-frameworks',
@@ -105,10 +102,12 @@ export default function CV() {
               <h3 className="text-lg font-semibold text-primary-800 mb-3">Additional Expertise</h3>
               <div className="flex flex-wrap gap-2">
                 {[
-                  'CI/CD',
+                  'C++',
+                  'C99',
+                  'Rust',
                   'TypeScript',
-                  'React',
-                  'Next.js',
+                  'CI/CD',
+                  'React, Next.js',
                   'System Design',
                   'Build Systems',
                   'Test Automation'
@@ -165,13 +164,13 @@ export default function CV() {
             />
             <ProjectCard
               title="USB Guitar Teacher"
-              description="Developed during a Virtual and Augmented Reality class, this project combines music and computing. Using an Arduino, modified a Western guitar for USB connectivity, enabling real-time fingering position detection. Created a guitar teacher application using marker-based computer vision with OpenCV for guitar position tracking and Openframeworks for OpenGL integration. The app visualizes chords and scale information directly on the guitar fretboard in the video feed."
+              description="Developed during a Virtual and Augmented Reality class, this project combines music and computing. Using an Arduino, we modified a Western guitar for USB connectivity, enabling real-time fingering position detection. We created a guitar teacher application using marker-based computer vision with OpenCV for guitar position tracking and Openframeworks for OpenGL integration. The app visualizes chords and scale information directly on the guitar fretboard in the video feed."
               image="/images/projects/guitar-project.png"
               technologies={['Arduino', 'OpenCV', 'OpenGL', 'C++', 'Computer Vision', 'Hardware Integration', 'Real-time Processing']}
             />
             <ProjectCard
               title="Autonomous Systems Algorithm Development"
-              description="At Spleenlab GmbH, developed sophisticated algorithms for autonomous systems and robotics. Successfully delivered a standalone product and completed a complex algorithm transcription to C99 with comprehensive test coverage. The work involved optimization for real-time performance and ensuring reliability in critical applications."
+              description="At Spleenlab GmbH, I developed algorithms for Autonomous Systems and Robotics. I successfully developed a standalone product that we were able to sell to new customers. I completed a complex algorithm transcription to C99 with the highest degree of test coverage. I implemented a Matlab / Octave parser for this, and automatically extracted test fixtures for each function in scope, essentially pinning the problem down for testing in a big way. Then, I implemented a completely TDD environment where the C99 functions had only to be implemented with Matlab code as sample and with Matlab I/O data as exact test reference."
               image="/images/projects/autonomous-systems.png"
               technologies={['C99', 'C++', 'Robotics', 'Algorithm Design', 'Test-Driven Development', 'Performance Optimization']}
               company={{
@@ -203,7 +202,7 @@ export default function CV() {
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 text-center transform hover:scale-105 transition-transform duration-300">
               <div className="text-2xl mb-2">🇪🇸</div>
               <h3 className="text-lg font-semibold text-primary-800">Spanish</h3>
-              <p className="text-primary-600">Advanced (B2)</p>
+              <p className="text-primary-600">B1</p>
             </div>
           </div>
         </section>

@@ -48,8 +48,11 @@ export function GraphBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
+    
+    // Ensure canvas is transparent
+    canvas.style.backgroundColor = 'transparent';
 
     // Store animation frame ID for cleanup
     let animationFrameId: number;
@@ -64,13 +67,13 @@ export function GraphBackground() {
 
     // Create position controller with hex grid
     const positionController = PositionController.createHexGrid({
-      gridSize: 600,     // Base size of hex cells (increased by 1.2x)
+      gridSize: 450,     // Base size of hex cells (increased by 1.2x)
       upwardBias: 0.13, // Slightly reduced upward force
       hexWeight: 0.25,  // Increased grid influence for more stability
       cellAspect: 1.0,  // Slightly compressed vertically
       cellScale: 1.0,   // Overall scale multiplier
-      brownianFactor: 2.30, // Reduced random motion
-      baseForce: 20.0,   // Reduced force for calmer movement
+      brownianFactor: 6.0, // Reduced random motion
+      baseForce: 10.0,   // Reduced force for calmer movement
     });
 
     // Create lightning controller
@@ -86,25 +89,10 @@ export function GraphBackground() {
       fadeDuration: 0.35,        // Fade to orange takes all in all ~1sec
       colorVariations: [
         {
-          start: 'rgb(255, 120, 120)', // Bright red
+          start: 'rgb(255, 180, 180)', // Bright red
           peak: 'rgb(230, 240, 255)',  // Cool white
-          end: 'rgb(180, 140, 60)',    // Warm gold
+          end: 'rgb(210, 180, 140)',    // Warm gold
         },
-        {
-          start: 'rgb(190, 90, 90)',   // Deep blue-purple
-          peak: 'rgb(240, 245, 255)',  // Bright white
-          end: 'rgb(160, 140, 80)',    // Muted gold
-        },
-        {
-          start: 'rgb(90, 100, 200)',   // Ice blue
-          peak: 'rgb(240, 255, 255)',  // Pure white
-          end: 'rgb(170, 150, 70)',    // Rich gold
-        },
-        {
-          start: 'rgb(255, 255, 200)',   // Flashy yellow-white
-          peak: 'rgb(245, 250, 255)',  // Ice white
-          end: 'rgb(150, 130, 90)',    // Warm bronze
-        }
       ]
     });
 
@@ -136,12 +124,12 @@ export function GraphBackground() {
     const familiarityMap = new Map<string, FamiliarityRecord>();
 
     const PARAMS = {
-      numVertices: 50, // More nodes for wider coverage
-      vertexBaseRadius: 2.0, // Increased for 1.2x zoom
-      vertexGlowMultiplier: 2.8,
-      vertexSpeed: 0.02, // Reduced for calmer movement
+      numVertices: 30, // More nodes for wider coverage
+      vertexBaseRadius: 5.0, // Increased for 1.2x zoom
+      vertexGlowMultiplier: 5.8,
+      vertexSpeed: 0.01, // Reduced for calmer movement # defunct?
       maxDistance: 370, // Adjusted for 1.2x zoom
-      edgeBaseWidth: 1.3, // Adjusted for 1.2x zoom
+      edgeBaseWidth: 3.3, // Adjusted for 1.2x zoom
       edgeActivityMultiplier: 0.8, // Increased activity for smoother transitions
       // Familiarity system parameters
       familiarityDecayTime: 2.0,  // Time in seconds before familiarity starts decaying
@@ -150,34 +138,34 @@ export function GraphBackground() {
       // Edge debouncing parameters
       edgeRemovalDelay: 1.0,      // Time in seconds an edge must be invalid before removal
       edgeCreationDelay: 0.5,     // Time in seconds a potential edge must be valid before creation
-      baseAlpha: 0.15, // Increased base opacity for more consistent visibility
+      baseAlpha: 0.40, // Increased base opacity for more consistent visibility
       activityDecay: 2.0, // Faster decay for less persistent activity
-      branchSpeed: 0.5, // Slower branches
-      branchSpawnChance: 0.01, // Fewer branches
+      branchSpeed: 0.005, // Slower branches
+      branchSpawnChance: 0.001, // Fewer branches
       // Edge animation parameters
-      edgePulseSpeed: 0.002, // Slower pulse
+      edgePulseSpeed: 0.004, // Slower pulse
       edgePulseAmount: 0.12, // Reduced pulse intensity
-      gradientSpeed: 0.5, // Slower gradient movement
-      gradientLength: 0.5,
+      gradientSpeed: 0.02, // Slower gradient movement
+      gradientLength: 0.7,
       // Activity parameters
       activityBoost: 0.5, // Reduced activity boost
       activitySpreadProb: 0.57, // Lower spread chance
       // Visual enhancement parameters
-      innerGlowSize: 0.8,
+      innerGlowSize: 0.9,
       outerGlowIntensity: 1.4, // Slightly reduced intensity
-      edgeGradientStops: 10,
+      edgeGradientStops: 15,
       // Pulsation parameters
       // Pulse wave parameters
       pulseSpawnInterval: 5.0,    // Much longer interval between pulses
-      pulseSpawnChance: 0.01,     // Much lower chance for new pulses
-      pulseSpeed: 10.0,           // Even slower pulse travel
-      pulseWavelength: 800,      // Longer wavelength for smoother effect
+      pulseSpawnChance: 0.001,     // Much lower chance for new pulses
+      pulseSpeed: 0.1,           // Even slower pulse travel
+      pulseWavelength: 500,      // Longer wavelength for smoother effect
       pulseDecay: 0.35,          // Faster decay for more localized effect
-      pulseStrengthMin: 0.1,     // Lower minimum strength
+      pulseStrengthMin: 0.7,     // Lower minimum strength
       pulseStrengthMax: 0.9,     // Lower maximum strength
       // Size parameters
-      baseSizeMin: 0.3,
-      baseSizeMax: 2.5,
+      baseSizeMin: 0.8,
+      baseSizeMax: 1.5,
       directionBias: Math.PI * 0.5,
       directionStrength: 0.4,
       // Connection probability based on distance and direction
@@ -476,7 +464,8 @@ export function GraphBackground() {
       lastFrameTimeRef.current = currentTime;
       timeRef.current += deltaTime;
 
-      // Clear canvas with blur effect (slower fade)
+      // Clear canvas with transparent fade
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -904,15 +893,15 @@ export function GraphBackground() {
   }, []); // Empty dependency array ensures effect runs only once
 
   return (
-    <div>
+    <div className="fixed inset-0 -z-20" style={{ background: 'linear-gradient(to bottom right, rgb(255, 251, 235), rgba(236, 253, 245, 0.8))' }}>
       <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none opacity-100 -z-10 graph-background-effect"
       style={{ 
         willChange: 'transform', // Optimize for animations
         transform: 'translateZ(0)', // Force GPU acceleration
-        filter: 'blur(2px)', // Slightly blur the background
-        opacity: 0.75 // Reduced opacity for better readability
+        filter: 'blur(0px)', // Slightly blur the background
+        opacity: 0.9 // Reduced opacity for better readability
       }}
     />
     </div>

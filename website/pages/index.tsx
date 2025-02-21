@@ -44,7 +44,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative px-6 py-24 md:py-32 flex flex-col items-center justify-center text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-primary-800 mb-6">
-            Simon Leischnig
+            Welcome!
           </h1>
           <p className="text-xl text-primary-600 max-w-2xl mb-8">
             Software and Algorithms Engineer at Spleenlab GmbH, specializing in 

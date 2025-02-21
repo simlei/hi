@@ -35,6 +35,7 @@ Usage: $(basename "$0") [options]
 
 Options:
     -s, --skip-tests    Skip running tests before deployment
+    --dry-run         Test the deployment process without pushing to GitHub
     -h, --help         Show this help message
 EOF
     exit 1
@@ -55,10 +56,15 @@ run_dev() {
 
 # Parse arguments
 SKIP_TESTS=0
+DRY_RUN=0
 while [[ $# -gt 0 ]]; do
     case $1 in
         -s|--skip-tests)
             SKIP_TESTS=1
+            shift
+            ;;
+        --dry-run)
+            DRY_RUN=1
             shift
             ;;
         -h|--help)
@@ -106,15 +112,23 @@ echo "💾 Committing changes..."
 git add .
 git commit -m "Deploy to GitHub Pages" || true
 
-# Push to gh-pages branch
-echo "⬆️ Pushing to GitHub..."
-git push -f origin gh-pages
+# Push to gh-pages branch if not dry run
+if [[ $DRY_RUN -eq 0 ]]; then
+    echo "⬆️ Pushing to GitHub..."
+    git push -f origin gh-pages
 
-# Switch back to previous branch
-git checkout -
+    # Switch back to previous branch
+    git checkout -
 
-# Get the actual site URL
-REPO_NAME=$(cd "$WEBSITE_DIR" && git config --get remote.origin.url | sed -n 's/.*\/\([^/]*\)\.git$/\1/p')
-echo "✨ Deployment complete!"
-echo "🌐 Site will be available at: https://simlei.github.io/$REPO_NAME"
-echo "⏳ Allow a few minutes for GitHub Pages to update"
+    # Get the actual site URL
+    REPO_NAME=$(cd "$WEBSITE_DIR" && git config --get remote.origin.url | sed -n 's/.*\/\([^/]*\)\.git$/\1/p')
+    echo "✨ Deployment complete!"
+    echo "🌐 Site will be available at: https://simlei.github.io/$REPO_NAME"
+    echo "⏳ Allow a few minutes for GitHub Pages to update"
+else
+    echo "✨ Dry run completed successfully!"
+    echo "🔍 No changes were pushed to GitHub"
+    
+    # Switch back to previous branch
+    git checkout -
+fi

@@ -37,10 +37,10 @@ import { Layout } from '../components/Layout';
 export default function Home() {
   return (
     <Layout title="Simon Leischnig - Software Engineer">
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-neutral-50">
+    <div className="min-h-screen relative">
       <GraphBackground />
       
-      <div className="relative">
+      <div className="relative z-10">
         {/* Hero Section */}
         <section className="relative px-6 py-24 md:py-32 flex flex-col items-center justify-center text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-primary-800 mb-6">

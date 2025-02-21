@@ -76,7 +76,7 @@ export function GraphBackground() {
       if (!canvas || !ctx) return;
 
       // Clear canvas with blur effect
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Randomly trigger vertex activity
@@ -134,7 +134,7 @@ export function GraphBackground() {
             const midX = (from.x + to.x) / 2;
             const midY = (from.y + to.y) / 2;
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(100, 120, 140, ${branch.life * 0.3})`;
+            ctx.strokeStyle = `rgba(217, 119, 6, ${branch.life * 0.4})`;
             ctx.lineWidth = branch.life;
             ctx.moveTo(midX, midY);
             ctx.lineTo(branch.x, branch.y);
@@ -151,11 +151,12 @@ export function GraphBackground() {
         const to = vertices[edge.to];
         const gradient = ctx.createLinearGradient(from.x, from.y, to.x, to.y);
         
-        const baseAlpha = 0.1;
-        const activityAlpha = edge.activity * 0.4;
+        const baseAlpha = 0.15;
+        const activityAlpha = edge.activity * 0.5;
         
-        gradient.addColorStop(0, `rgba(100, 120, 140, ${baseAlpha + from.activity * 0.4})`);
-        gradient.addColorStop(1, `rgba(100, 120, 140, ${baseAlpha + to.activity * 0.4})`);
+        // Using primary-600 color from theme
+        gradient.addColorStop(0, `rgba(217, 119, 6, ${baseAlpha + from.activity * 0.4})`);
+        gradient.addColorStop(1, `rgba(217, 119, 6, ${baseAlpha + to.activity * 0.4})`);
         
         ctx.beginPath();
         ctx.strokeStyle = gradient;
@@ -176,8 +177,8 @@ export function GraphBackground() {
             vertex.x, vertex.y, 0,
             vertex.x, vertex.y, glowRadius
           );
-          gradient.addColorStop(0, `rgba(100, 120, 140, ${vertex.activity * 0.4})`);
-          gradient.addColorStop(1, 'rgba(100, 120, 140, 0)');
+          gradient.addColorStop(0, `rgba(217, 119, 6, ${vertex.activity * 0.5})`);
+          gradient.addColorStop(1, 'rgba(217, 119, 6, 0)');
           
           ctx.beginPath();
           ctx.fillStyle = gradient;
@@ -187,7 +188,7 @@ export function GraphBackground() {
         
         // Draw vertex
         ctx.beginPath();
-        ctx.fillStyle = `rgba(100, 120, 140, ${0.2 + vertex.activity * 0.4})`;
+        ctx.fillStyle = `rgba(217, 119, 6, ${0.25 + vertex.activity * 0.5})`;
         ctx.arc(vertex.x, vertex.y, baseRadius, 0, Math.PI * 2);
         ctx.fill();
       });
@@ -206,8 +207,8 @@ export function GraphBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none opacity-30"
-      style={{ filter: 'blur(3px) brightness(1.1)' }}
+      className="fixed inset-0 w-full h-full pointer-events-none opacity-40 -z-10"
+      style={{ filter: 'blur(2px) brightness(1.2)' }}
     />
   );
 }

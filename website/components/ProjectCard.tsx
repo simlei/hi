@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Image from 'next/image';
+import { getAssetPath } from '../utils/paths';
 
 interface ProjectCardProps {
   title: string;
@@ -52,7 +53,7 @@ export function ProjectCard({ title, description, image, technologies, company }
             <div className="md:w-1/3 relative h-48">
               <div className="relative w-full h-full">
                 <Image
-                  src={image}
+                  src={getAssetPath(image)}
                   alt={title}
                   width={800}
                   height={600}
@@ -78,7 +79,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                 <div className="mt-4 flex items-center">
                   <div className="h-6 w-24">
                     <Image
-                      src={company.logo}
+                      src={getAssetPath(company.logo)}
                       alt={company.name}
                       width={400}
                       height={200}
@@ -123,7 +124,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                     <div>
                       <div className="mb-4 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
                         <Image
-                          src={image}
+                          src={getAssetPath(image)}
                           alt={title}
                           width={800}
                           height={600}
@@ -134,7 +135,7 @@ export function ProjectCard({ title, description, image, technologies, company }
                         <div className="flex items-center p-4 bg-primary-50/50 rounded-lg">
                           <div className="h-10 w-40">
                             <Image
-                              src={company.logo}
+                              src={getAssetPath(company.logo)}
                               alt={company.name}
                               width={400}
                               height={200}

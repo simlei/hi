@@ -36,6 +36,7 @@ export class PositionController {
       cellAspect?: number;    // Vertical stretch factor (1 = regular hexagons)
       cellScale?: number;     // Overall scale multiplier
       brownianFactor?: number; // Brownian motion magnitude as factor of field strength
+      baseForce?: number;     // Base force scale for the system
     } = {}
   ): PositionController {
     const {
@@ -44,10 +45,12 @@ export class PositionController {
       hexWeight = 0.4,
       cellAspect = 1,
       cellScale = 1,
-      brownianFactor = 4.0
+      brownianFactor = 4.0,
+      baseForce = 20.0,
+
     } = config;
     // Base force scale for the system (adjust this to control overall motion)
-    const BASE_FORCE = 50.0; // units/s²
+    const BASE_FORCE = baseForce; // units/s²
     
     // Calculate relative force magnitudes
     const brownianForce = BASE_FORCE * brownianFactor;

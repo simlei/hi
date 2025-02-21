@@ -52,12 +52,13 @@ export function GraphBackground() {
 
     // Create position controller with hex grid
     const positionController = PositionController.createHexGrid({
-      gridSize: 325,    // Base size of hex cells
+      gridSize: 320,    // Base size of hex cells
       upwardBias: 0.3,  // Strength of upward force
-      hexWeight: 0.25,  // Weight of hex grid vs upward force
-      cellAspect: 0.9,  // Slightly compressed vertically
+      hexWeight: 0.6,  // Weight of hex grid vs upward force
+      cellAspect: 1.0,  // Slightly compressed vertically
       cellScale: 1.0,   // Overall scale multiplier
-      brownianFactor: 5.0 // Brownian motion relative to field strength
+      brownianFactor: 4.0, // Brownian motion relative to field strength
+      baseForce: 8.0,  // Base force scale for the system, controls amount of movement
     });
 
     // Visualization parameters
@@ -79,17 +80,17 @@ export function GraphBackground() {
     }
 
     const PARAMS = {
-      numVertices: 42, // Increased from 80
+      numVertices: 30, // Increased from 80
       vertexBaseRadius: 0.53, // Scaled down by 1.5
       vertexGlowMultiplier: 2.8, // Scaled down by 1.5
       vertexSpeed: 0.2,
-      maxDistance: 375, // Increased for more spread (250 * 1.5)
-      edgeBaseWidth: 1.27, // Scaled down by 1.5
+      maxDistance: 350, // Increased for more spread (250 * 1.5)
+      edgeBaseWidth: 1.00, // Scaled down by 1.5
       edgeActivityMultiplier: 1.57, // Scaled down by 1.5
       baseAlpha: 0.35,
-      activityDecay: 0.008,
-      branchSpeed: 0.9,
-      branchSpawnChance: 0.28,
+      activityDecay: 0.01,
+      branchSpeed: 0.6,
+      branchSpawnChance: 0.05,
       // Edge animation parameters
       edgePulseSpeed: 0.004,
       edgePulseAmount: 0.2, // Reduced from 0.5 (scaled by 3/4)
@@ -97,18 +98,18 @@ export function GraphBackground() {
       gradientLength: 0.5,
       // Activity parameters
       activityBoost: 1.5, // New: increases activity effect
-      activitySpreadProb: 0.80, // New: chance to spread activity
+      activitySpreadProb: 0.50, // New: chance to spread activity
       // Visual enhancement parameters
-      innerGlowSize: 0.75,
-      outerGlowIntensity: 1.2,
-      edgeGradientStops: 6,
+      innerGlowSize: 0.9,
+      outerGlowIntensity: 1.9,
+      edgeGradientStops: 20,
       // Pulsation parameters
       // Pulse wave parameters
-      pulseSpawnInterval: 3.0,    // Average seconds between new pulses
-      pulseSpawnChance: 0.02,     // Chance per frame to spawn new pulse
-      pulseSpeed: 150,            // Units per second pulse travels
+      pulseSpawnInterval: 13.0,    // Average seconds between new pulses
+      pulseSpawnChance: 0.015,     // Chance per frame to spawn new pulse
+      pulseSpeed: 30,            // Units per second pulse travels
       pulseWavelength: 100,       // Distance between pulse peaks
-      pulseDecay: 0.3,           // Decay per unit distance
+      pulseDecay: 0.12,           // Decay per unit distance
       pulseStrengthMin: 0.5,     // Minimum initial pulse strength
       pulseStrengthMax: 1.0,     // Maximum initial pulse strength
       // Size parameters
@@ -483,18 +484,6 @@ export function GraphBackground() {
         ctx.fillStyle = innerGlow;
         ctx.arc(vertex.x, vertex.y, baseRadius, 0, Math.PI * 2);
         ctx.fill();
-
-        // Debug: Draw velocity vector
-        const velocityScale = 20; // Scale up velocity for visibility
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-        ctx.lineWidth = 1;
-        ctx.moveTo(vertex.x, vertex.y);
-        ctx.lineTo(
-          vertex.x + vertex.vx * velocityScale,
-          vertex.y + vertex.vy * velocityScale
-        );
-        ctx.stroke();
       });
 
       animationFrameId = requestAnimationFrame(animate);

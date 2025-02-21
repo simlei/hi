@@ -56,12 +56,23 @@
   - Lazy loading images
 
 - **Graph Background**
-  - Canvas-based for performance
-  - Dynamic vertex and edge system
-  - Activity propagation and branching
-  - Needs theme color integration
-  - Responsive to viewport size
-  - Optimized animation system
+  - Physics-based particle system
+    * Velocity Verlet integration
+    * Mass-based dynamics (0.8-1.2 units)
+    * Air drag and damping
+  - Force Field System
+    * Hex grid structure (weight: 0.35)
+    * Brownian motion (factor: 0.08)
+    * Upward bias (0.2)
+  - Network Effects
+    * Dynamic edge connections
+    * Wave-like pulse propagation
+    * Activity spreading
+  - Visual Optimization
+    * GPU-accelerated canvas
+    * Efficient data structures
+    * Smooth color transitions
+    * Responsive scaling
 
 ## Performance Optimization
 - **Image Strategy**

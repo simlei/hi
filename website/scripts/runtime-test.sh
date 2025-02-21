@@ -28,16 +28,20 @@ for i in {1..30}; do
         break
     fi
     log_step "DBG: attempt $i"
-    if ! kill -0 $SERVER_PID 2>/dev/null; then
-        log_error "Server failed to start"
-        cat server.log
-        exit 1
+    # if server is down, print the log and remember exit code
+    if kill -0 $SERVER_PID 2>/dev/null; then
+        break;
+    else
+        if [[ $i -eq 30 ]]; then
+            log_error "Server failed to start:"
+            cat server.log >&2
+            exit 1
+        else
+            sleep 1
+            continue
+        fi
     fi
-    sleep 1
 done
-
-# Wait a bit for the server to fully initialize
-sleep 3
 
 log_step "Running runtime tests..."
 # Check if current_error.txt exists and is empty

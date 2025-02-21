@@ -19,21 +19,30 @@ All agents MUST:
 ## Tools Overview
 
 1. Development Command (`website/scripts/dev.sh`)
-   - Command dispatcher with subcommands
-   - Environment management
-   - Local toolchain support
-   - Dependency validation
+   - Command dispatcher for development tasks
+   - Environment and dependency management
+   - Local toolchain with isolated environment
+   - Automated dependency validation
+   - Clean process handling
 
 2. Subcommands:
-   - `server`: Development server (default)
-   - `test`: Automated testing
-   - `exec`: Run with local environment
+   - `server`: Development server with hot reload
+   - `test`: Build validation and URL testing
+   - `exec`: Run commands in local environment
+   - Common options: `--skip-build`, `--help`
 
-3. Features:
+3. Deployment Tools
+   - GitHub Actions workflow (`.github/workflows/nextjs.yml`)
+   - Automated build and deployment to GitHub Pages
+   - Content validation and artifact handling
+   - Clean URLs without .html extension
+   - No manual deployment needed
+
+4. Development Features
+   - Isolated local environment in `.local/`
    - Smart dependency management
-   - Local installation support (`.local/`)
-   - Environment variable handling
-   - Clean process management
+   - TypeScript type checking
+   - Hot module replacement
    - Comprehensive testing
 
 ## Documentation Structure
@@ -51,32 +60,34 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - Robust error handling
    - Common library structure
 
-## Current Progress
+## Current Status
 
 1. CV Website Implementation
-   - Status: Transitioning deployment strategy
-   - Landing page: Minimal, professional design
-   - CV page: Content updated from legacy repository
-   - Infrastructure: Next.js + TailwindCSS
-   - Testing: Automated workflow with URL verification
-   - Deployment: Migrating from gh-pages to GitHub Actions
+   - Status: ✅ Stable, automated deployment
+   - Landing page: Clean, professional design
+   - CV page: Content synchronized with main branch
+   - Infrastructure: Next.js 13.4 + TailwindCSS
+   - Testing: Automated validation of build and URLs
+   - Deployment: GitHub Actions workflow
 
 2. Testing and Deployment
-   - Primary test command: `dev.sh test` (fast, validates build and content)
-   - Deployment command: `scripts/deploy.sh` (uses GitHub Actions)
-   - Dry run testing: `scripts/deploy.sh --dry-run` (local validation)
-   - Status: Automated deployment via GitHub Actions
-   - Focus: Clean, DRY code with centralized functionality
+   - Primary test command: `dev.sh test` (validates build and content)
+   - Local preview: `dev.sh server` (development server)
+   - Deployment: Automatic via GitHub Actions on push to main
+   - Dry run: `scripts/deploy.sh --dry-run` (local validation)
+   - Status: ✅ Fully automated CI/CD pipeline
 
-3. Current Goals
-   - Implement GitHub Actions workflow for deployment
-   - Remove gh-pages branch-based deployment
-   - Simplify bash tooling (dev.sh, deploy.sh)
-   - Resolve base-url configuration issues
-   - Maintain all existing functionality
+3. Architecture Highlights
+   - Next.js static site generation
+   - GitHub Pages hosting
+   - GitHub Actions for CI/CD
+   - Bash tooling for development
+   - TypeScript for type safety
+   - Tailwind for styling
 
-4. Future Steps
-   - Add project thumbnails and descriptions
-   - Implement PDF generation
-   - Enhance responsive design features
-   - Add more interactive elements
+4. Future Enhancements
+   - Project portfolio expansion
+   - PDF generation feature
+   - Enhanced responsive design
+   - Interactive elements
+   - SEO optimization

@@ -1,43 +1,45 @@
 # Build and Deployment Tools
 
-## Development and Testing Scripts
+## Development Tools
 
 ### Local Development
 
-The project includes several scripts for local development and testing:
+The project uses a unified development script for all tasks:
 
 ```bash
 # Start development server
-npm run dev
+./scripts/dev.sh server
 
-# Preview production build
-npm run preview
+# Run tests (includes build)
+./scripts/dev.sh test
 
-# Run build tests
-npm run test:build
+# Run specific command in dev environment
+./scripts/dev.sh exec npm run build
+
+# Skip build step
+./scripts/dev.sh test --skip-build
 ```
 
-### Build Test Script
+### Development Script Features
 
-Location: `scripts/test-build.sh`
+Location: `website/scripts/dev.sh`
 
-A non-interactive script that verifies:
-1. Clean build process
-2. Static content generation
-3. Basic content validation
-4. Directory structure
+1. **Environment Management**
+   - Isolated local environment in `.local/`
+   - Proper PATH and library handling
+   - Clean process management
 
-#### What's Tested
-- Build completion
-- Critical file presence
-- Content validation (key elements)
-- Directory structure
-- Static generation
+2. **Build Process**
+   - Next.js static site generation
+   - TypeScript compilation
+   - Asset optimization
+   - `.nojekyll` file creation
 
-#### Output
-- Build size metrics
-- File count
-- Validation results
+3. **Testing**
+   - Build validation
+   - URL structure verification
+   - Content checks
+   - TypeScript type checking
 
 ## Deployment
 

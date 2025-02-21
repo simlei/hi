@@ -46,22 +46,4 @@ body {
     text-wrap: balance;
   }
 
-  .graph-background-effect {
-    @apply backdrop-blur-[30px] backdrop-contrast-110 backdrop-brightness-105;
-    background-image: repeating-linear-gradient(
-      60deg,
-      rgba(255, 255, 255, 0.1) 0px,
-      rgba(255, 255, 255, 0.1) 2px,
-      transparent 2px,
-      transparent 32px
-    ),
-    repeating-linear-gradient(
-      -60deg,
-      rgba(255, 255, 255, 0.1) 0px,
-      rgba(255, 255, 255, 0.1) 2px,
-      transparent 2px,
-      transparent 32px
-    );
-    background-size: 35px 60px;
-  }
 }

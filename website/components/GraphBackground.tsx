@@ -907,10 +907,12 @@ export function GraphBackground() {
     <div>
       <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none opacity-100 -z-10"
+      className="fixed inset-0 w-full h-full pointer-events-none opacity-100 -z-10 graph-background-effect"
       style={{ 
         willChange: 'transform', // Optimize for animations
-        transform: 'translateZ(0)' // Force GPU acceleration
+        transform: 'translateZ(0)', // Force GPU acceleration
+        filter: 'blur(2px)', // Slightly blur the background
+        opacity: 0.75 // Reduced opacity for better readability
       }}
     />
     </div>

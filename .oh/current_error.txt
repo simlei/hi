@@ -1,6 +1,16 @@
-Run actions/upload-pages-artifact@v3
-Run echo ::group::Archive artifact
-Archive artifact
-  tar: out: Cannot open: No such file or directory
-  tar: Error is not recoverable: exiting now
-  Error: Process completed with exit code 2.
+project1.png:1 
+        
+        
+       Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+project2.png:1 
+        
+        
+       Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+project3.png:1 
+        
+        
+       Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+hi/:1 Unchecked runtime.lastError: The message port closed before a response was received.Understand this errorAI
+bootstrap-legacy-autofill-overlay.js:6247 Uncaught TypeError: Cannot read properties of undefined (reading 'domQueryService')
+    at checkPageContainsShadowDom (bootstrap-legacy-autofill-overlay.js:6247:14)
+    at bootstrap-legacy-autofill-overlay.js:869:53

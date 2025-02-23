@@ -1,3 +1,2 @@
-- scan /workspace/docs/index.md for a knowledge base of the website and how to test.
-
-- look at current_error.txt and it's resolution proposal added by me and act accordingly.
+- In /workspace/website/pages/index.tsx there is a variable "projects" used for the cards; in /workspace/website/pages/cv.tsx, the cards are defined by scratch. make it so that both use the variables, to deduplicate...
+- The mouse movements and clicks, that are used to make the background graph interactive, should be registered by some global mechanism. Because right now, element events are used and it's conflicting; if the registereing invisible div is in foreground with high z-coordinate it works, but it blocks clicks to the page's elements. Therefore, it should be made so that all elements are normal and only concern themselves with their function and not global mouse tracking; remove any global forefront overlay that's there only for mouse events. Rather, make it so that a listener to mouse events for the whole page is registered, and used to feed the background graph

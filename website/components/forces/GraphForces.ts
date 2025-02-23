@@ -33,7 +33,7 @@ const PHYSICS = {
   MOUSE_RADIUS: 0.8,       // Mouse influence radius in graph space
   MOUSE_TIMEOUT: 2000,     // Mouse position reset timeout (ms)
   EDGE_LENGTH: 0.3,        // Preferred edge length in graph space
-  EDGE_STRENGTH: 0.8,      // Edge spring force strength
+  EDGE_STRENGTH: 0.1,      // Edge spring force strength
   REPULSION_STRENGTH: 0.08, // Node repulsion strength
   CENTER_STRENGTH: 3.0,    // Force pulling nodes to center
   WAVE_FORCE: 0.9,        // Wave force magnitude

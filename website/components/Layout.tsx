@@ -1,15 +1,22 @@
 import { ReactNode } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { MouseProvider, useMouseContext } from '../contexts/MouseContext';
 
 interface LayoutProps {
   children: ReactNode;
   title?: string;
 }
 
-export function Layout({ children, title = 'Portfolio' }: LayoutProps) {
+function LayoutContent({ children, title = 'Portfolio' }: LayoutProps) {
+  const { handlePointerMove, handlePointerDown } = useMouseContext();
+
   return (
-    <>
+    <div 
+      onPointerMove={handlePointerMove}
+      onPointerDown={handlePointerDown}
+      className="min-h-screen"
+    >
       <Head>
         <title>{title}</title>
         <meta name="description" content="Professional portfolio and CV" />
@@ -75,6 +82,14 @@ export function Layout({ children, title = 'Portfolio' }: LayoutProps) {
           </div>
         </div>
       </footer>
-    </>
+    </div>
+  );
+}
+
+export function Layout(props: LayoutProps) {
+  return (
+    <MouseProvider>
+      <LayoutContent {...props} />
+    </MouseProvider>
   );
 }

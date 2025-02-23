@@ -10,9 +10,11 @@ interface ProjectCardProps {
   image: string;
   technologies: string[];
   company?: {
+    url: string;
     name: string;
     logo: string;
   };
+
 }
 
 export function ProjectCard({ title, description, image, technologies, company }: ProjectCardProps) {

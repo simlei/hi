@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useMouseContext } from '../contexts/MouseContext';
 
 interface Vertex {
   x: number;
@@ -16,6 +17,8 @@ interface Edge {
 
 export function GoldenGraph() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { mouseState } = useMouseContext();
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -72,14 +75,32 @@ export function GoldenGraph() {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
       ctx.fillRect(0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
 
-      // Update vertex positions
+      // Update vertex positions and apply mouse influence
       vertices.forEach(vertex => {
         vertex.x += vertex.vx;
         vertex.y += vertex.vy;
 
+        // Apply mouse influence
+        if (mouseState.current.position) {
+          const dx = mouseState.current.position.x * canvas.width / window.devicePixelRatio - vertex.x;
+          const dy = mouseState.current.position.y * canvas.height / window.devicePixelRatio - vertex.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const maxDistance = 100;
+          
+          if (distance < maxDistance) {
+            const force = (1 - distance / maxDistance) * 0.5;
+            vertex.vx += (dx / distance) * force;
+            vertex.vy += (dy / distance) * force;
+          }
+        }
+
         // Bounce off edges
         if (vertex.x < 0 || vertex.x > canvas.width / window.devicePixelRatio) vertex.vx *= -1;
         if (vertex.y < 0 || vertex.y > canvas.height / window.devicePixelRatio) vertex.vy *= -1;
+
+        // Apply damping
+        vertex.vx *= 0.99;
+        vertex.vy *= 0.99;
       });
 
       // Update edges

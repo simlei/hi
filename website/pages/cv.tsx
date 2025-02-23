@@ -1,6 +1,7 @@
 import { GoldenGraph } from '../components/GoldenGraph';
 import { Layout } from '../components/Layout';
 import { ProjectCard } from '../components/ProjectCard';
+import { projects } from '../data/projects';
 
 export default function CV() {
   return (
@@ -33,7 +34,7 @@ export default function CV() {
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
               <h3 className="text-lg font-semibold text-primary-800">Software and Algorithms Engineer - Spleenlab GmbH</h3>
               <p className="text-primary-600">May 2023 - Present</p>
-              <p className="text-primary-700">Developing algorithms for autonomous systems and robotics. Successfully delivered a standalone product and completed a complex algorithm transcription to C99 with comprehensive test coverage.</p>
+              <p className="text-primary-700">Developing algorithms for autonomous systems and robotics. Successfully prototyped, branded and maintained a standalone product with customers, and completed a complex algorithm transcription to C99 with comprehensive test coverage that met it's performance goals on the first try while matching the spec 100%.</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
               <h3 className="text-lg font-semibold text-primary-800">Project Lead JCrypTool - Esslinger IT Consulting</h3>
@@ -152,32 +153,9 @@ export default function CV() {
             </span>
           </h2>
           <div className="space-y-8">
-            <ProjectCard
-              title="JCrypTool"
-              description="Core contributor to the JCrypTool open-source project since graduating from high school. Responsible for GUI and core programming, project management, and documentation. It's a comprehensive Eclipse Rich Client Platform project with over 100 plug-ins providing cryptography functionality and visualizations. Current focus: Integrating the Bouncy Castle crypto provider library using Scala with a Domain Specific Language for generic GUI and console functionality. Long-term vision includes integration with Shapeless and Ammonite REPL, with plans to utilize Free Applicatives for theoretical foundation."
-              image="/images/projects/jcryptool.png"
-              technologies={['Java', 'Scala', 'Eclipse RCP', 'OSGi', 'Cryptography', 'GUI Development', 'Project Management']}
-              company={{
-                name: 'JCrypTool Project',
-                logo: '/images/companies/jcryptool-logo.png'
-              }}
-            />
-            <ProjectCard
-              title="USB Guitar Teacher"
-              description="Developed during a Virtual and Augmented Reality class, this project combines music and computing. Using an Arduino, we modified a Western guitar for USB connectivity, enabling real-time fingering position detection. We created a guitar teacher application using marker-based computer vision with OpenCV for guitar position tracking and Openframeworks for OpenGL integration. The app visualizes chords and scale information directly on the guitar fretboard in the video feed."
-              image="/images/projects/guitar-project.png"
-              technologies={['Arduino', 'OpenCV', 'OpenGL', 'C++', 'Computer Vision', 'Hardware Integration', 'Real-time Processing']}
-            />
-            <ProjectCard
-              title="Autonomous Systems Algorithm Development"
-              description="At Spleenlab GmbH, I developed algorithms for Autonomous Systems and Robotics. I successfully developed a standalone product that we were able to sell to new customers. I completed a complex algorithm transcription to C99 with the highest degree of test coverage. I implemented a Matlab / Octave parser for this, and automatically extracted test fixtures for each function in scope, essentially pinning the problem down for testing in a big way. Then, I implemented a completely TDD environment where the C99 functions had only to be implemented with Matlab code as sample and with Matlab I/O data as exact test reference."
-              image="/images/projects/autonomous-systems.png"
-              technologies={['C99', 'C++', 'Robotics', 'Algorithm Design', 'Test-Driven Development', 'Performance Optimization']}
-              company={{
-                name: 'Spleenlab GmbH',
-                logo: '/images/companies/spleenlab-logo.png'
-              }}
-            />
+            {projects.map((project) => (
+              <ProjectCard key={project.title} {...project} />
+            ))}
           </div>
         </section>
 

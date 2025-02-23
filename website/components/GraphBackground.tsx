@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { calculateViewport, pixelToGraph } from './forces/GraphSpace';
-import { GraphNode, MouseState, calculateForces, updateNode } from './forces/GraphForces';
+import { calculateViewport } from './forces/GraphSpace';
+import { GraphNode, calculateForces, updateNode } from './forces/GraphForces';
 import { renderGraph } from './forces/GraphRenderer';
+import { useMouseContext } from '../contexts/MouseContext';
 
 // Configuration
 const CONFIG = {
-  NUM_NODES: 25,
+  NUM_NODES: 23,
   MIN_MASS: 50.8,
   MAX_MASS: 130.2,
   ACTIVITY_INTERVAL: 10,  // Seconds between random activity
@@ -15,11 +16,7 @@ const CONFIG = {
 export function GraphBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<GraphNode[]>([]);
-  const mouseRef = useRef<MouseState>({
-    position: null,
-    lastMoved: 0,
-    waves: []
-  });
+  const { mouseState: mouseRef } = useMouseContext();
   const timeRef = useRef(0);
   const lastFrameTimeRef = useRef(0);
 
@@ -45,8 +42,8 @@ export function GraphBackground() {
 
         const random_variation = Math.random() * 0.08;
         const phi = (1 + Math.sqrt(5)) / 2 + random_variation;
-        const theta = 2 * Math.PI * i * phi + Math.random() * 0.1;
-        const r = Math.sqrt(i / CONFIG.NUM_NODES) + Math.random() * 0.1;
+        const theta = 2 * Math.PI * i * phi + random_variation;
+        const r = Math.sqrt(i / CONFIG.NUM_NODES) + random_variation;
 
         nodesRef.current.push({
           x: r * Math.cos(theta),
@@ -105,69 +102,21 @@ export function GraphBackground() {
     };
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!canvasRef.current) return;
-
-    const rect = canvasRef.current.getBoundingClientRect();
-    const viewport = calculateViewport(canvasRef.current.width, canvasRef.current.height);
-    mouseRef.current.position = pixelToGraph({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    }, viewport);
-    mouseRef.current.lastMoved = performance.now();
-  };
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (!canvasRef.current) return;
-
-    const rect = canvasRef.current.getBoundingClientRect();
-    const viewport = calculateViewport(canvasRef.current.width, canvasRef.current.height);
-    const clickPos = pixelToGraph({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    }, viewport);
-    
-    if (!mouseRef.current.waves) {
-      mouseRef.current.waves = [];
-    }
-    
-    mouseRef.current.waves.push({
-      center: clickPos,
-      startTime: performance.now(),
-      amplitude: 1.0
-    });
-  };
-
   return (
-    <>
-      {/* Background and canvas - visually behind */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0" style={{ 
-          background: 'linear-gradient(to bottom right, rgb(255, 251, 235), rgba(236, 253, 245, 0.8))'
-        }} />
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 w-full h-full"
-          style={{ 
-            willChange: 'transform',
-            transform: 'translateZ(0)',
-            filter: 'blur(0px)',
-            opacity: 0.9
-          }}
-        />
-      </div>
-
-      {/* Invisible overlay for events - in front */}
-      <div 
-        className="fixed inset-0"
+    <div className="fixed inset-0 -z-10">
+      <div className="absolute inset-0" style={{ 
+        background: 'linear-gradient(to bottom right, rgb(255, 251, 235), rgba(236, 253, 245, 0.8))'
+      }} />
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
         style={{ 
-          zIndex: 9999,
-          pointerEvents: 'auto',
-          background: 'transparent'
+          willChange: 'transform',
+          transform: 'translateZ(0)',
+          filter: 'blur(0px)',
+          opacity: 0.9
         }}
-        onMouseMove={handleMouseMove}
-        onClick={handleClick}
       />
-    </>
+    </div>
   );
 }

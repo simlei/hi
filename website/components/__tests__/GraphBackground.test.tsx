@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { GraphBackground } from '../GraphBackground';
+import { MouseProvider } from '../../contexts/MouseContext';
 
 // Mock the LightningController and PositionController
 jest.mock('../forces/LightningController', () => ({
@@ -44,7 +45,11 @@ describe('GraphBackground Component', () => {
   });
 
   it('should render without crashing', () => {
-    const { container } = render(<GraphBackground />);
+    const { container } = render(
+      <MouseProvider>
+        <GraphBackground />
+      </MouseProvider>
+    );
     expect(container.querySelector('canvas')).toBeInTheDocument();
   });
 

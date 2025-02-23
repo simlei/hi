@@ -159,13 +159,13 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - Commands:
      ```bash
      # Development testing
-     ./scripts/dev.sh server
+     /workspace/website/scripts/dev.sh server
      
      # Build validation
-     ./scripts/dev.sh test
+     /workspace/website/scripts/dev.sh test
      
      # Full deployment test
-     ./scripts/deploy.sh --dry-run
+     /workspace/scripts/deploy.sh --dry-run
      ```
 
 5. Content Integration

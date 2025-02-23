@@ -10,6 +10,7 @@ readonly LIB_DIR="${SCRIPTS_DIR}/lib"
 # Runtime files (using mktemp for safety)
 readonly TEMP_DIR="$(mktemp -d)"
 readonly PID_FILE="${TEMP_DIR}/website-dev-server.pid"
+readonly PORT_FILE="${TEMP_DIR}/website-dev-server.port"
 readonly URL_FILE="${TEMP_DIR}/website-dev-server.url"
 readonly LOG_FILE="${TEMP_DIR}/website-dev-server.log"
 

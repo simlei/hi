@@ -1,0 +1,16 @@
+The graph works kind of, but the points are super strong forced to the hex grid and then after a few seconds, this error appears:
+
+TypeError: Failed to execute 'createLinearGradient' on 'CanvasRenderingContext2D': The provided double value is non-finite.
+
+Source
+components/forces/GraphRenderer.ts (39:31) @ createLinearGradient
+
+  37 | var width = VISUAL.EDGE_WIDTH * (1 + activity);
+  38 | // Draw edge with gradient
+> 39 | var gradient = ctx.createLinearGradient(fromPixel.x, fromPixel.y, toPixel.x, toPixel.y);
+     |                   ^
+  40 | // Animate gradient
+  41 | var phase = (time * 0.5 + dist) % 1;
+  42 | gradient.addColorStop(0, rgba(alpha * 0.5));
+
+Fix: make the distortion field less strong; base it's force on construction on a physical-unit-equivalent of variable that other parameters of the graph movement are based on also so that tuning gets easier. think of a clever physics-related ways of binding many parameters together. in extreme cases, non-finite values can appear when dividing by zero or the like -- tuning parameters better should be able to avoid this pretty easily

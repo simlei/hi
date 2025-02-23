@@ -10,16 +10,14 @@ SKIP_BUILD=0
 SKIP_RUNTIME=0
 CI_MODE=0
 RUNTIME_TIMEOUT=5
-VERIFY_SERVER=1
 
 usage() {
     show_usage "$(basename "$0")" \
         "Run all tests" \
-        "    -s, --skip-build     Skip build test
-    -r, --skip-runtime   Skip runtime tests
-    -n, --no-server     Skip server verification
-    -c, --ci            Run in CI mode with extended timeout
-    -h, --help          Show this help message"
+        "    -s, --skip-build    Skip build test
+    -r, --skip-runtime  Skip runtime tests (for content updates)
+    -c, --ci           Run in CI mode with extended timeout
+    -h, --help         Show this help message"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -30,10 +28,6 @@ while [[ $# -gt 0 ]]; do
             ;;
         -r|--skip-runtime)
             SKIP_RUNTIME=1
-            shift
-            ;;
-        -n|--no-server)
-            VERIFY_SERVER=0
             shift
             ;;
         -c|--ci)
@@ -63,7 +57,7 @@ if ! ensure_project_deps "$WEBSITE_DIR"; then
     exit 1
 fi
 
-# Run build test (only once)
+# Run build test
 if [[ $SKIP_BUILD -eq 0 ]]; then
     log_step "Running build test..."
     # Save .nojekyll if it exists
@@ -87,7 +81,7 @@ if [[ ! -d "out" ]]; then
     exit 1
 fi
 
-# Required files to check
+# Required files to check - adjust based on your needs
 declare -A required_files=(
     ["index.html"]="Homepage"
     ["cv/index.html"]="CV page"
@@ -157,7 +151,7 @@ if ! find "out/_next" -name "*.js" -type f | grep -q .; then
     exit 1
 fi
 
-# Validate HTML content
+# Optional: Validate HTML content more thoroughly
 log_step "Validating HTML content..."
 
 # Check homepage content
@@ -181,43 +175,3 @@ if ! npm test -- --watchAll=false --ci; then
     exit 1
 fi
 log_success "Unit tests passed"
-
-# Verify development server if requested
-if [[ $VERIFY_SERVER -eq 1 && $SKIP_RUNTIME -eq 0 ]]; then
-    log_step "Verifying development server..."
-    
-    # Start server in background
-    npm run dev > "$LOG_FILE" 2>&1 &
-    echo $! > "$PID_FILE"
-    
-    # Wait for server to start and detect port
-    retries=30
-    while [ $retries -gt 0 ]; do
-        # Check if server has started and get port from log
-        if grep -q "started server on" "$LOG_FILE"; then
-            port=$(grep "started server on" "$LOG_FILE" | grep -o "localhost:[0-9]*" | cut -d: -f2)
-            url="http://localhost:$port"
-            
-            # Try to access server
-            if curl -s -f "$url" > /dev/null; then
-                log_success "Server verification passed (port $port)"
-                break
-            fi
-        fi
-        sleep 1
-        ((retries--))
-        if [ $retries -eq 0 ]; then
-            log_error "Server verification failed"
-            cat "$LOG_FILE"
-            exit 1
-        fi
-    done
-    
-    # Cleanup server
-    if [ -f "$PID_FILE" ]; then
-        kill $(cat "$PID_FILE") 2>/dev/null || true
-        rm -f "$PID_FILE"
-    fi
-fi
-
-log_success "All tests passed successfully"

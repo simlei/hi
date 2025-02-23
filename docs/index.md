@@ -25,17 +25,33 @@ All agents MUST:
    - Automated dependency validation
    - Clean process handling
 
-2. Testing Strategy:
-   - Quick content updates: `dev.sh test --skip-runtime`
-   - Component changes: `dev.sh test`
-   - CI/deployment: `dev.sh test --ci`
-   - Runtime error monitoring via `/workspace/.oh/current_error.txt`
+2. Testing Infrastructure:
+   - Comprehensive test suite: `dev.sh test`
+   - Test phases:
+     * Build validation (Next.js build)
+     * Static export verification
+     * Content validation
+     * Unit tests (Jest)
+     * Server verification
+   - Test options:
+     * `--skip-build`: Skip build phase for quick iterations
+     * `--skip-runtime`: Skip server tests for content updates
+     * `--no-server`: Skip server verification
+     * `--ci`: Extended timeouts for CI environment
+   - Automated checks:
+     * File structure validation
+     * HTML content verification
+     * Asset presence and integrity
+     * Server accessibility
+     * Runtime error monitoring via `/workspace/.oh/current_error.txt`
 
-3. Subcommands:
+3. Development Commands:
    - `server`: Development server with hot reload
-   - `test`: Multi-level validation (build, static, runtime)
+   - `test`: Comprehensive test suite
    - `exec`: Run commands in local environment
-   - Common options: `--skip-build`, `--skip-runtime`, `--ci`
+   - Common options:
+     * `--skip-build`: Skip build step
+     * `--port PORT`: Custom server port (default: 3000)
 
 3. Deployment Tools
    - GitHub Actions workflow (`.github/workflows/nextjs.yml`)

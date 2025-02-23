@@ -3,10 +3,10 @@ import { Viewport, graphToPixel } from './GraphSpace';
 
 // Visual parameters
 const VISUAL = {
-  NODE_SIZE: 5,           // Base node size in pixels
+  NODE_SIZE: 3,           // Base node size in pixels
   NODE_GLOW: 15,         // Maximum node glow radius
-  EDGE_WIDTH: 2,         // Base edge width in pixels
-  EDGE_MAX_LENGTH: 0.5,  // Maximum edge length in graph space
+  EDGE_WIDTH: 1,         // Base edge width in pixels
+  EDGE_MAX_LENGTH: 0.44,  // Maximum edge length in graph space
   BASE_ALPHA: 0.4,       // Base opacity for edges
   GLOW_ALPHA: 0.2,       // Glow opacity
   COLOR: {

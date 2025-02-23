@@ -31,11 +31,11 @@ body {
   }
 
   .project-card-content {
-    @apply bg-white/[0.55] backdrop-filter;
+    @apply bg-white/[0.75] backdrop-filter;
   }
 
   .project-card-image {
-    @apply opacity-[0.55];
+    @apply opacity-[0.75];
   }
 
   .skill-tag {

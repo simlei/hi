@@ -12,23 +12,33 @@ export interface GraphNode extends GraphPoint {
   activity: number; // Node activity level [0,1]
 }
 
+interface Wave {
+  center: GraphPoint;
+  startTime: number;
+  amplitude: number;
+}
+
 export interface MouseState {
   position: GraphPoint | null;  // Current mouse position in graph space
   lastMoved: number;           // Last time mouse was moved (ms)
+  waves: Wave[];              // Active waves from clicks
 }
 
 // Physics parameters
 const PHYSICS = {
-  DAMPING: 0.95,           // Velocity damping per second
-  MAX_FORCE: 2.0,          // Maximum force magnitude
+  DAMPING: 0.85,           // Velocity damping per second
+  MAX_FORCE: 30.0,          // Maximum force magnitude
   MIN_DISTANCE: 0.01,      // Minimum distance for force calculation
-  MOUSE_FORCE: 0.5,        // Mouse repulsion force magnitude
-  MOUSE_RADIUS: 0.3,       // Mouse influence radius in graph space
+  MOUSE_FORCE: 0.25,        // Mouse repulsion force magnitude
+  MOUSE_RADIUS: 0.8,       // Mouse influence radius in graph space
   MOUSE_TIMEOUT: 2000,     // Mouse position reset timeout (ms)
   EDGE_LENGTH: 0.3,        // Preferred edge length in graph space
-  EDGE_STRENGTH: 0.3,      // Edge spring force strength
-  REPULSION_STRENGTH: 0.2, // Node repulsion strength
-  CENTER_STRENGTH: 4.8,    // Force pulling nodes to center
+  EDGE_STRENGTH: 0.8,      // Edge spring force strength
+  REPULSION_STRENGTH: 0.08, // Node repulsion strength
+  CENTER_STRENGTH: 3.0,    // Force pulling nodes to center
+  WAVE_FORCE: 0.9,        // Wave force magnitude
+  WAVE_SPEED: 0.9,         // Wave propagation speed
+  WAVE_DECAY: 0.7,         // Wave amplitude decay rate
 };
 
 // Calculate forces on a node from other nodes and constraints
@@ -92,6 +102,40 @@ export function calculateForces(
         y: (dy / dist) * force
       });
     }
+  }
+
+  // Wave forces
+  if (mouse.waves && mouse.waves.length > 0) {
+    mouse.waves.forEach((wave, index) => {
+      const timeSinceStart = (time - wave.startTime) / 1000; // Convert to seconds
+      const waveRadius = PHYSICS.WAVE_SPEED * timeSinceStart;
+      const dist = graphDistance(node, wave.center);
+      
+      // Only affect nodes near the wave front
+      const waveFrontWidth = 0.5;
+      const distFromFront = Math.abs(dist - waveRadius);
+      
+      if (distFromFront < waveFrontWidth) {
+        // Calculate wave amplitude with decay
+        const amplitude = wave.amplitude * Math.exp(-PHYSICS.WAVE_DECAY * timeSinceStart);
+        const force = amplitude * PHYSICS.WAVE_FORCE * (1 - distFromFront / waveFrontWidth);
+        
+        // Direction from wave center
+        const dx = node.x - wave.center.x;
+        const dy = node.y - wave.center.y;
+        const normalizedDist = Math.max(dist, PHYSICS.MIN_DISTANCE);
+        
+        forces.push({
+          x: (dx / normalizedDist) * force,
+          y: (dy / normalizedDist) * force
+        });
+      }
+    });
+
+    // Remove old waves
+    mouse.waves = mouse.waves.filter(wave => 
+      (time - wave.startTime) / 1000 < 2.0 // Remove waves after 2 seconds
+    );
   }
 
   // Sum all forces

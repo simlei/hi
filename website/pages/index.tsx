@@ -43,30 +43,32 @@ export default function Home() {
       <div className="relative z-10 bg-transparent">
         {/* Hero Section */}
         <section className="relative px-6 py-24 md:py-32 flex flex-col items-center justify-center text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-primary-800 mb-6">
-            Welcome!
-          </h1>
-          <p className="text-xl text-primary-600 max-w-2xl mb-8">
-            Software and Algorithms Engineer at Spleenlab GmbH, specializing in 
-            autonomous systems, robotics, and software architecture. Passionate about 
-            creating robust and efficient solutions.
-          </p>
-          <div className="flex gap-4">
-            <Link
-              href="/cv"
-              className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-            >
-              View CV
-              <ArrowRightIcon className="w-5 h-5 ml-2" />
-            </Link>
-            <a
-              href="https://github.com/simlei"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-neutral-50 text-neutral-700 rounded-lg hover:bg-neutral-100 transition-colors border border-neutral-200"
-            >
-              GitHub Profile
-            </a>
+          <div className="inline-block">
+            <div className="backdrop-blur-sm bg-white/30 rounded-2xl p-8 shadow-lg border border-white/40">
+              <h1 className="text-4xl md:text-4xl font-bold text-primary-900 mb-6">
+                Hi, I'm Simon Leischnig.
+              </h1>
+              <p className="text-xl text-primary-800 max-w-2xl mb-8">
+                I'm a software developer based in Jena, Germany. Software that "knows itself" is my passion. Check out my "ManageBash" project if you are a developer that hops between machines and containers often, go on :)
+              </p>
+              <div className="flex gap-4">
+                <Link
+                  href="/cv"
+                  className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
+                >
+                  View CV
+                  <ArrowRightIcon className="w-5 h-5 ml-2" />
+                </Link>
+                <a
+                  href="https://github.com/simlei"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 bg-white/80 text-neutral-700 rounded-lg hover:bg-white transition-colors border border-white/60 shadow-sm"
+                >
+                  GitHub Profile
+                </a>
+              </div>
+            </div>
           </div>
         </section>
 

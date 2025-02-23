@@ -109,14 +109,8 @@ Each task or component has its own directory under `/workspace/docs/` with:
 
 3. Testing & Development:
    ```bash
-   # Start development server
-   ./scripts/dev.sh server
-
-   # Run tests (includes build validation)
-   ./scripts/dev.sh test
-
-   # Test deployment
-   ./scripts/deploy.sh --dry-run
+   /workspace/scripts/deploy.sh --dry-run
+   /workspace/website/scripts/dev.sh test
    ```
 
 2. Design Guidelines
@@ -139,9 +133,6 @@ Each task or component has its own directory under `/workspace/docs/` with:
    - ✅ Automated deployment via GitHub Actions
    - ✅ Image optimization with next/image
    - ✅ Basic responsive design
-   - 🔄 Enhancing visual elements
-   - 🔄 Adding dynamic background
-   - 🔄 Implementing smooth transitions
 
 4. Testing Requirements
    - Visual consistency across browsers

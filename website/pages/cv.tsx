@@ -37,7 +37,7 @@ export default function CV() {
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">
               <h3 className="text-lg font-semibold text-primary-800">Project Lead JCrypTool - Esslinger IT Consulting</h3>
-              <p className="text-primary-600">2020 - 2023</p>
+              <p className="text-primary-600">2019 - 2023</p>
               <p className="text-primary-700">Leading the core development and dev-ops initiatives for the JCrypTool project, managing plugin architecture and deployment infrastructure.</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border border-primary-50 transition-all hover:shadow-lg">

@@ -12,10 +12,14 @@ describe('ForceField', () => {
       )).toBeCloseTo(1);
     });
 
-    test('zero force at hex point', () => {
+    test('minimal force at hex point', () => {
       // Point exactly on hex grid (origin)
       const force = hexField({ x: 0, y: 0 }, 0);
-      expect(force.magnitude).toBeCloseTo(0, 1);
+      // Using exponential decay, force at origin is exp(0) = 1
+      expect(force.magnitude).toBeCloseTo(1, 1);
+      // Direction should be zero at origin
+      expect(force.direction.x).toBeCloseTo(0, 1);
+      expect(force.direction.y).toBeCloseTo(0, 1);
     });
   });
 

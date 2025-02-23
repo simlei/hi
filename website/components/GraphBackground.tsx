@@ -8,7 +8,7 @@ const CONFIG = {
   NUM_NODES: 30,
   MIN_MASS: 0.8,
   MAX_MASS: 1.2,
-  ACTIVITY_INTERVAL: 5,  // Seconds between random activity
+  ACTIVITY_INTERVAL: 30,  // Seconds between random activity
   ACTIVITY_CHANCE: 0.2,  // Chance of activity per interval
 };
 

@@ -28,7 +28,7 @@ const PHYSICS = {
   EDGE_LENGTH: 0.3,        // Preferred edge length in graph space
   EDGE_STRENGTH: 0.3,      // Edge spring force strength
   REPULSION_STRENGTH: 0.2, // Node repulsion strength
-  CENTER_STRENGTH: 0.1,    // Force pulling nodes to center
+  CENTER_STRENGTH: 4.8,    // Force pulling nodes to center
 };
 
 // Calculate forces on a node from other nodes and constraints

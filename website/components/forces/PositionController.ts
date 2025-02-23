@@ -1,4 +1,4 @@
-import { forceFields, combineForceFields, applyForce, type ForceField, type ForceFieldConfig } from './ForceField';
+import { forceFields, combineForceFields, applyForce, calculateForceBalance, type ForceField, type ForceFieldConfig } from './ForceField';
 
 export interface Moveable {
   x: number;
@@ -41,42 +41,37 @@ export class PositionController {
   ): PositionController {
     const {
       gridSize = 100,
-      upwardBias = 0.3,
-      hexWeight = 0.4,
+      upwardBias = 0.2,
       cellAspect = 1,
       cellScale = 1,
-      brownianFactor = 4.0,
-      baseForce = 20.0,
-
+      baseForce = 50.0
     } = config;
+
+    // Calculate balanced forces
+    const { brownianForce, fieldForce, coherenceTime } = calculateForceBalance(baseForce);
     // Base force scale for the system (adjust this to control overall motion)
     const BASE_FORCE = baseForce; // units/s²
     
-    // Calculate relative force magnitudes
-    const brownianForce = BASE_FORCE * brownianFactor;
-    const hexForce = BASE_FORCE * hexWeight;
-    const upwardForce = BASE_FORCE * upwardBias;
-
     return new PositionController([
-      // Brownian motion force
+      // Brownian motion force - always slightly stronger than field force
       {
-        field: forceFields.brownianMotion(brownianForce, 2.0),
+        field: forceFields.brownianMotion(brownianForce, coherenceTime),
         weight: 1.0,
         type: 'additive'
       },
-      // Hex grid alignment force
+      // Hex grid alignment force - gentle guiding force
       {
         field: forceFields.hexGrid(gridSize, {
           aspect: cellAspect,
           scale: cellScale
         }),
-        weight: hexForce / BASE_FORCE,
-        type: 'restrictive'
+        weight: fieldForce / baseForce,
+        type: 'additive'  // Changed from restrictive to allow more natural motion
       },
-      // Upward bias force
+      // Upward bias force - very subtle vertical tendency
       {
         field: (pos) => ({
-          magnitude: upwardForce,
+          magnitude: fieldForce * upwardBias,
           direction: { x: 0, y: -1 }
         }),
         weight: 1.0,

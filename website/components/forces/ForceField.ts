@@ -131,36 +131,45 @@ export const forceFields = {
       const hexWidth = gridSize * Math.sqrt(3);
       const hexHeight = gridSize * 2 * aspect;
       
-      // Convert to hex coordinates (accounting for aspect ratio)
+      // Convert to axial hex coordinates
       const q = (2/3 * pos.x) / gridSize;
       const r = (-1/3 * pos.x + Math.sqrt(3)/3 * pos.y / aspect) / gridSize;
-      const s = -(q + r);
       
-      // Round to nearest hex
-      let rq = Math.round(q);
-      let rr = Math.round(r);
-      let rs = Math.round(s);
+      // Find nearest hex center using cube coordinates
+      const x = q;
+      const z = r;
+      const y = -(x + z);  // cube coordinate constraint: x + y + z = 0
       
-      const qDiff = Math.abs(rq - q);
-      const rDiff = Math.abs(rr - r);
-      const sDiff = Math.abs(rs - s);
+      // Round cube coordinates
+      let rx = Math.round(x);
+      let ry = Math.round(y);
+      let rz = Math.round(z);
       
-      if (qDiff > rDiff && qDiff > sDiff) {
-        rq = -(rr + rs);
-      } else if (rDiff > sDiff) {
-        rr = -(rq + rs);
+      // Fix rounding to maintain cube constraint
+      const xDiff = Math.abs(rx - x);
+      const yDiff = Math.abs(ry - y);
+      const zDiff = Math.abs(rz - z);
+      
+      if (xDiff > yDiff && xDiff > zDiff) {
+        rx = -(ry + rz);
+      } else if (yDiff > zDiff) {
+        ry = -(rx + rz);
+      } else {
+        rz = -(rx + ry);
       }
       
-      // Convert back to pixel coordinates (with aspect ratio)
-      const targetX = gridSize * (3/2 * rq);
-      const targetY = gridSize * aspect * (Math.sqrt(3) * (rr + rq/2));
-
+      // Convert back to pixel coordinates
+      const targetX = gridSize * (3/2 * rx);
+      const targetY = gridSize * aspect * (Math.sqrt(3) * (rz + rx/2));
+      
       const dx = targetX - pos.x;
       const dy = targetY - pos.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-
+      
+      // Smooth force falloff using exponential decay
+      const forceMagnitude = Math.exp(-dist / (gridSize * 2));
       return {
-        magnitude: Math.min(1, dist / gridSize),
+        magnitude: forceMagnitude,
         direction: {
           x: dist > 0 ? dx / dist : 0,
           y: dist > 0 ? dy / dist : 0
@@ -288,7 +297,20 @@ const PHYSICS = {
   TARGET_TIMESTEP: 1/60,  // Target physics timestep (60 Hz)
   MAX_TIMESTEP: 1/30,     // Maximum allowed timestep to prevent instability
   DRAG_COEFF: 0.1,       // Fluid drag coefficient
-  MIN_SPEED: 1e-5        // Minimum speed to consider for calculations
+  MIN_SPEED: 1e-5,       // Minimum speed to consider for calculations
+  FORCE_RATIO: 1.2       // Ratio of Brownian to field force (> 1 ensures motion)
+};
+
+// Calculate balanced force parameters based on base magnitude
+export function calculateForceBalance(baseMagnitude: number) {
+  return {
+    // Brownian motion should slightly exceed field force
+    brownianForce: baseMagnitude * PHYSICS.FORCE_RATIO,
+    // Field force acts as a gentle guide
+    fieldForce: baseMagnitude,
+    // Coherence time for Brownian motion
+    coherenceTime: 2.0
+  };
 };
 
 // Physics state for debugging/visualization

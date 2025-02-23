@@ -79,16 +79,24 @@ export function ProjectCard({ title, description, image, technologies, company }
               </div>
               {company && (
                 <div className="mt-4 flex items-center">
-                  <div className="h-6 w-24">
-                    <Image
-                      src={getAssetPath(company.logo)}
-                      alt={company.name}
-                      width={400}
-                      height={200}
-                      className="w-full h-full object-contain project-card-image"
-                    />
-                  </div>
-                  <span className="ml-2 text-primary-600 text-sm">{company.name}</span>
+                  <a
+                    href={company.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center hover:opacity-80 transition-opacity"
+                  >
+                    <div className="h-6 w-24">
+                      <Image
+                        src={getAssetPath(company.logo)}
+                        alt={company.name}
+                        width={400}
+                        height={200}
+                        className="w-full h-full object-contain project-card-image"
+                      />
+                    </div>
+                    <span className="ml-2 text-primary-600 text-sm hover:text-primary-800">{company.name}</span>
+                  </a>
                 </div>
               )}
             </div>
@@ -134,18 +142,25 @@ export function ProjectCard({ title, description, image, technologies, company }
                         />
                       </div>
                       {company && (
-                        <div className="flex items-center p-4 bg-primary-50/50 rounded-lg">
-                          <div className="h-10 w-40">
-                            <Image
-                              src={getAssetPath(company.logo)}
-                              alt={company.name}
-                              width={400}
-                              height={200}
-                              className="w-full h-full object-contain project-card-image"
-                            />
+                        <a
+                          href={company.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block hover:opacity-90 transition-opacity"
+                        >
+                          <div className="flex items-center p-4 bg-primary-50/50 rounded-lg hover:bg-primary-100/50 transition-colors">
+                            <div className="h-10 w-40">
+                              <Image
+                                src={getAssetPath(company.logo)}
+                                alt={company.name}
+                                width={400}
+                                height={200}
+                                className="w-full h-full object-contain project-card-image"
+                              />
+                            </div>
+                            <span className="ml-4 text-primary-700 font-medium group-hover:text-primary-800">{company.name}</span>
                           </div>
-                          <span className="ml-4 text-primary-700 font-medium">{company.name}</span>
-                        </div>
+                        </a>
                       )}
                     </div>
                     

@@ -6,7 +6,7 @@ import { useMouseContext } from '../contexts/MouseContext';
 
 // Configuration
 const CONFIG = {
-  NUM_NODES: 23,
+  NUM_NODES: 12,
   MIN_MASS: 50.8,
   MAX_MASS: 130.2,
   ACTIVITY_INTERVAL: 10,  // Seconds between random activity

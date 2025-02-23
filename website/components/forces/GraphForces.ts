@@ -27,16 +27,16 @@ export interface MouseState {
 // Physics parameters
 const PHYSICS = {
   DAMPING: 0.85,           // Velocity damping per second
-  MAX_FORCE: 30.0,          // Maximum force magnitude
+  MAX_FORCE: 20.0,          // Maximum force magnitude
   MIN_DISTANCE: 0.01,      // Minimum distance for force calculation
-  MOUSE_FORCE: 0.15,        // Mouse repulsion force magnitude
-  MOUSE_RADIUS: 0.8,       // Mouse influence radius in graph space
+  MOUSE_FORCE: 0.13,        // Mouse repulsion force magnitude
+  MOUSE_RADIUS: 0.4,       // Mouse influence radius in graph space
   MOUSE_TIMEOUT: 2000,     // Mouse position reset timeout (ms)
-  EDGE_LENGTH: 0.3,        // Preferred edge length in graph space
-  EDGE_STRENGTH: 0.1,      // Edge spring force strength
-  REPULSION_STRENGTH: 0.08, // Node repulsion strength
-  CENTER_STRENGTH: 3.0,    // Force pulling nodes to center
-  WAVE_FORCE: 0.62,        // Wave force magnitude
+  EDGE_LENGTH: 0.34,        // Preferred edge length in graph space
+  EDGE_STRENGTH: 0.17,      // Edge spring force strength
+  REPULSION_STRENGTH: 0.07, // Node repulsion strength
+  CENTER_STRENGTH: 2.2,    // Force pulling nodes to center
+  WAVE_FORCE: 0.42,        // Wave force magnitude
   WAVE_SPEED: 0.9,         // Wave propagation speed
   WAVE_DECAY: 0.7,         // Wave amplitude decay rate
 };
